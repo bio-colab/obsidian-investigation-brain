@@ -1,0 +1,33 @@
+case_id: CASE-TEMPLATE-000
+title: "Template case — replace me"
+version: "1.0.0"
+difficulty: 2
+case_status: training
+sensitivity: fictional
+domain_tags:
+  - fictional
+source_kinds:
+  - mixed
+expected_modes: [A, B, C, D]
+scope:
+  in_scope:
+    - "Replace with in-scope questions"
+  out_of_scope:
+    - "Replace with out-of-scope items"
+phases:
+  - id: P1
+    name: "Scope & intake"
+    description: "Define scope and collect initial packet"
+  - id: P2
+    name: "Evidence & entities"
+    description: "Register evidence with CoC/provenance and entities"
+  - id: P3
+    name: "Hypotheses & timeline"
+    description: "Primary+counter, events, contradictions"
+  - id: P4
+    name: "Audit & report"
+    description: "Audit vault and draft report with gaps"
+team_roles:
+  - role: lead-investigator
+    name: "Agent (assisted)"
+notes: "Agents may only read source_packet/ during generation."

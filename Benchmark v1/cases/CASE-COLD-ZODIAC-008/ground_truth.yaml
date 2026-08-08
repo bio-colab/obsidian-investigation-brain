@@ -1,0 +1,98 @@
+case_id: CASE-COLD-ZODIAC-008
+truth_status: unknown
+canonical_conclusion: Series linked by letters/claims in public lore; definitive single
+  attribution not established in packet.
+evidence:
+- id: EV-LETTER-001
+  title: Public letter excerpt themes
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-LETTER-001
+  - Public letter excerpt themes
+  summary: Public letter excerpt themes
+  must_have_provenance: true
+- id: EV-CIPHER-001
+  title: Cipher public history note
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-CIPHER-001
+  - Cipher public history note
+  summary: Cipher public history note
+  must_have_provenance: true
+- id: EV-CRIME-001
+  title: Public summary of one linked attack
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-CRIME-001
+  - Public summary of one linked attack
+  summary: Public summary of one linked attack
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: One offender authored letters and committed multiple attacks (working
+    theory).
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - copycat
+  - overlinking
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Copycat letters and over-linking of unrelated crimes.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-1969
+  timestamp: '1969-01-01'
+  precision: year-only
+  summary: Peak publicized activity era
+  required: true
+  aliases:
+  - T-1969
+  - Peak publicized activity era
+contradictions:
+- id: CX-COUNT
+  description: Claimed victim counts vs confirmed linked cases
+  aliases:
+  - CX-COUNT
+  - Claimed victim counts vs confirmed linked cases
+missing_evidence:
+- id: GAP-FORENSIC
+  description: Modern forensic dossier not in packet
+  aliases:
+  - GAP-FORENSIC
+  - Modern forensic dossier not in packet
+  phase_id: P2
+forbidden_inferences:
+- id: FI-NAME-KILLER
+  description: Do not mark a named person as verified killer
+  match_patterns:
+  - verified killer is
+  - definitely the zodiac is
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Peak publicized activity era
+  must_link_evidence_ids:
+  - EV-LETTER-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

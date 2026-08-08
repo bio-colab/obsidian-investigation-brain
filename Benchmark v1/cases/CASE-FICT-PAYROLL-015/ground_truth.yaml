@@ -1,0 +1,96 @@
+case_id: CASE-FICT-PAYROLL-015
+truth_status: probable
+canonical_conclusion: Ghost employees and duplicate payments indicate internal fraud;
+  system error alone unlikely.
+evidence:
+- id: EV-PAY-001
+  title: Payroll export anomaly list
+  type: financial-record
+  source_kind: operational
+  required: true
+  aliases:
+  - EV-PAY-001
+  - Payroll export anomaly list
+  summary: Payroll export anomaly list
+  must_have_coc: true
+- id: EV-BANK-001
+  title: Bank batch payment file
+  type: financial-record
+  source_kind: operational
+  required: true
+  aliases:
+  - EV-BANK-001
+  - Bank batch payment file
+  summary: Bank batch payment file
+  must_have_coc: true
+- id: EV-HR-001
+  title: HR roster vs payroll mismatch memo
+  type: documentary
+  source_kind: operational
+  required: true
+  aliases:
+  - EV-HR-001
+  - HR roster vs payroll mismatch memo
+  summary: HR roster vs payroll mismatch memo
+  must_have_coc: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Internal actor created ghost employees.
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - software bug
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Payroll software bug without intent.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-Q1
+  timestamp: '2023-01-01'
+  precision: month-only
+  summary: Anomalies begin Q1
+  required: true
+  aliases:
+  - T-Q1
+  - Anomalies begin Q1
+contradictions: []
+missing_evidence:
+- id: GAP-LAPTOP
+  description: Suspect laptop image not yet acquired
+  aliases:
+  - GAP-LAPTOP
+  - Suspect laptop image not yet acquired
+  phase_id: P2
+forbidden_inferences:
+- id: FI-OFFSHORE
+  description: Do not invent offshore transfers
+  match_patterns:
+  - Cayman transfer of
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Anomalies begin Q1
+  must_link_evidence_ids:
+  - EV-PAY-001
+entities:
+- id: ORG-1
+  name: Northbridge Municipal Works
+  type: organization
+  role: employer
+  aliases:
+  - Northbridge Municipal Works
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

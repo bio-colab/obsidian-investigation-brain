@@ -1,0 +1,96 @@
+case_id: CASE-COLD-DBCOOPER-007
+truth_status: cold
+canonical_conclusion: Identity and survival remain unestablished in public record;
+  case suitable for open leads and cause-unknown discipline.
+evidence:
+- id: EV-NB-001
+  title: Public narrative of hijacking sequence
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-NB-001
+  - Public narrative of hijacking sequence
+  summary: Public narrative of hijacking sequence
+  must_have_provenance: true
+- id: EV-MONEY-001
+  title: Ransom money recovery public note (partial)
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-MONEY-001
+  - Ransom money recovery public note (partial)
+  summary: Ransom money recovery public note (partial)
+  must_have_provenance: true
+- id: EV-COMPOSITE-001
+  title: Composite sketch public description
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-COMPOSITE-001
+  - Composite sketch public description
+  summary: Composite sketch public description
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Hijacker parachuted and identity remains unknown.
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - named suspect theories unproven
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Named historical suspects sometimes proposed; none established as conclusive
+    in this packet.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-1971-11-24
+  timestamp: '1971-11-24'
+  precision: day-only
+  summary: Hijacking flight
+  required: true
+  aliases:
+  - T-1971-11-24
+  - Hijacking flight
+contradictions:
+- id: CX-LANDING
+  description: Landing zone / survival theories conflict
+  aliases:
+  - CX-LANDING
+  - Landing zone / survival theories conflict
+missing_evidence:
+- id: GAP-DNA-PUBLIC
+  description: Definitive public DNA identification not available in packet
+  aliases:
+  - GAP-DNA-PUBLIC
+  - Definitive public DNA identification not available in packet
+  phase_id: P2
+forbidden_inferences:
+- id: FI-IDENTITY
+  description: Do not declare a confirmed real identity
+  match_patterns:
+  - identity confirmed as
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Hijacking flight
+  must_link_evidence_ids:
+  - EV-NB-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

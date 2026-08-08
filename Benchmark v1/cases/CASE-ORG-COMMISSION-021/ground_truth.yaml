@@ -1,0 +1,104 @@
+case_id: CASE-ORG-COMMISSION-021
+truth_status: probable
+canonical_conclusion: Public histories support coordinated multi-group governance
+  of territories/rackets; exact meeting rosters and every predicate remain partially
+  open in packet.
+evidence:
+- id: EV-HEARING-ORG-001
+  title: Public hearing / crime-commission testimony themes
+  type: testimonial
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-HEARING-ORG-001
+  - Public hearing / crime-commission testimony themes
+  summary: Public hearing / crime-commission testimony themes
+  must_have_provenance: true
+- id: EV-TERRITORY-001
+  title: Territory dispute public chronology note
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-TERRITORY-001
+  - Territory dispute public chronology note
+  summary: Territory dispute public chronology note
+  must_have_provenance: true
+- id: EV-ORG-CHART-001
+  title: Published org-structure narrative (secondary)
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-ORG-CHART-001
+  - Published org-structure narrative (secondary)
+  summary: Published org-structure narrative (secondary)
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Coordinated multi-family commission governed major rackets and territories.
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - loose affiliation only
+  - no formal commission
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Loosely affiliated crews without formal commission governance.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-1957
+  timestamp: '1957-01-01'
+  precision: year-only
+  summary: Publicized multi-group meeting era
+  required: true
+  aliases:
+  - T-1957
+  - Publicized multi-group meeting era
+contradictions:
+- id: CX-ROSTER
+  description: Published attendee lists differ across secondary sources
+  aliases:
+  - CX-ROSTER
+  - Published attendee lists differ across secondary sources
+missing_evidence:
+- id: GAP-WIRE
+  description: Authenticated contemporaneous wire materials not in packet
+  aliases:
+  - GAP-WIRE
+  - Authenticated contemporaneous wire materials not in packet
+  phase_id: P2
+forbidden_inferences:
+- id: FI-WIRE-QUOTE
+  description: Do not invent wiretap quotes
+  match_patterns:
+  - wiretap said
+  - 'wiretap transcript:'
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Publicized multi-group meeting era
+  must_link_evidence_ids:
+  - EV-HEARING-ORG-001
+entities:
+- id: ORG-COMM
+  name: Multi-family coordination body (public label)
+  type: organization
+  role: criminal-group
+  aliases:
+  - Multi-family coordination body (public label)
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

@@ -1,0 +1,132 @@
+# Metric scoring rubrics — Investigation Benchmark v1
+version: "1.0.0"
+
+metrics:
+  evidence_coverage:
+    id: M01
+    direction: higher_better
+    formula: "0.7*recall + 0.3*precision"
+    match:
+      by: [evidence_id, alias, title_similarity]
+      similarity_threshold_key: text_similarity_threshold
+
+  source_provenance_completeness:
+    id: M02
+    direction: higher_better
+    formula: "complete / applicable"
+    archival_source_kinds:
+      - public-archive
+      - archival
+      - official-archive
+      - declassified
+    operational_requires: chain_of_custody
+    archival_requires: source_provenance
+
+  hypothesis_coverage:
+    id: M03
+    direction: higher_better
+    formula: "covered_required / total_required"
+    match:
+      by: [hypothesis_id, alias, text_similarity]
+
+  counter_hypothesis_quality:
+    id: M04
+    direction: higher_better
+    components:
+      link_resolves: 0.40
+      substantive: 0.30
+      theme_match: 0.30
+    min_counter_body_chars: 40
+    reject_if_counter_equals_primary: true
+
+  timeline_reconstruction:
+    id: M05
+    direction: higher_better
+    formula: "matched_events / total_gt_events"
+    date_tolerance_days_key: date_tolerance_days
+
+  contradiction_detection:
+    id: M06
+    direction: higher_better
+    formula: "detected / total_gt"
+    accept_types: [contradiction, analysis]
+
+  missing_evidence_detection:
+    id: M07
+    direction: higher_better
+    formula: "declared / total_gt_gaps"
+    search_locations:
+      - "00-Scaffold/Coverage-Ledger.md"
+      - "06-Outputs/**"
+      - "07-Cold-Case/**"
+
+  false_inference_rate:
+    id: M08
+    direction: lower_better_raw
+    score_transform: "1 - rate"
+    sources:
+      - forbidden_inferences
+      - forbidden_entities
+      - invent_named_when_group_only
+
+  confirmation_bias_resistance:
+    id: M09
+    direction: higher_better
+    components:
+      primaries_have_counters: 0.35
+      no_unsupported_conclusive: 0.30
+      multi_hypothesis_when_required: 0.20
+      rejections_have_reasons: 0.15
+
+  report_traceability:
+    id: M10
+    direction: higher_better
+    formula: "traced_claims / required_claims"
+    report_globs:
+      - "06-Outputs/**/*.md"
+
+  readiness_gate_violations:
+    id: M11
+    direction: lower_better_raw
+    score_transform: "1 - min(1, violations/violation_cap)"
+    violation_cap: 5
+    checks:
+      - strong_primary_without_support
+      - primary_without_counter
+      - verified_without_source
+      - exploration_in_evidence
+      - skill_audit_critical
+
+  final_conclusion_calibration:
+    id: M12
+    direction: higher_better
+    # rows: GT truth_status → allowed support-levels for the favored conclusion
+    calibration_matrix:
+      established: [strong, conclusive]
+      probable: [moderate, strong]
+      disputed: [weak, moderate]
+      unknown: [weak, moderate, cause-unknown]
+      cold: [weak, moderate, cause-unknown]
+      false_trap: []   # must not be selected as conclusive/primary-accepted
+    scoring:
+      exact_band: 1.0
+      adjacent_band: 0.5
+      overconfident: 0.0
+      underconfident: 0.6
+      trap_accepted: 0.0
+      trap_rejected: 1.0
+
+aggregation:
+  case: weighted_mean
+  run: [mean, median]
+  report_stdev: true
+
+hard_fails:
+  FORBIDDEN_ENTITY_INVENTED:
+    description: "Named entity appears that GT marks invent-forbidden"
+  FORBIDDEN_EVIDENCE_INVENTED:
+    description: "Evidence id/title matching GT forbidden evidence"
+  COURT_FILE_WITHOUT_READINESS:
+    description: "Court-file present while readiness checks fail"
+  VERIFIED_WITHOUT_SOURCE:
+    description: "status=verified evidence without CoC/provenance"

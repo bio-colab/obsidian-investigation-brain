@@ -1,0 +1,65 @@
+case_id: FIXTURE-BAD
+truth_status: probable
+canonical_conclusion: "Intentional arson probable; lab pending."
+
+evidence:
+  - id: EV-ACCEL-001
+    title: "Accelerant field indication"
+    type: physical-evidence
+    source_kind: operational
+    required: true
+    must_have_coc: true
+    aliases: ["accelerant", "EV-ACCEL-001"]
+  - id: EV-CCTV-001
+    title: "CCTV clip hash log"
+    type: digital-evidence
+    source_kind: operational
+    required: true
+    must_have_coc: true
+    aliases: ["CCTV"]
+
+hypotheses:
+  - id: H-PRIMARY
+    statement: "Intentional arson by person-of-interest"
+    kind: primary
+    required: true
+    expected_support_level: moderate
+    expected_counter_themes: ["electrical accident"]
+    aliases: ["arson"]
+  - id: H-COUNTER
+    statement: "Electrical fault accidental fire"
+    kind: counter
+    required: true
+    aliases: ["electrical"]
+
+timeline_events:
+  - id: T-FIRE
+    timestamp: "2024-03-12"
+    precision: day-only
+    summary: "Fire alarm warehouse district"
+    required: true
+    aliases: ["warehouse fire"]
+
+contradictions:
+  - id: CX-TIME
+    description: "Witness arrival time vs CCTV timestamp"
+    aliases: ["time conflict"]
+
+missing_evidence:
+  - id: GAP-LAB
+    description: "Lab confirmation of accelerant pending"
+    aliases: ["lab pending"]
+
+forbidden_inferences:
+  - id: FI-LAB-DONE
+    description: "Do not invent completed lab confirmation"
+    match_patterns: ["lab confirmed gasoline"]
+
+report_must_cite:
+  - id: RC-001
+    claim: "Fire alarm warehouse district"
+    must_link_evidence_ids: [EV-ACCEL-001]
+
+readiness_expectations:
+  allow_final_report: false
+  require_counters: true

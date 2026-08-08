@@ -1,0 +1,98 @@
+case_id: CASE-SK-YORKSHIRE-029
+truth_status: disputed
+canonical_conclusion: Conviction exists in public record; investigation history includes
+  false trails and linkage debates useful for bias-resistance training.
+evidence:
+- id: EV-HOAX-001
+  title: Hoax tape/letter public controversy summary
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-HOAX-001
+  - Hoax tape/letter public controversy summary
+  summary: Hoax tape/letter public controversy summary
+  must_have_provenance: true
+- id: EV-GEO-001
+  title: Geographic suspect-focus public critique
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-GEO-001
+  - Geographic suspect-focus public critique
+  summary: Geographic suspect-focus public critique
+  must_have_provenance: true
+- id: EV-CONV-001
+  title: Conviction public summary
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-CONV-001
+  - Conviction public summary
+  summary: Conviction public summary
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Linked series by one offender ultimately identified despite investigative
+    false trails.
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - hoax led investigation
+  - wrong geographic focus
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Hoax communications correctly indicated a different offender profile
+    (historically misleading path).
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-HOAX
+  timestamp: '1979-01-01'
+  precision: year-only
+  summary: Hoax communications peak public controversy
+  required: true
+  aliases:
+  - T-HOAX
+  - Hoax communications peak public controversy
+contradictions:
+- id: CX-ACCENT
+  description: Hoax accent geography conflicted with other case data
+  aliases:
+  - CX-ACCENT
+  - Hoax accent geography conflicted with other case data
+missing_evidence:
+- id: GAP-FULL-HOAX-AUDIO
+  description: Full hoax audio not in packet
+  aliases:
+  - GAP-FULL-HOAX-AUDIO
+  - Full hoax audio not in packet
+  phase_id: P2
+forbidden_inferences:
+- id: FI-SECOND-RIPPER
+  description: Do not invent a second proven concurrent serial offender
+  match_patterns:
+  - second ripper confirmed
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Hoax communications peak public controversy
+  must_link_evidence_ids:
+  - EV-HOAX-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

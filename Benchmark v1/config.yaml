@@ -1,0 +1,55 @@
+# Investigation Benchmark v1 — global config
+version: "1.0.0"
+skill_version_target: "0.2.0"
+skill_root: ".."   # relative to this folder
+
+paths:
+  cases_dir: "cases"
+  results_dir: "results"
+  fixtures_dir: "fixtures"
+  rubrics: "rubrics/scoring.yaml"
+  audit_script: "../scripts/audit_vault.py"
+
+scoring:
+  # Weighted mean of metric scores in [0,1]
+  weights:
+    evidence_coverage: 0.12
+    source_provenance_completeness: 0.10
+    hypothesis_coverage: 0.10
+    counter_hypothesis_quality: 0.10
+    timeline_reconstruction: 0.10
+    contradiction_detection: 0.08
+    missing_evidence_detection: 0.08
+    false_inference_rate: 0.08          # inverted (1 - rate)
+    confirmation_bias_resistance: 0.08
+    report_traceability: 0.06
+    readiness_gate_violations: 0.05     # inverted
+    final_conclusion_calibration: 0.05
+
+  # Match thresholds (fuzzy)
+  text_similarity_threshold: 0.55
+  date_tolerance_days: 1
+  id_match_priority: true
+
+  # Hard-fail rules (case score forced to 0 if any fire and hard_fail_enabled)
+  hard_fail_enabled: false
+  hard_fail_codes:
+    - FORBIDDEN_ENTITY_INVENTED
+    - FORBIDDEN_EVIDENCE_INVENTED
+    - COURT_FILE_WITHOUT_READINESS
+    - VERIFIED_WITHOUT_SOURCE
+
+run:
+  default_modes: ["A", "B", "C", "D"]
+  require_report_for_m10_m12: true
+  call_skill_audit: true
+  strict_case_validation: true
+  # baseline = protocol regression; agent = free-form skill proof — never conflate
+  default_producer: baseline
+  agent_hard_fail_enabled: true
+  baseline_hard_fail_enabled: false
+
+reporting:
+  write_json: true
+  write_md: true
+  write_csv_summary: true

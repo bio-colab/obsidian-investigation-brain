@@ -1,0 +1,96 @@
+case_id: CASE-SPY-ROSENBERG-012
+truth_status: disputed
+canonical_conclusion: Historical convictions exist; later declassified materials reopened
+  public debate on relative culpability and proportionality.
+evidence:
+- id: EV-TRIAL-001
+  title: Trial public summary
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-TRIAL-001
+  - Trial public summary
+  summary: Trial public summary
+  must_have_provenance: true
+- id: EV-DECLAS-001
+  title: Later declassification public commentary
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-DECLAS-001
+  - Later declassification public commentary
+  summary: Later declassification public commentary
+  must_have_provenance: true
+- id: EV-TESTIMONY-001
+  title: Key witness testimony public themes
+  type: testimonial
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-TESTIMONY-001
+  - Key witness testimony public themes
+  summary: Key witness testimony public themes
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Espionage-related guilt narrative as historically prosecuted.
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - unequal culpability
+  - witness reliability
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Over-charging / unequal culpability / unreliable witness themes.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-1951
+  timestamp: '1951-01-01'
+  precision: year-only
+  summary: Trial era
+  required: true
+  aliases:
+  - T-1951
+  - Trial era
+contradictions:
+- id: CX-CULPABILITY
+  description: Relative culpability of defendants debated
+  aliases:
+  - CX-CULPABILITY
+  - Relative culpability of defendants debated
+missing_evidence:
+- id: GAP-FULL-VENONA
+  description: Full cryptographic archive not in packet
+  aliases:
+  - GAP-FULL-VENONA
+  - Full cryptographic archive not in packet
+  phase_id: P2
+forbidden_inferences:
+- id: FI-NEW-SPY-RING
+  description: Do not invent additional named spy ring members
+  match_patterns:
+  - new spy identified as
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Trial era
+  must_link_evidence_ids:
+  - EV-TRIAL-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

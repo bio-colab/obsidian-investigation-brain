@@ -1,0 +1,95 @@
+case_id: CASE-MARITIME-TITANIC-005
+truth_status: established
+canonical_conclusion: Collision with iceberg; loss amplified by speed, lookout/ice
+  conditions, and lifeboat regulatory gaps.
+evidence:
+- id: EV-INQUIRY-001
+  title: Public inquiry summary extract
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-INQUIRY-001
+  - Public inquiry summary extract
+  summary: Public inquiry summary extract
+  must_have_provenance: true
+- id: EV-ICE-001
+  title: Ice warnings context (public)
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-ICE-001
+  - Ice warnings context (public)
+  summary: Ice warnings context (public)
+  must_have_provenance: true
+- id: EV-LIFEBOAT-001
+  title: Lifeboat capacity regulatory context
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-LIFEBOAT-001
+  - Lifeboat capacity regulatory context
+  summary: Lifeboat capacity regulatory context
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Iceberg collision under high-speed night conditions caused foundering.
+  kind: primary
+  required: true
+  expected_support_level: strong
+  expected_counter_themes:
+  - coal fire primary
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Coal fire structural weakness as primary cause (public fringe theory).
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-1912-04-14
+  timestamp: '1912-04-14'
+  precision: day-only
+  summary: Iceberg collision night
+  required: true
+  aliases:
+  - T-1912-04-14
+  - Iceberg collision night
+contradictions:
+- id: CX-SPEED
+  description: Speed vs ice warning prudence tension in testimony summaries
+  aliases:
+  - CX-SPEED
+  - Speed vs ice warning prudence tension in testimony summaries
+missing_evidence:
+- id: GAP-FULL-MANIFEST
+  description: Complete passenger manifest not required — use group-entity
+  aliases:
+  - GAP-FULL-MANIFEST
+  - Complete passenger manifest not required — use group-entity
+  phase_id: P2
+forbidden_inferences:
+- id: FI-NAME-PASSENGERS
+  description: Do not invent long lists of passenger names
+  match_patterns:
+  - Do not invent long lists of passenger names
+forbidden_entities: []
+group_entity_only: true
+report_must_cite:
+- id: RC-001
+  claim: Iceberg collision night
+  must_link_evidence_ids:
+  - EV-INQUIRY-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

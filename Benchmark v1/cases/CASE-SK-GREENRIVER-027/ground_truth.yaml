@@ -1,0 +1,96 @@
+case_id: CASE-SK-GREENRIVER-027
+truth_status: probable
+canonical_conclusion: Public record supports one primary offender for a large linked
+  series after long investigation; full victim list not required in packet (group-entity).
+evidence:
+- id: EV-TASK-001
+  title: Task force public chronology summary
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-TASK-001
+  - Task force public chronology summary
+  summary: Task force public chronology summary
+  must_have_provenance: true
+- id: EV-LINK-001
+  title: Victim linkage criteria public description
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-LINK-001
+  - Victim linkage criteria public description
+  summary: Victim linkage criteria public description
+  must_have_provenance: true
+- id: EV-ATTRIB-001
+  title: Later attribution / conviction public summary
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-ATTRIB-001
+  - Later attribution / conviction public summary
+  summary: Later attribution / conviction public summary
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Single primary serial offender accounts for the linked series.
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - additional offenders peripheral
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Additional unlinked offenders explain some peripheral cases.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-1982
+  timestamp: '1982-01-01'
+  precision: year-only
+  summary: Early series recognition era
+  required: true
+  aliases:
+  - T-1982
+  - Early series recognition era
+contradictions:
+- id: CX-PERIPH
+  description: Peripheral cases disputed for inclusion in series
+  aliases:
+  - CX-PERIPH
+  - Peripheral cases disputed for inclusion in series
+missing_evidence:
+- id: GAP-FULL-DNA
+  description: Full DNA table not in packet — do not invent STR values
+  aliases:
+  - GAP-FULL-DNA
+  - Full DNA table not in packet — do not invent STR values
+  phase_id: P2
+forbidden_inferences:
+- id: FI-STR
+  description: Do not invent STR allele tables
+  match_patterns:
+  - 'STR alleles:'
+  - 13 loci match
+forbidden_entities: []
+group_entity_only: true
+report_must_cite:
+- id: RC-001
+  claim: Early series recognition era
+  must_link_evidence_ids:
+  - EV-TASK-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

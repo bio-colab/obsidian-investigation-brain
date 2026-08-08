@@ -1,0 +1,91 @@
+case_id: CASE-SK-BTK-028
+truth_status: established
+canonical_conclusion: Public record ties communications trail and investigation to
+  identified offender after long dormancy; packet must not invent new confessions.
+evidence:
+- id: EV-COMM-001
+  title: Public description of offender communications
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-COMM-001
+  - Public description of offender communications
+  summary: Public description of offender communications
+  must_have_provenance: true
+- id: EV-COLD-001
+  title: Long dormancy then recontact public note
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-COLD-001
+  - Long dormancy then recontact public note
+  summary: Long dormancy then recontact public note
+  must_have_provenance: true
+- id: EV-ID-001
+  title: Identification pathway public summary
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-ID-001
+  - Identification pathway public summary
+  summary: Identification pathway public summary
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Single offender authored the communications and committed the linked
+    crimes.
+  kind: primary
+  required: true
+  expected_support_level: strong
+  expected_counter_themes:
+  - copycat communications
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Copycat authored some late communications only.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-RECONTACT
+  timestamp: '2004-01-01'
+  precision: year-only
+  summary: Publicized recontact / investigation restart era
+  required: true
+  aliases:
+  - T-RECONTACT
+  - Publicized recontact / investigation restart era
+contradictions: []
+missing_evidence:
+- id: GAP-ORIGINAL-MEDIA
+  description: Original physical media package not attached
+  aliases:
+  - GAP-ORIGINAL-MEDIA
+  - Original physical media package not attached
+  phase_id: P2
+forbidden_inferences:
+- id: FI-NEW-CONFESS
+  description: Do not invent additional confession text
+  match_patterns:
+  - 'full confession text:'
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Publicized recontact / investigation restart era
+  must_link_evidence_ids:
+  - EV-COMM-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

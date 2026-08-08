@@ -1,0 +1,43 @@
+case_id: CASE-ORG-COMMISSION-021
+title: National crime commission era — multi-family coordination (public themes)
+version: 1.0.0
+difficulty: 4
+case_status: closed
+sensitivity: public-historical
+domain_tags:
+- organized-crime
+- archival
+- corruption
+source_kinds:
+- public-archive
+expected_modes:
+- A
+- B
+- C
+- D
+scope:
+  in_scope:
+  - Facts supported by source_packet
+  - Hypotheses with counters and calibrated support
+  - Timeline reconstruction and gap declaration
+  out_of_scope:
+  - Inventing evidence, quotes, lab results, or names absent from packet
+  - Live web claims not in packet
+phases:
+- id: P1
+  name: Scaffold & scope
+  description: Vault + scope + plan
+- id: P2
+  name: Evidence & entities
+  description: Ingest packet with CoC/provenance
+- id: P3
+  name: Hypotheses & timeline
+  description: Primary/counter, events, contradictions
+- id: P4
+  name: Audit & report
+  description: Audit + calibrated report
+team_roles:
+- role: lead-investigator
+  name: Benchmark Agent
+notes: 'Organized crime: commission/coordination themes from public histories. Focus
+  on org entities, hierarchy hypotheses, no invented wiretap quotes.'

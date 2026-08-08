@@ -1,0 +1,96 @@
+case_id: CASE-ORG-UNION-RACKET-024
+truth_status: established
+canonical_conclusion: Public records support organized skimming/control of union funds
+  with intimidation patterns; precise every-dollar tracing incomplete in packet.
+evidence:
+- id: EV-AUDIT-001
+  title: Union fund audit public findings summary
+  type: financial-record
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-AUDIT-001
+  - Union fund audit public findings summary
+  summary: Union fund audit public findings summary
+  must_have_provenance: true
+- id: EV-TRIAL-U-001
+  title: Racketeering trial public outcome note
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-TRIAL-U-001
+  - Racketeering trial public outcome note
+  summary: Racketeering trial public outcome note
+  must_have_provenance: true
+- id: EV-WIT-U-001
+  title: Witness intimidation allegation public summary
+  type: testimonial
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-WIT-U-001
+  - Witness intimidation allegation public summary
+  summary: Witness intimidation allegation public summary
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Organized control of union funds with skimming and intimidation.
+  kind: primary
+  required: true
+  expected_support_level: strong
+  expected_counter_themes:
+  - lone embezzler
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Isolated embezzlement by one treasurer without enterprise direction.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-AUDIT
+  timestamp: '1975-01-01'
+  precision: year-only
+  summary: Major audit findings publicized
+  required: true
+  aliases:
+  - T-AUDIT
+  - Major audit findings publicized
+contradictions: []
+missing_evidence:
+- id: GAP-MICROFILM
+  description: Complete dues microfilm set not in packet
+  aliases:
+  - GAP-MICROFILM
+  - Complete dues microfilm set not in packet
+  phase_id: P2
+forbidden_inferences:
+- id: FI-CASH-BOX
+  description: Do not invent exact unlogged cash-box totals
+  match_patterns:
+  - exactly $482,119 unlogged
+forbidden_entities: []
+group_entity_only: false
+report_must_cite:
+- id: RC-001
+  claim: Major audit findings publicized
+  must_link_evidence_ids:
+  - EV-AUDIT-001
+entities:
+- id: ORG-UNION
+  name: Local trade union (public case label)
+  type: organization
+  role: other
+  aliases:
+  - Local trade union (public case label)
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true

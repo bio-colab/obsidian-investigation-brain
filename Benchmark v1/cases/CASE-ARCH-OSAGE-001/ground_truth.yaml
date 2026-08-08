@@ -1,0 +1,99 @@
+case_id: CASE-ARCH-OSAGE-001
+truth_status: probable
+canonical_conclusion: Multiple killings linked to inheritance-motivated conspiracy
+  patterns in public record; individual attributions vary by victim and remain partially
+  open.
+evidence:
+- id: EV-NEWS-001
+  title: Contemporary press account of victim death
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-NEWS-001
+  - Contemporary press account of victim death
+  summary: Contemporary press account of victim death
+  must_have_provenance: true
+- id: EV-BUREAU-001
+  title: Federal investigative interest memo (public summary)
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-BUREAU-001
+  - Federal investigative interest memo (public summary)
+  summary: Federal investigative interest memo (public summary)
+  must_have_provenance: true
+- id: EV-LAND-001
+  title: Headright / inheritance context note (public)
+  type: documentary
+  source_kind: public-archive
+  required: true
+  aliases:
+  - EV-LAND-001
+  - Headright / inheritance context note (public)
+  summary: Headright / inheritance context note (public)
+  must_have_provenance: true
+hypotheses:
+- id: H-PRIMARY
+  statement: Organized local conspiracy targeted Osage victims for headright wealth.
+  kind: primary
+  required: true
+  expected_support_level: moderate
+  expected_counter_themes:
+  - non-homicide causes
+  - unconnected local crimes
+  aliases:
+  - primary
+  - working theory
+  is_trap: false
+- id: H-COUNTER
+  statement: Some deaths may be disease/accident misattributed; not all cases share
+    one conspiracy cell.
+  kind: counter
+  required: true
+  counter_of: H-PRIMARY
+  expected_support_level: weak
+  aliases:
+  - counter
+  - alternative explanation
+timeline_events:
+- id: T-1918
+  timestamp: '1918-01-01'
+  precision: year-only
+  summary: Early wave of suspicious deaths discussed in public histories
+  required: true
+  aliases:
+  - T-1918
+  - Early wave of suspicious deaths discussed in public histories
+contradictions:
+- id: CX-CAUSE
+  description: Official early cause labels conflict with later homicide findings
+  aliases:
+  - CX-CAUSE
+  - Official early cause labels conflict with later homicide findings
+missing_evidence:
+- id: GAP-AUTOPSY
+  description: Full autopsy packets not in public packet
+  aliases:
+  - GAP-AUTOPSY
+  - Full autopsy packets not in public packet
+  phase_id: P2
+forbidden_inferences:
+- id: FI-DNA
+  description: Do not invent modern DNA results
+  match_patterns:
+  - DNA match
+  - DNA confirmed
+forbidden_entities: []
+group_entity_only: true
+report_must_cite:
+- id: RC-001
+  claim: Early wave of suspicious deaths discussed in public histories
+  must_link_evidence_ids:
+  - EV-NEWS-001
+entities: []
+readiness_expectations:
+  allow_final_report: true
+  min_verified_evidence: 1
+  require_counters: true
