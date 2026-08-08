@@ -5,7 +5,7 @@
 **الإصدار:** 0.3.1  
 **مبني على:** [Obsidian Research Brain Skill](https://github.com/bio-colab/obsidian-research-brain-skill) (v1.1.9)
 
-### شفافية البنchmark (يُرجى القراءة قبل تفسير أي درجات)
+### شفافية البنشمارك (يُرجى القراءة قبل تفسير أي درجات)
 
 هذا الإصدار طُوِّر تحت ضغط **Investigation Benchmark v1** (`Benchmark v1/`).  
 الوثيقة المركزية للأثر والحدود والمنهج:
