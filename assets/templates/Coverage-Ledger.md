@@ -1,10 +1,17 @@
 ---
 type: coverage-ledger
-status: verified
+status: draft
 created: {{date}}
 updated: {{date}}
 case-id: 
 plan-ref: "[[Investigation-Plan]]"
+# v0.3.1 structured gaps (preferred for audit + benchmark M07)
+gaps: []
+# gaps:
+#   - id: GAP-DNA
+#     description: "DNA lab report pending"
+#     phase_id: P2
+#     status: open   # open | mitigated | accepted-risk
 tags: [ledger]
 ---
 
@@ -21,13 +28,21 @@ tags: [ledger]
 
 > **قاعدة التحديث:** يُحدَّث بعد كل دفعة أدلة جديدة، كل فرضية جديدة أو مرفوضة، وكل مراجعة Timeline.
 
+## Structured gaps (v0.3.1 — YAML + mirror table)
+
+| id | description | phase_id | status |
+|----|-------------|----------|--------|
+| GAP- | | P2 | open |
+
+Mirror the same rows under frontmatter `gaps:`.
+
 ## Gap Intelligence — استعلامات مقترحة
 - مراحل `in_scope=yes` و`evidence_status=none` → فجوة أدلة حرجة
 - فرضيات Primary بلا Counter (`counter_ok=no`)
-- أدلة بلا سجل في Chain-of-Custody
+- أدلة بلا سجل في Chain-of-Custody / provenance
 - فترات زمنية فارغة في Master-Timeline
-- تناقضات مفتوحة (`resolution-status: open`)
-- أسئلة تحقيقية بلا فرضية أو دليل كافٍ
+- تناقضات مفتوحة
+- تقارير بلا claim-trace (v0.3)
 
 ## ملخص سريع للفجوات الحالية
 - 

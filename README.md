@@ -2,8 +2,17 @@
 
 مهارة (Skill) لبناء وإدارة **vault أوبسيديان** كمرجع تحقيقي موثوق مضاد للانحراف والتحيز.
 
-**الإصدار:** 0.2.0  
-**مبني على:** [obsidian-research-brain](../obsidian-research-brain/) v1.1.9
+**الإصدار:** 0.3.1  
+**مبني على:** [Obsidian Research Brain Skill](https://github.com/bio-colab/obsidian-research-brain-skill) (v1.1.9)
+
+### شفافية البنchmark (يُرجى القراءة قبل تفسير أي درجات)
+
+هذا الإصدار طُوِّر تحت ضغط **Investigation Benchmark v1** (`Benchmark v1/`).  
+الوثيقة المركزية للأثر والحدود والمنهج:
+
+**→ [`docs/BENCHMARK_TRANSPARENCY.md`](docs/BENCHMARK_TRANSPARENCY.md)**
+
+باختصار: درجات **baseline** تقيس قابلية التعبير عن البروتوكول؛ درجات **agent** (منفصلة) تقيس الوكيل الحر. لا تُخلط الاثنتان.
 
 ---
 
@@ -24,13 +33,13 @@
 
 - **أربعة أوضاع:** Scaffold · Management · Audit · Reporting
 - فصل صارم بين Evidence والفرضيات ومنطقة الاستكشاف
-- **سلسلة حفظ أدلة (Chain of Custody)** إلزامية
+- **سلسلة حفظ أدلة (Chain of Custody)** + **source-provenance** للأرشيف
 - **Counter-Hypothesis** إلزامي لكل فرضية رئيسية
-- **Timeline-first**
-- **Human Gate** + Review-Queue
-- **Gap Intelligence** تحقيقي
-- Canvas كبروتوكولات عمل (Evidence Board · Crime Scene · Timeline · Suspect Profile · Link Analysis)
-- سكريبت تدقيق آلي (`audit_vault.py`)
+- **Claim Trace Matrix** + **Readiness-Checklist** (v0.3) — لا Court-File دون جاهزية
+- **Series-Linkage** / **Enterprise-Map** (v0.3.1) لأنماط التسلسل والجريمة المنظمة
+- **Timeline-first** · **Human Gate** · **Gap Intelligence**
+- Canvas كبروتوكولات عمل + `audit_vault.py` (قواعد v0.3+)
+- حزام بنشمارك اختياري: `Benchmark v1/` (30 قضية تدريبية + مقيّم)
 
 ---
 

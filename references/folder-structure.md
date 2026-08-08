@@ -12,6 +12,7 @@ Case-Vault-XXXX/
 │   ├── Investigation-Plan.md
 │   ├── Team-Roles.md
 │   ├── Review-Queue.md
+│   ├── Readiness-Checklist.md            # v0.3.0 — بوابة جاهزية التقارير/Court-File
 │   ├── Coverage-Ledger.md
 │   ├── Dashboard.md
 │   ├── Visual/
@@ -69,6 +70,8 @@ Case-Vault-XXXX/
 │   ├── Motives/
 │   ├── Behavioral-Patterns/
 │   ├── Link-Charts/
+│   ├── Series-Linkage/                       # v0.3.1 — سلاسل / قتلة متسلسلون
+│   ├── Enterprise-Maps/                      # v0.3.1 — جريمة منظمة / RICO-style
 │   ├── Technical-Analysis/                   # v0.2.0 — محاكاة، حسابات ثباتية، نماذج
 │   ├── Safety-Culture/                       # v0.2.0 — ثقافة سلامة الشركة
 │   └── Survivability-Analysis/               # v0.2.0 — لماذا نجا البعض

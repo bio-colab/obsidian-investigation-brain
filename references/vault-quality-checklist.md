@@ -9,6 +9,7 @@
 - [ ] `00-Scaffold/Investigation-Plan.md` موجود
 - [ ] `00-Scaffold/Coverage-Ledger.md` موجود ويُحدَّث
 - [ ] `00-Scaffold/Review-Queue.md` موجود
+- [ ] `00-Scaffold/Readiness-Checklist.md` موجود (v0.3)
 - [ ] `00-Scaffold/Team-Roles.md` (إن وُجد فريق)
 
 ## ب. منطقة Evidence
@@ -33,11 +34,15 @@
 - [ ] التناقضات المفتوحة موثّقة كـ `contradiction`
 - [ ] Alibis مرتبطة بأشخاص وفترات زمنية
 
-## هـ. Human Gate و Review-Queue
+## هـ. Human Gate و Review-Queue و Readiness (v0.3)
 
 - [ ] كل ملاحظة `pending-human-review` ظاهرة في Review-Queue
 - [ ] القرارات (موافقة/رفض/إعادة) مسجّلة
 - [ ] التقارير النهائية لم تُعتمد دون Macro-Review
+- [ ] التقارير المعتمدة تحمل `claim-trace` غير فارغ
+- [ ] لا Court-File مع `readiness-passed: false`
+- [ ] Informant/wiretap ليسا verified بلا مصداقية/تفويض
+- [ ] لا أسماء ضحايا مخترعة مع group-entity فارغ named-individuals
 
 ## و. Gap Intelligence (أسئلة سريعة)
 
@@ -46,6 +51,9 @@
 3. هل توجد أدلة بلا سلسلة حفظ؟
 4. هل توجد فترات زمنية فارغة حرجة؟
 5. هل توجد تناقضات مفتوحة دون خطة حل؟
+6. هل Coverage-Ledger يحمل `gaps:` منظمة (v0.3.1)؟
+7. جريمة منظمة: هل يوجد Enterprise-Map عند الحاجة؟
+8. سلسلة جرائم: هل يوجد Series-Linkage عند الحاجة؟
 
 ## ز. التشغيل الآلي
 

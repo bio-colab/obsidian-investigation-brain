@@ -124,3 +124,58 @@ cold-since: YYYY-MM-DD
 ### Person أدوار إضافية
 `role` يقبل أيضاً: `crew` · `passenger` · `missing-person` · `informant`  
 `legal-status`: `convicted` · `acquitted` · `charged` · `suspected` · `unknown`
+
+## إضافات v0.3.0 — Reporting / Readiness
+
+### على case-report / court-file / cold-case-report
+```yaml
+readiness-passed: false
+claim-trace:
+  - claim-id: RC-001
+    claim: "..."
+    evidence: ["[[EV-001]]"]
+    support-level: moderate
+```
+
+### readiness-checklist
+```yaml
+type: readiness-checklist
+readiness-passed: false
+```
+
+**قواعد:** Court-File يتطلب `readiness-passed: true` و claim-trace غير فارغ.  
+Informant verified يتطلب `credibility-assessment` مكتمل.  
+Wiretap verified يتطلب `legal-authorization`.
+
+## إضافات v0.3.1 — Series / Enterprise / Ledger
+
+### series-linkage
+```yaml
+type: series-linkage
+series-id: SER-001
+linkage-confidence: weak
+inclusion-criteria: []
+members: []
+peripheral: []
+alternative-cluster-hypothesis: "[[H-...]]"
+```
+
+### enterprise-map
+```yaml
+type: enterprise-map
+enterprise-id: ENT-001
+enterprise-confidence: moderate
+org-nodes: []
+predicates: []
+financial-edges: []
+counter-enterprise-theory: "[[H-...]]"
+```
+
+### coverage-ledger gaps
+```yaml
+gaps:
+  - id: GAP-001
+    description: "..."
+    phase_id: P2
+    status: open  # open | mitigated | accepted-risk
+```

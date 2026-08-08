@@ -136,9 +136,18 @@
 | `regulatory-gap` | ثغرة تنظيمية | `02-Entities/Regulatory-Gaps/` |
 | `cold-case-report` | تقرير قضية باردة/مفتوحة | `06-Outputs/Cold-Case-Reports/` |
 | `recommendation` | توصية سلامة/تنظيمية | `06-Outputs/Recommendations/` |
+| `case-report` | تقرير تحقيقي + claim-trace (v0.3) | `06-Outputs/Case-Reports/` |
+| `court-file` | ملف محكمة — بعد readiness فقط | `06-Outputs/Court-File/` |
+| `readiness-checklist` | بوابة جاهزية قابلة للتدقيق (v0.3) | `00-Scaffold/` |
+| `series-linkage` | معايير إدراج سلسلة جرائم + peripheral (v0.3.1) | `05-Analysis/Series-Linkage/` |
+| `enterprise-map` | خريطة مشروع إجرامي / predicates / مالية (v0.3.1) | `05-Analysis/Enterprise-Maps/` |
 
 **قواعد:**
 - `source-kind: public-archive` → يتطلب `source-provenance` بدلاً من (أو بالإضافة إلى) chain-of-custody.
 - `vehicle-class: vessel | aircraft` يوسّع قالب Vehicle.
 - `case-status: cold-case | open-investigation` يفعّل مجلد `07-Cold-Case/` وسير عمل خاص.
 - `status: cause-unknown` للفرضيات أو التحليلات عندما يبقى السبب مجهولاً (مع مراجعة دورية).
+- **v0.3:** `court-file` / التقارير المعتمدة تتطلب `claim-trace`؛ Court-File يتطلب `readiness-passed: true`.
+- **v0.3:** `informant-testimony` لا `verified` بلا `credibility-assessment`؛ `wiretap-evidence` لا `verified` بلا `legal-authorization`.
+- **v0.3.1:** قضايا serial/homicide series → `series-linkage` موصى به؛ organized-crime → `enterprise-map` موصى به.
+- **v0.3.1:** Coverage-Ledger يفضّل `gaps: [{id, description, phase_id, status}]`.

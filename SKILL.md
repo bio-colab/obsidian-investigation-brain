@@ -1,16 +1,16 @@
 ---
 name: obsidian-investigation-brain
-description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط (Evidence Board)، كشف فجوات وتحقيق، مقاومة التحيز التأكيدي، إنتاج تقرير قضية أو ملف محكمة. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.2.0 — source-provenance + Technical-Analysis + Cold-Case + Probable-Cause + Group-Entity + Vessel/Aircraft + Financial/Wiretap/Informant.
+description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط (Evidence Board)، كشف فجوات وتحقيق، مقاومة التحيز التأكيدي، إنتاج تقرير قضية أو ملف محكمة. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.3.1 — Series-Linkage + Enterprise-Map + Claim-Trace + Readiness + structured gaps.
 metadata:
   type: workflow
-  version: "0.2.0"
+  version: "0.3.1"
   based-on: obsidian-research-brain@1.1.9
 ---
 
 # 🕵️ مِحَكّ الدماغ التحقيقي
 ## بناء وإدارة second brain تحقيقي + تنسيق تقرير القضية — فوق أوبسيديان
 
-**الإصدار:** 0.2.0 (source-provenance · Technical/Data-Analysis · Cold-Case · Probable-Cause · Group-Entity · specialized Vehicle · Financial/Wiretap/Informant)  
+**الإصدار:** 0.3.1 (Series-Linkage · Enterprise-Map · Ledger gaps schema · فوق 0.3.0 Claim-Trace/Readiness)  
 **مبني على:** `obsidian-research-brain` v1.1.9
 
 ---
@@ -20,22 +20,26 @@ metadata:
 هذه المهارة تتقن شيئين مترابطين:
 
 > **(أ) الوعاء:** تحويل قضية (نطاق + خطة تحقيق + فريق) إلى vault أوبسيديان منظم يمنع التوهان واختلاط الأدلة بالتخمين، مع فصل صارم بين المتحقق والفرضيات.  
-> **(ب) التقرير:** عند وجود خطة تحقيق، تشغيل مسار إنتاج موجه بالمراحل عبر Coverage Ledger + سلسلة إثبات (Hypotheses + support-level)، دون اختلاق أدلة ودون تجاهل الفرضيات المضادة.
+> **(ب) التقرير:** عند وجود خطة تحقيق، تشغيل مسار إنتاج موجه بالمراحل عبر Coverage Ledger + سلسلة إثبات (Hypotheses + support-level) + **Claim Trace Matrix** + **Readiness Gate**، دون اختلاق أدلة ودون تجاهل الفرضيات المضادة.
 
 **ما تفعله:**
-- ✅ سقالة كاملة لقضية واحدة من نطاق + خطة + أدوار فريق.
+- ✅ سقالة كاملة لقضية واحدة من نطاق + خطة + أدوار فريق + **Readiness-Checklist**.
 - ✅ إدارة أدلة → كيانات → فرضيات (Primary / Alternative / Counter / Rejected).
-- ✅ سلسلة حفظ أدلة (Chain of Custody) إلزامية.
+- ✅ سلسلة حفظ أدلة (Chain of Custody) إلزامية + source-provenance للأرشيف.
 - ✅ خط زمني كعنصر أساسي (Timeline-first).
 - ✅ لوحة خيوط بصرية (Evidence Board) عبر Canvas كبروتوكول عمل.
-- ✅ مقاومة التحيز التأكيدي (Counter-Hypothesis إلزامي).
-- ✅ تدقيق قابل للقياس + Gap Intelligence تحقيقي.
+- ✅ مقاومة التحيز التأكيدي (Counter-Hypothesis إلزامي + مضمون substantive).
+- ✅ تدقيق قابل للقياس + Gap Intelligence تحقيقي (`audit_vault.py` v0.3).
 - ✅ Human Gate قبل اعتماد فرضية أو إغلاق مرحلة.
+- ✅ **Claim Trace** يربط كل ادعاء جوهري في التقرير بأدلة.
 
 **ما لا تفعله:**
 - ❌ اختلاق أدلة أو شهادات أو نتائج في `01-Evidence`.
 - ❌ تجاهل فرضية مضادة لفرضية رئيسية.
 - ❌ تجاوز Human Gate للمحتوى الحرج (فرضيات قوية، أدلة حساسة، تقرير نهائي).
+- ❌ **Court-File** دون `readiness-passed: true` و claim-trace.
+- ❌ `verified` لمخبر/wiretap دون مصداقية/تفويض.
+- ❌ اختلاق أسماء ضحايا/ركاب عند استخدام group-entity.
 - ❌ استخدام قضايا محلية حقيقية في مستودع عام أو مفتوح المصدر.
 - ❌ استبدال الحكم المهني للمحقق أو المدعي العام.
 
@@ -68,6 +72,8 @@ metadata:
 
 11. **العرض ≠ الحقيقة** — Dashboard / Graph / Canvas أدوات عمل؛ الحقيقة في الملفات + YAML + Ledger + Chain-of-Custody.
 
+12. **Claim Trace + Readiness (v0.3)** — كل تقرير معتمد يحمل `claim-trace`؛ Court-File ممنوع دون `readiness-passed: true` على Readiness-Checklist والتقرير.
+
 ---
 
 ## 3. أوضاع التشغيل (أ · ب · ج · د)
@@ -80,10 +86,10 @@ metadata:
 **خطوات:**
 1. استخرج: رقم/اسم القضية، نوع الجريمة (إن وُجد)، النطاق (داخل/خارج)، خطة التحقيق أو المراحل، أدوار الفريق.
 2. اقرأ `references/folder-structure.md` و`note-types-taxonomy.md`.
-3. ولّد الشجرة + القوالب + Case-Scope + Investigation-Plan + Team-Roles + AGENTS + Coverage-Ledger + Review-Queue.
+3. ولّد الشجرة + القوالب + Case-Scope + Investigation-Plan + Team-Roles + AGENTS + Coverage-Ledger + Review-Queue + **Readiness-Checklist**.
 4. **طبقة بصرية:** Dashboard + Graph-Setup + **Canvases كبروتوكولات** (Evidence-Board، Crime-Scene-Map، Timeline، Suspect-Profile، Link-Analysis).
 5. فرضيات أولية → `03-Hypotheses` (Primary + Counter إلزامي) أو `02b-Exploration`.
-6. ملخص قابل للقياس (مجلدات، قوالب، Scope، AGENTS، Ledger، Review-Queue، Dashboard، Canvas).
+6. ملخص قابل للقياس (مجلدات، قوالب، Scope، AGENTS، Ledger، Review-Queue، Readiness-Checklist، Dashboard، Canvas).
 
 ### الوضع ب — Management Mode (إدارة محتوى)
 **متى:** إضافة دليل، كيان، حدث زمني، فرضية، تحديث حالة، ربط، ترقية من Exploration.
@@ -108,15 +114,18 @@ metadata:
 **متى:** كتابة تقرير قضية، ملف محكمة، إحاطة، أو إغلاق مرحلة.
 
 **خطوات إلزامية:**
-1. اقرأ Investigation-Plan + Coverage-Ledger.
+1. اقرأ Investigation-Plan + Coverage-Ledger + **Readiness-Checklist**.
 2. **Plan-Driven:** الترتيب الافتراضي = مراحل الخطة.
-3. **Readiness Gate** قبل اعتماد تقرير:
+3. **Readiness Gate** قبل اعتماد تقرير أو أي Court-File:
    - حد أدنى من أدلة verified المناسبة؛
    - الفرضيات الجوهرية مرتبطة بـ supporting-notes صالحة؛
    - وجود Counter لكل Primary أو تبرير صريح لغيابها؛
-   - سلسلة حفظ مكتملة للأدلة المستخدمة.
-4. بعد النثر: حدّث Ledger + Snapshots عند الحاجة؛ Macro-Review + Human Gate قبل الاعتماد النهائي.
-5. التفاصيل: `references/reporting-pipeline.md`.
+   - سلسلة حفظ / source-provenance مكتملة للأدلة المستخدمة؛
+   - **Claim Trace Matrix** (`claim-trace` في YAML + جدول)؛
+   - `readiness-passed: true` فقط بعد اكتمال checklist.
+4. ابنِ التقرير من قالب `Case-Report`؛ لا تُنشئ Court-File إن فشل readiness.
+5. بعد النثر: حدّث Ledger + Snapshots عند الحاجة؛ Macro-Review + Human Gate قبل الاعتماد النهائي.
+6. التفاصيل: `references/reporting-pipeline.md`.
 
 ---
 
@@ -153,8 +162,11 @@ metadata:
 | Timeline-Event | `04-Timeline/Events/` | timestamp + era/period عند الحاجة |
 | Alibi / Contradiction | `04-Timeline/` | مرتبطة بأشخاص وأحداث |
 | Analysis / Data-Analysis / Safety-Culture | `05-Analysis/` | تقني + سلوكي |
-| Coverage Ledger | `00-Scaffold/` | مراحل × فجوات × فرضيات |
-| Case-Report / Court-File / Recommendations / Cold-Case-Report | `06-Outputs/` | + Probable Cause structure |
+| Series-Linkage | `05-Analysis/Series-Linkage/` | v0.3.1 — سلاسل / overlinking discipline |
+| Enterprise-Map | `05-Analysis/Enterprise-Maps/` | v0.3.1 — جريمة منظمة / predicates |
+| Coverage Ledger | `00-Scaffold/` | مراحل × فجوات منظمة (`gaps:`) |
+| Readiness-Checklist | `00-Scaffold/` | v0.3 — بوابة جاهزية قابلة للتدقيق |
+| Case-Report / Court-File / Recommendations / Cold-Case-Report | `06-Outputs/` | + claim-trace + readiness-passed |
 | financial-record / wiretap-evidence / informant-testimony | `01-Evidence/` | قوالب متخصصة |
 
 ---
@@ -162,11 +174,12 @@ metadata:
 ## 6. معايير الجودة
 
 ### 6.1 صحة الوعاء
-- مناطق سليمة، AGENTS موجود، Scope مكتوب.
-- كل دليل له سلسلة حفظ.
-- كل Primary لها Counter (أو تبرير مسجّل).
+- مناطق سليمة، AGENTS موجود، Scope مكتوب، Readiness-Checklist موجود.
+- كل دليل له سلسلة حفظ أو source-provenance.
+- كل Primary لها Counter (أو تبرير مسجّل) بمضمون substantive.
 - لا يوجد محتوى verified بلا مصدر/دليل.
 - Human Gate غير متجاوز.
+- التقارير المعتمدة/Court-File تحمل claim-trace؛ Court-File فقط مع readiness-passed.
 
 ### 6.2 Gap Intelligence تحقيقي
 - % مراحل الخطة التي لها صف في Coverage-Ledger.
@@ -198,6 +211,8 @@ metadata:
 8. لا تتجاوز Human Gate.
 9. Exploration حرية مضبوطة؛ الترقية لها بروتوكول صريح.
 10. القضايا الحقيقية الحساسة تبقى محلية ومشفرة — لا تُرفع إلى مستودعات عامة.
+11. Claim-trace قبل اعتماد التقرير؛ لا Court-File دون readiness.
+12. Informant/wiretap و group-entity: التزم بقواعد v0.3 في anti-drift و audit.
 
 ---
 
@@ -214,7 +229,7 @@ metadata:
 | `references/reporting-pipeline.md` | مسار إنتاج التقارير |
 | `references/visual-investigation-layer.md` | الطبقة البصرية + بروتوكولات Canvas |
 | `assets/templates/` | قوالب الملاحظات + Canvas |
-| `scripts/audit_vault.py` | تدقيق آلي (لاحقاً) |
+| `scripts/audit_vault.py` | تدقيق آلي v0.3 (CoC، Counter، claim-trace، informant/wiretap، group، court) |
 
 ---
 
@@ -222,4 +237,7 @@ metadata:
 
 | الإصدار | التغيير |
 |---------|---------|
+| 0.3.1 | Series-Linkage · Enterprise-Map · Coverage-Ledger gaps schema · Agent run protocol (benchmark) |
+| 0.3.0 | Claim Trace Matrix · Readiness-Checklist · Court-File gate · audit: INFORMANT/WIRETAP/GROUP/COURT/CLAIM_TRACE · من بنشمارك v1 |
+| 0.2.0 | source-provenance · Technical/Data-Analysis · Cold-Case · Probable-Cause · Group-Entity · Vessel/Aircraft · Financial/Wiretap/Informant |
 | 0.1.2 | الإصدار الأولي — تكييف كامل من research-brain للتحقيق: Chain of Custody، Counter-Hypotheses، Timeline-first، أوضاع أ/ب/ج/د، طيف أدلة تحقيقي، Visual Protocols |

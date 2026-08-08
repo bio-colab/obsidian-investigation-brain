@@ -1,5 +1,50 @@
 # Changelog — obsidian-investigation-brain
 
+## 0.3.1 — 2026-08-08
+
+### أضيف (P1 من خطة الإصلاح / البنchmark + شفافية الإصدار)
+
+**Skill**
+- قوالب **Series-Linkage** و **Enterprise-Map**
+- **Coverage-Ledger** مع `gaps:` منظمة (id / description / phase_id / status)
+- تحديث taxonomy · folder-structure · guide-for-investigator · anti-drift · yaml-standards · SKILL 0.3.1
+- `audit_vault.py`: تنبيه minor عند غياب `gaps:` المنظمة (`LEDGER_GAPS_UNSTRUCTURED`)
+
+**Benchmark**
+- `docs/AGENT_RUN_PROTOCOL.md` — بروتوكول وكيل حر
+- `tools/prepare_agent_run.py` — تجهيز agent_input بلا GT
+- `score_vault` / `run_benchmark`: hard_fail حسب `producer` (agent on / baseline off)
+- **إثراء كامل لحزم ORG/SK 021–030** (جداول، حدود، TRAP notes) — انظر `Benchmark v1/docs/PACKET_ENRICHMENT_LOG.md`
+- **شفافية الإصدار:** `docs/BENCHMARK_TRANSPARENCY.md` — ماذا قيس، حدود baseline vs agent، وأثر البنchmark على 0.2→0.3.1
+
+---
+
+## 0.3.0 — 2026-08-08
+
+### أضيف / أصلح (من Investigation Benchmark v1 + خطة الإصلاح)
+
+**Critical**
+- **Claim Trace Matrix** إلزامي للتقارير المعتمدة و Court-File (`claim-trace` في YAML + جدول)
+- قالب **Readiness-Checklist** + حقل `readiness-passed` على التقارير
+- قالب **Case-Report** و **Court-File** محدّثان للجاهزية
+- **حظر Court-File** دون readiness (audit: `COURT_WITHOUT_READINESS`, `COURT_NO_CLAIM_TRACE`)
+- `audit_vault.py` v0.3:
+  - `INFORMANT_VERIFIED_NO_CRED`
+  - `WIRETAP_NO_AUTH`
+  - `GROUP_VICTIM_NAME_WITH_EMPTY_GROUP`
+  - `PRIMARY_COUNTER_THIN`
+  - `REPORT_NO_CLAIM_TRACE` / `CLAIM_TRACE_NO_EVIDENCE`
+  - إضافة `informant-testimony` إلى EVIDENCE_TYPES
+
+**Major**
+- تحديث reporting-pipeline · anti-drift · vault-quality-checklist · taxonomy · yaml-standards · folder-structure · SKILL.md
+- بنchmark: `sanitize_packets.py` (إزالة تسرّب Truth band من BRIEF) · وسم `producer` في score/run/aggregate
+
+**مبدأ**
+كل إصلاح يجيب: هل يزيد قدرة المحقق على الدفاع عن سلامة الأدلة ومسار الاستدلال أمام جهة إشراف أو محكمة؟
+
+---
+
 ## 0.2.0 — 2026-08-08
 
 ### أضيف / أصلح (من بنشماركين مستقلين على 20 قضية مشهورة)

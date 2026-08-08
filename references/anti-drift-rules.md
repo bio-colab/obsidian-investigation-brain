@@ -59,3 +59,14 @@
 - **Probable Cause:** في التقارير التقنية لا تختلق Findings؛ أعلن Contributing Factors وRecommendations بشكل منفصل.
 - **Vehicle متخصص:** سفن وطائرات تستخدم vehicle-class + الحقول المتخصصة (IMO / N-number).
 - **Informant / Wiretap:** لا ترفع إلى verified دون تقييم مصداقية / تفويض قانوني موثّق.
+
+## 10. قواعد v0.3.0 الإضافية
+
+- **Claim Trace:** كل تقرير معتمد / Court-File يحمل `claim-trace` (ادعاء → أدلة → support-level).
+- **Readiness-Checklist:** ملف `00-Scaffold/Readiness-Checklist.md`؛ `readiness-passed: true` فقط بعد اكتمال البوابات.
+- **Court-File:** ممنوع مع `readiness-passed: false` أو بلا claim-trace (critical في audit).
+- **Counter substantive:** رابط Counter وحده لا يكفي؛ جسم الفرضية المضادة يجب أن يكون مضموناً (حد أدنى من النص).
+- **Group-Entity:** عند group-entity للضحايا بلا `named-individuals`، لا تُنشئ Person بأسماء ضحايا فردية غير موجودة في الحزمة.
+- **Series-Linkage (v0.3.1):** لا تدمج حوادث في سلسلة دون inclusion-criteria مكتوبة؛ احتفظ بـ peripheral و cluster counter.
+- **Enterprise-Map (v0.3.1):** لا ترفع مشروع إجرامي إلى verified من تدفق مالي وحده دون predicates مدعومة وحدود صريحة.
+- **Ledger gaps:** فضّل `gaps: [{id, description, phase_id, status}]` في Coverage-Ledger.

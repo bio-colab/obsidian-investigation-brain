@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 audit_vault.py — تدقيق حتمي لـ vault أوبسيديان التحقيقي
-(obsidian-investigation-brain v0.1.0)
+(obsidian-investigation-brain v0.3.0)
 
 يفحص:
 - وجود الملفات الهيكلية الحرجة
@@ -74,9 +74,12 @@ CRITICAL_FILES = [
 
 EVIDENCE_TYPES = {
     "physical-evidence", "digital-evidence", "testimonial", "documentary",
-    "financial-record", "wiretap-evidence", "audio-visual-evidence", "data-analysis"
+    "financial-record", "wiretap-evidence", "audio-visual-evidence", "data-analysis",
+    "informant-testimony",
 }
 HYPOTHESIS_KINDS = {"primary", "alternative", "counter", "rejected"}
+REPORT_TYPES = {"case-report", "court-file", "cold-case-report", "briefing"}
+MIN_COUNTER_BODY_CHARS = 40
 
 WIKILINK_RE = re.compile(r"\[\[([^\]]+?)(?:\|[^\]]+)?\]\]")
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
@@ -171,7 +174,15 @@ def audit_vault(vault: Path) -> dict[str, Any]:
         "evidence_count": 0,
         "hypothesis_count": 0,
         "coc_count": 0,
+        "skill_version_target": "0.3.1",
     }
+
+    # Collected for post-pass checks (v0.3)
+    group_entities: list[tuple[str, dict[str, Any], str]] = []  # rel, fm, body
+    person_notes: list[tuple[str, dict[str, Any], str]] = []
+    report_notes: list[tuple[str, dict[str, Any], str]] = []
+    readiness_notes: list[tuple[str, dict[str, Any]]] = []
+    hypothesis_notes: list[tuple[str, dict[str, Any], str]] = []
 
     # --- Critical files ---
     for rel in CRITICAL_FILES:
@@ -348,6 +359,51 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                     "msg": f"فرضية {support} بلا supporting-notes",
                     "path": rel,
                 })
+            hypothesis_notes.append((rel, fm, body))
+
+        # --- v0.3.0: informant / wiretap gates ---
+        if ntype == "informant-testimony" and status == "verified":
+            cred = fm.get("credibility-assessment") or fm.get("credibility_assessment")
+            incomplete = False
+            if not cred:
+                incomplete = True
+            elif isinstance(cred, str) and cred.strip().lower() in ("", "incomplete", "unknown", "n/a"):
+                incomplete = True
+            elif isinstance(cred, dict):
+                # require at least one substantive field
+                vals = [str(v).strip() for v in cred.values() if v is not None and str(v).strip()]
+                if not vals or all(v.lower() in ("incomplete", "unknown", "n/a", "") for v in vals):
+                    incomplete = True
+            if incomplete:
+                result["issues"].append({
+                    "severity": "critical",
+                    "code": "INFORMANT_VERIFIED_NO_CRED",
+                    "msg": "informant-testimony بحالة verified بلا credibility-assessment مكتمل",
+                    "path": rel,
+                })
+
+        if ntype == "wiretap-evidence" and status in ("verified", "pending-human-review"):
+            auth = fm.get("legal-authorization") or fm.get("legal_authorization")
+            if not auth or (isinstance(auth, str) and not str(auth).strip()):
+                # also allow body mention
+                if "legal-authorization" not in text.lower() and "warrant" not in text.lower() and "تفويض" not in text:
+                    sev = "critical" if status == "verified" else "major"
+                    result["issues"].append({
+                        "severity": sev,
+                        "code": "WIRETAP_NO_AUTH",
+                        "msg": "wiretap-evidence بلا legal-authorization موثّق",
+                        "path": rel,
+                    })
+
+        if ntype == "group-entity":
+            group_entities.append((rel, fm, body))
+        if ntype == "person":
+            person_notes.append((rel, fm, body))
+        if ntype in REPORT_TYPES or zone == "06-Outputs":
+            if ntype in REPORT_TYPES or "report" in rel.lower() or "court" in rel.lower():
+                report_notes.append((rel, fm, body))
+        if ntype == "readiness-checklist" or rel.endswith("Readiness-Checklist.md"):
+            readiness_notes.append((rel, fm))
 
         # Broken wikilinks (sample)
         broken = find_broken_wikilinks(body, known_names)
@@ -360,6 +416,156 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                 })
 
     result["broken_links_total_est"] = broken_total
+
+    # --- v0.3.1: Coverage-Ledger structured gaps ---
+    for md_path in sorted(vault.rglob("Coverage-Ledger.md")):
+        try:
+            rel = md_path.relative_to(vault).as_posix()
+            text = md_path.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        fm, _body = parse_frontmatter(text)
+        gaps = fm.get("gaps")
+        if gaps is None:
+            result["issues"].append({
+                "severity": "minor",
+                "code": "LEDGER_GAPS_UNSTRUCTURED",
+                "msg": "Coverage-Ledger بلا حقل gaps: في YAML (مُفضّل v0.3.1)",
+                "path": rel,
+            })
+        elif isinstance(gaps, list) and gaps:
+            for i, g in enumerate(gaps):
+                if not isinstance(g, dict) or not g.get("id") or not g.get("description"):
+                    result["issues"].append({
+                        "severity": "minor",
+                        "code": "LEDGER_GAP_ROW_INCOMPLETE",
+                        "msg": f"gaps[{i}] يحتاج id + description",
+                        "path": rel,
+                    })
+
+    # --- v0.3 post-pass: thin counters ---
+    for rel, fm, body in hypothesis_notes:
+        kind = str(fm.get("hypothesis-kind") or fm.get("hypothesis_kind") or "").strip().lower()
+        if kind != "primary":
+            continue
+        counter = fm.get("counter-hypothesis") or fm.get("counter_hypothesis")
+        if not counter:
+            continue
+        targets = counter if isinstance(counter, list) else [counter]
+        for c in targets:
+            pure = str(c).strip().strip("[]").split("#")[0].split("|")[0].strip()
+            stem = pure.split("/")[-1]
+            # find counter note body among hypothesis_notes
+            cbody = ""
+            for r2, fm2, b2 in hypothesis_notes:
+                if Path(r2).stem == stem or r2.endswith(stem + ".md"):
+                    cbody = b2 or ""
+                    break
+            if cbody and len(cbody.strip()) < MIN_COUNTER_BODY_CHARS:
+                result["issues"].append({
+                    "severity": "major",
+                    "code": "PRIMARY_COUNTER_THIN",
+                    "msg": f"Counter مرتبط لكن مضمونه أقصر من {MIN_COUNTER_BODY_CHARS} حرفاً",
+                    "path": rel,
+                })
+
+    # --- v0.3: group-entity vs named person victims ---
+    empty_victim_groups = False
+    for rel, fm, body in group_entities:
+        role = str(fm.get("role") or "").strip().lower()
+        if role not in ("victims", "passengers", "crew"):
+            continue
+        named = fm.get("named-individuals") or fm.get("named_individuals") or []
+        if not named:
+            empty_victim_groups = True
+    if empty_victim_groups:
+        for rel, fm, body in person_notes:
+            role = str(fm.get("role") or "").strip().lower()
+            if role not in ("victim", "passenger", "crew", "missing-person"):
+                continue
+            # Allow explicit packet labels that look like placeholders
+            title_line = ""
+            for line in (body or "").splitlines():
+                if line.strip().startswith("#"):
+                    title_line = line.strip().lstrip("#").strip()
+                    break
+            stem = Path(rel).stem
+            label = title_line or stem
+            low = label.lower()
+            if any(x in low for x in ("unidentified", "unknown", "unnamed", "group", "label", "poi", "غير")):
+                continue
+            result["issues"].append({
+                "severity": "major",
+                "code": "GROUP_VICTIM_NAME_WITH_EMPTY_GROUP",
+                "msg": "Person بدور ضحية/راكب بينما group-entity للضحايا بلا named-individuals — راجع اختلاق الأسماء",
+                "path": rel,
+            })
+
+    # --- v0.3: reports claim-trace + court readiness ---
+    readiness_ok = False
+    for rel, fm in readiness_notes:
+        if fm.get("readiness-passed") is True or str(fm.get("readiness-passed")).lower() == "true":
+            readiness_ok = True
+
+    for rel, fm, body in report_notes:
+        ntype = str(fm.get("type") or "").strip().lower()
+        status = str(fm.get("status") or "").strip().lower()
+        claim_trace = fm.get("claim-trace") or fm.get("claim_trace") or []
+        has_trace = isinstance(claim_trace, list) and len(claim_trace) > 0
+        if not has_trace and "claim-trace" in (body or "").lower():
+            # table-only partial credit → still major if court/final
+            has_trace = False
+
+        is_court = ntype == "court-file" or "court-file" in rel.lower() or "/Court-File" in rel.replace("\\", "/")
+        is_finalish = status in ("verified",) or is_court
+
+        if is_court:
+            rp = fm.get("readiness-passed")
+            court_ready = rp is True or str(rp).lower() == "true"
+            if not court_ready and not readiness_ok:
+                result["issues"].append({
+                    "severity": "critical",
+                    "code": "COURT_WITHOUT_READINESS",
+                    "msg": "court-file بدون readiness-passed على التقرير أو Readiness-Checklist",
+                    "path": rel,
+                })
+            if not has_trace:
+                # check empty list vs missing
+                empty_rows = True
+                if isinstance(claim_trace, list):
+                    for row in claim_trace:
+                        if isinstance(row, dict) and (row.get("evidence") or row.get("claim")):
+                            empty_rows = False
+                            break
+                if empty_rows:
+                    result["issues"].append({
+                        "severity": "critical",
+                        "code": "COURT_NO_CLAIM_TRACE",
+                        "msg": "court-file بلا claim-trace (مصفوفة تتبع الادعاءات)",
+                        "path": rel,
+                    })
+
+        if ntype in ("case-report", "cold-case-report") and is_finalish and not has_trace:
+            result["issues"].append({
+                "severity": "major",
+                "code": "REPORT_NO_CLAIM_TRACE",
+                "msg": "تقرير معتمد/verified بلا claim-trace",
+                "path": rel,
+            })
+
+        # claim-trace rows must have evidence when present
+        if isinstance(claim_trace, list):
+            for i, row in enumerate(claim_trace):
+                if not isinstance(row, dict):
+                    continue
+                ev = row.get("evidence") or row.get("supporting-notes") or []
+                if not ev:
+                    result["issues"].append({
+                        "severity": "major",
+                        "code": "CLAIM_TRACE_NO_EVIDENCE",
+                        "msg": f"claim-trace[{i}] بلا evidence",
+                        "path": rel,
+                    })
 
     # Convert Counters for later JSON
     result["status_global"] = result["status_global"]
