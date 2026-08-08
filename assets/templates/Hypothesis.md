@@ -5,11 +5,16 @@ created: {{date}}
 updated: {{date}}
 hypothesis-kind: primary
 support-level: weak
+support-history: []
+# support-history example:
+#   - {date: YYYY-MM-DD, level: weak, note: "initial"}
+#   - {date: YYYY-MM-DD, level: moderate, note: "after source X"}
 supporting-notes: []
 counter-hypothesis: 
 rejects: 
 related-entities: []
 related-events: []
+superseded-by: 
 tags: [hypothesis]
 ---
 
@@ -34,6 +39,13 @@ tags: [hypothesis]
 
 **القيمة الحالية:** 
 
+## تاريخ تطور الدعم (`support-history`)
+> سجّل تغيّر قوة الفرضية عبر الزمن (مفيد للقضايا الطويلة).
+
+| التاريخ | المستوى | ملاحظة |
+|---------|---------|--------|
+| | | |
+
 ## روابط الإثبات الخلفية (إلزامية عند الرفع)
 - 
 - 
@@ -45,6 +57,10 @@ tags: [hypothesis]
 - **أشخاص / مواقع / مركبات:** 
 - **أحداث زمنية:** 
 
+## الاستبدال / الإزاحة
+- **superseded-by:** (إن حلت فرضية أخرى محل هذه)
+- **rejects:** (فرضيات ترفضها هذه)
+
 ## سبب الرفض (إن كانت Rejected)
 - **التاريخ:** 
 - **السبب:** 
@@ -53,7 +69,7 @@ tags: [hypothesis]
 ## بروتوكول الاعتماد
 - [ ] مرّ من Human Gate (`pending-human-review` → إقرار)
 - [ ] Counter موجود ومرتبط (للـ Primary)
-- [ ] supporting-notes غير فارغة
-- [ ] سُجّل في Changelog عند الترقية أو الرفض
+- [ ] supporting-notes غير فارغة عند strong/conclusive
+- [ ] سُجّل تغيّر الدعم في `support-history` أو Changelog
 
 > **قاعدة مقاومة التحيز:** لا تُعتمد فرضية Primary دون وجود Counter-Hypothesis صريحة أو تبرير مسجّل لغيابها.

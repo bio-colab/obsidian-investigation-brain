@@ -58,6 +58,7 @@ ZONES = (
     "05-Analysis",
     "02b-Exploration",
     "06-Outputs",
+    "90-Reference-Sources",
     "99-Attachments",
     "OTHER",
 )

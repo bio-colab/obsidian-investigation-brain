@@ -83,6 +83,11 @@
 - `type: alibi` أو `type: contradiction`
 - مرتبطة بشخص + أحداث + مصدر.
 
+### 2.7b Hypothesis evolution
+
+- الحقل الاختياري `support-history` يسجّل تغيّر `support-level` عبر الزمن.
+- الحقل `superseded-by` لربط فرضية أُزيحت بفرضية لاحقة.
+
 ### 2.8 Analysis
 
 - `type: analysis` (modus-operandi / motive / behavioral / link)
@@ -98,3 +103,8 @@
 - الروابط الداخلية بأسلوب `[[Note Name]]`.
 - عند الرفض أو الإهلاك: لا تحذف — غيّر `status` إلى `rejected` أو `deprecated` وسجّل السبب.
 - التواريخ بصيغة ISO قدر الإمكان (`YYYY-MM-DD` أو `YYYY-MM-DDTHH:mm`).
+
+
+### قالب Analysis
+
+استخدم `assets/templates/Analysis.md` لملاحظات النمط / الدافع / السلوك مع `related-events` إلزامي تقريباً عند الحديث عن سلسلة حوادث.

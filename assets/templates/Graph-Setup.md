@@ -1,9 +1,9 @@
 ---
-type: graph-setup
+type: visual-doc
 status: verified
 created: {{date}}
 updated: {{date}}
-tags: [visual, graph]
+tags: [visual]
 ---
 
 # إعداد Graph View التحقيقي

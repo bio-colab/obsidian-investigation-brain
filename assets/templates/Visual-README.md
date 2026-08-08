@@ -1,5 +1,5 @@
 ---
-type: visual-readme
+type: visual-doc
 status: verified
 created: {{date}}
 updated: {{date}}

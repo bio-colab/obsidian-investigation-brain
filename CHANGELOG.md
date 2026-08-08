@@ -1,5 +1,16 @@
 # Changelog — obsidian-investigation-brain
 
+## 0.1.1 — 2026-08-08
+
+### أصلح / حسّن (عامة — مستفادة من تجربة vault تدريبي)
+- **S1:** إضافة منطقة `90-Reference-Sources` إلى `ZONES` في `audit_vault.py`
+- **S2:** توحيد frontmatter للقوالب البصرية (`visual-doc`)
+- **S3:** حقل `support-history` + `superseded-by` في قالب Hypothesis
+- **S4:** قالب `Analysis.md` جديد + ربط أوضح في `Timeline-Event`
+- **S5:** فقرة في دليل المحقق: مصادر أرشيفية عامة مقابل أدلة تشغيلية
+- **S6:** إصلاح مسارات روابط Canvas في قالب Dashboard
+- تحديث taxonomy و yaml-standards و folder-structure
+
 ## 0.1.0 — 2026-08-08
 
 ### أضيف

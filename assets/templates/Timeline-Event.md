@@ -8,6 +8,9 @@ precision: approximate
 source: 
 participants: []
 location: 
+related-evidence: []
+related-hypotheses: []
+related-analysis: []
 contradicts: []
 tags: [timeline, event]
 ---
@@ -16,7 +19,7 @@ tags: [timeline, event]
 
 ## التوقيت
 - **الوقت / النطاق:** 
-- **الدقة:** exact / approximate / day-only / unknown
+- **الدقة:** exact / approximate / day-only / month-only / unknown
 - **المنطقة الزمنية (إن لزم):** 
 
 ## المصدر
@@ -34,9 +37,10 @@ tags: [timeline, event]
 ## تناقضات مع أحداث أو إفادات أخرى
 - 
 
-## الروابط
+## الروابط (للقضايا المتسلسلة والنمط)
 - **أدلة مرتبطة:** 
 - **فرضيات:** 
+- **تحليل نمط / Modus / Motive:** 
 - **كيانات:** 
 
 ## ملاحظات

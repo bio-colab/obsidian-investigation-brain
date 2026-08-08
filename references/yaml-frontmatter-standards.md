@@ -41,3 +41,14 @@
 3. الروابط الداخلية بصيغة `[[Note Name]]`.
 4. التواريخ بصيغة ISO (`YYYY-MM-DD` أو `YYYY-MM-DDTHH:mm`).
 5. القوائم الفارغة تُكتب `[]` وليس فارغة.
+
+
+## حقول اختيارية موصى بها (v0.1.1+)
+
+| الحقل | النوع | الاستخدام |
+|-------|-------|-----------|
+| `support-history` | list | تاريخ تغيّر قوة الفرضية |
+| `superseded-by` | link | فرضية حلت محل أخرى |
+| `related-analysis` | list | ربط حدث زمني بتحليل نمط |
+| `related-events` | list | على Analysis و Hypothesis |
+| `source-kind` | string | public-archive / operational / other |

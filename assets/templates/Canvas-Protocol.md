@@ -1,9 +1,9 @@
 ---
-type: canvas-protocol
+type: visual-doc
 status: verified
 created: {{date}}
 updated: {{date}}
-tags: [visual, protocol]
+tags: [visual]
 ---
 
 # بروتوكول Canvas التحقيقي

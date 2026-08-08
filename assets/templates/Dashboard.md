@@ -26,9 +26,9 @@ tags: [dashboard, visual]
 
 > حدّث من [[Coverage-Ledger]]
 
-## 3. استعلامات Dataview مقترحة (الصق في ملاحظات Dataview)
+## 3. استعلامات Dataview مقترحة
 
-**كل الفرضيات الرئيسية:**
+**كل الفرضيات:**
 ```dataview
 TABLE hypothesis-kind, support-level, status, counter-hypothesis
 FROM "03-Hypotheses"
@@ -43,17 +43,21 @@ FROM "01-Evidence"
 WHERE status = "pending-human-review"
 ```
 
-**فرضيات بلا Counter (تقريبي):**
+**فرضيات Primary:**
 ```dataview
-TABLE support-level, status
+TABLE support-level, status, counter-hypothesis
 FROM "03-Hypotheses/Primary"
 WHERE type = "hypothesis"
 ```
 
 ## 4. اختصارات بصرية
 
-- [[01-Evidence-Board]] — لوحة الخيوط
-- [[03-Timeline-Canvas]] — الخط الزمني
+> بعد نسخ ملفات Canvas من `assets/templates/canvases/` إلى `00-Scaffold/Visual/Canvases/` داخل vault القضية، استخدم الروابط التالية (عدّل المسار إن لزم):
+
+- [[00-Scaffold/Visual/Canvases/01-Evidence-Board]] — لوحة الخيوط
+- [[00-Scaffold/Visual/Canvases/03-Timeline-Canvas]] — الخط الزمني البصري
+- [[00-Scaffold/Visual/Canvases/04-Suspect-Profile]] — ملف المشتبه
+- [[00-Scaffold/Visual/Canvases/05-Link-Analysis]] — تحليل الروابط
 - [[Coverage-Ledger]] — جدول التغطية
 - [[Review-Queue]] — طابور المراجعة
 - [[Master-Timeline]] — الخط الزمني النصي
