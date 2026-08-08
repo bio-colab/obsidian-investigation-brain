@@ -3,7 +3,7 @@
 مهارة (Skill) لبناء وإدارة **vault أوبسيديان** كمرجع تحقيقي موثوق مضاد للانحراف والتحيز.
 
 **الإصدار:** 0.1.2  
-**مبني على:** [obsidian-research-brain](../obsidian-research-brain/) v1.1.9
+**مبني على:** [Obsidian Research Brain Skill](https://github.com/bio-colab/obsidian-research-brain-skill) (v1.1.9)
 
 ---
 
