@@ -46,7 +46,8 @@ except ImportError:
 REQUIRED_FIELDS = {"type", "status", "created", "updated"}
 VALID_STATUSES = {
     "verified", "unverified", "draft", "stub", "deprecated",
-    "exploration", "pending-human-review", "rejected"
+    "exploration", "pending-human-review", "rejected",
+    "open-investigation", "cold-case", "cause-unknown"
 }
 
 ZONES = (
@@ -72,7 +73,8 @@ CRITICAL_FILES = [
 ]
 
 EVIDENCE_TYPES = {
-    "physical-evidence", "digital-evidence", "testimonial", "documentary"
+    "physical-evidence", "digital-evidence", "testimonial", "documentary",
+    "financial-record", "wiretap-evidence", "audio-visual-evidence", "data-analysis"
 }
 HYPOTHESIS_KINDS = {"primary", "alternative", "counter", "rejected"}
 
@@ -255,9 +257,19 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                 "path": rel,
             })
 
-        # --- Evidence checks ---
-        if ntype in EVIDENCE_TYPES or (zone == "01-Evidence" and ntype != "chain-of-custody"):
+        # --- Evidence checks (v0.2.0: support source-provenance for public-archive) ---
+        if ntype in EVIDENCE_TYPES or (zone == "01-Evidence" and ntype not in ("chain-of-custody", "source-provenance")):
             result["evidence_count"] += 1
+            source_kind = str(fm.get("source-kind") or fm.get("source_kind") or "").strip().lower()
+            is_archival = source_kind in ("public-archive", "archival", "official-archive", "declassified")
+
+            # Prefer source-provenance for archival/public sources
+            sp = fm.get("source-provenance") or fm.get("source_provenance")
+            has_provenance = bool(sp) and (
+                (isinstance(sp, dict) and sp.get("archive") and (sp.get("record-id") or sp.get("record_id") or sp.get("url")))
+                or (isinstance(sp, str) and sp.strip())
+            )
+
             coc = fm.get("chain-of-custody") or fm.get("chain_of_custody")
             has_coc = False
             if coc:
@@ -265,18 +277,28 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                     has_coc = any(resolve_link_target(str(c), known_names) for c in coc)
                 else:
                     has_coc = resolve_link_target(str(coc), known_names)
-            # also accept if file lives under Chain-of-Custody and is itself a coc note
             if ntype == "chain-of-custody":
                 has_coc = True
                 result["coc_count"] += 1
-            if not has_coc and ntype != "chain-of-custody":
-                result["evidence_without_coc"].append(rel)
-                result["issues"].append({
-                    "severity": "critical",
-                    "code": "EVIDENCE_NO_COC",
-                    "msg": "دليل بلا سلسلة حفظ (chain-of-custody) صالحة",
-                    "path": rel,
-                })
+
+            if is_archival:
+                if not has_provenance and not has_coc:
+                    result["evidence_without_coc"].append(rel)
+                    result["issues"].append({
+                        "severity": "critical",
+                        "code": "ARCHIVAL_NO_PROVENANCE",
+                        "msg": "مصدر أرشيفي/عام بلا source-provenance (أو CoC بديل)",
+                        "path": rel,
+                    })
+            else:
+                if not has_coc and ntype != "chain-of-custody":
+                    result["evidence_without_coc"].append(rel)
+                    result["issues"].append({
+                        "severity": "critical",
+                        "code": "EVIDENCE_NO_COC",
+                        "msg": "دليل بلا سلسلة حفظ (chain-of-custody) صالحة",
+                        "path": rel,
+                    })
 
         if ntype == "chain-of-custody":
             result["coc_count"] += 1

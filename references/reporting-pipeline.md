@@ -45,4 +45,30 @@
 
 - لا تلخّص أقساماً أو مراحل لم تُغطَّ بأدلة دون وسم.
 - لا تقدّم فرضية Primary كحقيقة قاطعة دون ذكر Counter أو حدود الدعم.
-- لا تُدرج أدلة بلا سلسلة حفظ في ملف محكمة.
+- لا تُدرج أدلة بلا سلسلة حفظ (أو source-provenance للأرشيف) في ملف محكمة.
+
+## 6. بنية Probable Cause (v0.2.0 — قضايا تقنية / NTSB-style)
+
+للتحقيقات في حوادث النقل والطيران والسلامة الصناعية يُفضَّل هذا الترتيب داخل Case-Report أو Court-File:
+
+1. **Findings** — النتائج المؤكدة المدعومة بأدلة
+2. **Probable Cause** — السبب المحتمل الرئيسي
+3. **Contributing Factors** — العوامل المساهمة (بما فيها System-Failure / Regulatory-Gap / Safety-Culture)
+4. **Safety Recommendations** — تُحفظ أيضاً كملاحظات منفصلة تحت `06-Outputs/Recommendations/`
+
+لا تختلق Findings. إن بقي السبب مجهولاً استخدم `status: cause-unknown` وأعلن الفجوة.
+
+## 7. تقارير Cold Case / Open Investigation (v0.2.0)
+
+عند `case-status: cold-case` أو `open-investigation`:
+- استخدم قالب `Cold-Case-Report.md`
+- أقسام إلزامية: ما نعرفه · ما لا نعرفه · الخيوط الحية · الفرضيات المتبقية · توصيات المرحلة التالية
+- راجع دورياً (quarterly) وسجّل في Changelog
+
+## 8. المخرجات الجديدة في الهيكل
+
+| المجلد | الاستخدام |
+|--------|-----------|
+| `06-Outputs/Recommendations/` | توصيات سلامة / تنظيمية |
+| `06-Outputs/Cold-Case-Reports/` | تقارير القضايا الباردة أو المفتوحة |
+| `07-Cold-Case/` | خيوط حية + "ما نعرفه" أثناء المتابعة |

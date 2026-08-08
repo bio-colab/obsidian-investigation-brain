@@ -1,16 +1,16 @@
 ---
 name: obsidian-investigation-brain
-description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط (Evidence Board)، كشف فجوات وتحقيق، مقاومة التحيز التأكيدي، إنتاج تقرير قضية أو ملف محكمة. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.1.2 — Chain of Custody + Counter-Hypotheses + Timeline-first + Visual Protocols.
+description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط (Evidence Board)، كشف فجوات وتحقيق، مقاومة التحيز التأكيدي، إنتاج تقرير قضية أو ملف محكمة. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.2.0 — source-provenance + Technical-Analysis + Cold-Case + Probable-Cause + Group-Entity + Vessel/Aircraft + Financial/Wiretap/Informant.
 metadata:
   type: workflow
-  version: "0.1.2"
+  version: "0.2.0"
   based-on: obsidian-research-brain@1.1.9
 ---
 
 # 🕵️ مِحَكّ الدماغ التحقيقي
 ## بناء وإدارة second brain تحقيقي + تنسيق تقرير القضية — فوق أوبسيديان
 
-**الإصدار:** 0.1.2 (Chain of Custody · Counter-Hypotheses · Timeline-first · Human Gate · Gap Intelligence · Visual Protocols)  
+**الإصدار:** 0.2.0 (source-provenance · Technical/Data-Analysis · Cold-Case · Probable-Cause · Group-Entity · specialized Vehicle · Financial/Wiretap/Informant)  
 **مبني على:** `obsidian-research-brain` v1.1.9
 
 ---
@@ -58,7 +58,7 @@ metadata:
 
 6. **Timeline-first** — الأحداث الزمنية عنصر أساسي وليست ملحقاً. أي ادعاء زمني يجب أن يرتبط بـ Event أو Alibi.
 
-7. **سلسلة حفظ الأدلة (Chain of Custody)** — كل دليل في `01-Evidence` يجب أن يكون له سجل في `Chain-of-Custody/`.
+7. **سلسلة حفظ الأدلة (Chain of Custody) + Source Provenance** — كل دليل تشغيلي في `01-Evidence` يجب أن يكون له سجل CoC. المصادر الأرشيفية/العامة تستخدم `source-provenance` كبديل منطقي.
 
 8. **سلسلة الإثبات (Provenance)** — كل فرضية جوهرية قابلة للتتبع إلى أدلة عبر `supporting-notes` + `support-level`.
 
@@ -125,33 +125,37 @@ metadata:
 | طبقة | أمثلة | متى تُطلب |
 |------|--------|-----------|
 | **L-Physical** | بصمات، DNA، أسلحة، آثار مادية، أجسام | ربط مادي بمسرح أو شخص |
-| **L-Digital** | سجلات هاتف، كاميرات، رسائل، بيانات موقع، hash | إثبات وجود رقمي أو تواصل |
-| **L-Testimonial** | إفادة شاهد، اعتراف، مقابلة | مع ظروف الإدلاء وتاريخ الجلسة |
-| **L-Documentary** | مستندات رسمية، سجلات بنكية، عقود، مراسلات | إثبات علاقات أو معاملات |
-| **L-Temporal** | أحداث مؤرخة، Alibi، تناقضات زمنية | بناء الخط الزمني |
+| **L-Digital** | سجلات هاتف، كاميرات، رسائل، بيانات موقع، hash، wiretap | إثبات وجود رقمي أو تواصل |
+| **L-Testimonial** | إفادة شاهد، اعتراف، مقابلة، informant | مع ظروف الإدلاء + تقييم مصداقية عند الحاجة |
+| **L-Documentary** | مستندات رسمية، سجلات بنكية، عقود، مراسلات، financial-record | إثبات علاقات أو معاملات |
+| **L-Temporal** | أحداث مؤرخة، Alibi، تناقضات زمنية، تحذيرات طقس | بناء الخط الزمني |
 | **L-Behavioral** | نمط عمل، دوافع، سوابق موثقة | تحليل أسلوب ودافع |
+| **L-Archival** | وثائق أرشيفية منشورة (NARA, FBI Vault, NTSB…) | مصدر تاريخي أو رسمي — يستخدم source-provenance |
+| **L-Technical** | محاكاة، نماذج، حسابات ثباتية، data-analysis | نتائج تحليل بيانات أو محاكاة (NTSB-style) |
 
 **قاعدة الطيف:**  
 اختر الطبقات حسب نوع القضية.  
-إن ادّعى النص طبقة غير المدعومة في Evidence → **draft** أو وسم فجوة — لا ملء Evidence.
+إن ادّعى النص طبقة غير المدعومة في Evidence → **draft** أو وسم فجوة — لا ملء Evidence.  
+للمصادر الأرشيفية: `source-provenance` بدلاً من (أو مع) Chain-of-Custody التشغيلي.
 
 ---
 
 ## 5. أنواع الملاحظات الأساسية
 
-راجع `references/note-types-taxonomy.md`. أبرز الأنواع:
+راجع `references/note-types-taxonomy.md`. أبرز الأنواع (محدثة v0.2.0):
 
 | نوع | مجلد رئيسي | ملاحظة |
 |-----|------------|--------|
-| Evidence (Physical/Digital/...) | `01-Evidence/` | مع رابط إلزامي إلى Chain-of-Custody |
-| Chain-of-Custody Entry | `01-Evidence/Chain-of-Custody/` | جامع، وقت، مكان، حالة، شهود |
-| Person / Location / Vehicle / Organization | `02-Entities/` | كيانات مع علاقات |
+| Evidence (Physical/Digital/…) | `01-Evidence/` | CoC تشغيلي أو source-provenance للأرشيف |
+| Chain-of-Custody / Source-Provenance | `01-Evidence/...` | حسب طبيعة المصدر |
+| Person / Group-Entity / Location / Vehicle (Vessel/Aircraft) / Organization | `02-Entities/` | + System-Failures / Regulatory-Gaps |
 | Hypothesis | `03-Hypotheses/` | support-level + supporting-notes + counter عند Primary |
-| Timeline-Event | `04-Timeline/Events/` | timestamp + مصدر |
+| Timeline-Event | `04-Timeline/Events/` | timestamp + era/period عند الحاجة |
 | Alibi / Contradiction | `04-Timeline/` | مرتبطة بأشخاص وأحداث |
-| Analysis | `05-Analysis/` | status يحدد المنطقة المنطقية |
+| Analysis / Data-Analysis / Safety-Culture | `05-Analysis/` | تقني + سلوكي |
 | Coverage Ledger | `00-Scaffold/` | مراحل × فجوات × فرضيات |
-| Case-Report / Court-File | `06-Outputs/` | مخرجات قابلة للتصدير |
+| Case-Report / Court-File / Recommendations / Cold-Case-Report | `06-Outputs/` | + Probable Cause structure |
+| financial-record / wiretap-evidence / informant-testimony | `01-Evidence/` | قوالب متخصصة |
 
 ---
 

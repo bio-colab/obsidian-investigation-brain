@@ -50,3 +50,12 @@
 
 - القضايا الحقيقية الحساسة تبقى محلية ومشفرة.
 - لا ترفع محتوى حساساً إلى مستودعات عامة أو مشتركة غير آمنة.
+
+## 9. قواعد v0.2.0 الإضافية
+
+- **أرشيف vs تشغيلي:** لا تفرض CoC التشغيلي على وثائق NARA/FBI Vault/NTSB المنشورة؛ استخدم source-provenance.
+- **Group-Entity:** لا تختلق أسماء لأفراد غير مسمّين؛ استخدم group-entity مع estimated-count.
+- **Cold Case:** لا تعامل قضية مفتوحة/باردة كقضية مغلقة؛ فعّل case-status وCold-Case-Report.
+- **Probable Cause:** في التقارير التقنية لا تختلق Findings؛ أعلن Contributing Factors وRecommendations بشكل منفصل.
+- **Vehicle متخصص:** سفن وطائرات تستخدم vehicle-class + الحقول المتخصصة (IMO / N-number).
+- **Informant / Wiretap:** لا ترفع إلى verified دون تقييم مصداقية / تفويض قانوني موثّق.

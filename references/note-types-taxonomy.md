@@ -120,4 +120,25 @@
 
 ### 2.10 ملاحظات النطاق الجماعي (قضايا تاريخية)
 
-- عند وجود عشرات الضحايا غير المسمّين في المصدر العام: أنشئ ملاحظة كيان جماعية أو أعلن الفجوة في Coverage-Ledger — **لا تختلق أسماء**.
+- عند وجود عشرات الضحايا غير المسمّين في المصدر العام: أنشئ ملاحظة كيان جماعية (`type: group-entity`) أو أعلن الفجوة في Coverage-Ledger — **لا تختلق أسماء**.
+
+### 2.11 إضافات v0.2.0 — أنواع حرجة من بنشمارك NTSB / أرشيف / جرائم منظمة
+
+| type | الغرض | المجلد المفضل |
+|------|--------|----------------|
+| `source-provenance` | بديل CoC للمصادر الأرشيفية/العامة | `01-Evidence/Source-Provenance/` |
+| `group-entity` | مجموعة ضحايا/ركاب/طاقم | `02-Entities/Persons/Groups/` |
+| `financial-record` | سجلات بنكية/ضريبية/معاملات | `01-Evidence/Documentary/` أو فرعي |
+| `wiretap-evidence` | تسجيلات استماع + تفويض قانوني | `01-Evidence/Digital/` |
+| `informant-testimony` | إفادة عميل سري + تقييم مصداقية | `01-Evidence/Testimonial/` |
+| `data-analysis` | محاكاة / نموذج / حساب تقني | `01-Evidence/Data-Analysis/` أو `05-Analysis/Technical-Analysis/` |
+| `system-failure` | فشل تنظيمي/تقني/ثقافي | `02-Entities/System-Failures/` |
+| `regulatory-gap` | ثغرة تنظيمية | `02-Entities/Regulatory-Gaps/` |
+| `cold-case-report` | تقرير قضية باردة/مفتوحة | `06-Outputs/Cold-Case-Reports/` |
+| `recommendation` | توصية سلامة/تنظيمية | `06-Outputs/Recommendations/` |
+
+**قواعد:**
+- `source-kind: public-archive` → يتطلب `source-provenance` بدلاً من (أو بالإضافة إلى) chain-of-custody.
+- `vehicle-class: vessel | aircraft` يوسّع قالب Vehicle.
+- `case-status: cold-case | open-investigation` يفعّل مجلد `07-Cold-Case/` وسير عمل خاص.
+- `status: cause-unknown` للفرضيات أو التحليلات عندما يبقى السبب مجهولاً (مع مراجعة دورية).

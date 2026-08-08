@@ -62,3 +62,65 @@
 | `org-kind` | organization | تصنيف الجهة |
 | `related-persons` | organization | أشخاص مرتبطون بالمنظمة |
 | `role: investigator` | person | محقق / وكيل ضمن الفريق أو الوكالة |
+
+## إضافات v0.2.0 — حرجة من بنشمارك
+
+### الحالات الجديدة
+`status` يقبل أيضاً: `open-investigation` · `cold-case` · `cause-unknown`
+
+### source-provenance (بديل CoC للأرشيف)
+```yaml
+source-kind: public-archive   # أو archival / official-archive / declassified
+source-provenance:
+  archive: "NARA"
+  collection: ""
+  record-id: ""
+  date-accessed: YYYY-MM-DD
+  url: ""
+  authenticity: official      # official | declassified | leaked | unverified
+```
+**قاعدة:** إذا `source-kind` أرشيفي → `source-provenance` إلزامي؛ لا تُرفع انتهاك "missing CoC".
+
+### Vehicle موسّع
+```yaml
+vehicle-class: road | vessel | aircraft | other
+vessel-id: ""           # IMO
+flag-state: ""
+classification-society: ""
+aircraft-id: ""         # N-number
+type-certificate: ""
+flight-hours: 
+```
+
+### Group-Entity
+```yaml
+type: group-entity
+role: victims | passengers | crew | suspects | witnesses
+estimated-count: 
+named-individuals: []
+unnamed-count: 
+```
+
+### Financial / Wiretap / Informant / Data-Analysis
+انظر القوالب الجديدة في `assets/templates/`. الحقول الرئيسية:
+- `record-kind`, `amount`, `currency`, `period`
+- `legal-authorization`, `participants`, `quality`
+- `credibility-assessment` (reliability / motivation / deal-terms / protection-status)
+- `methodology`, `input-data`, `output-data`, `confidence-level`, `limitations`
+
+### Timeline
+```yaml
+era: ""                 # Prohibition-Era / Cold-War / ...
+period: "1920-1933"
+severity: ""            # لتحذيرات الطقس وغيرها
+```
+
+### Case-Scope
+```yaml
+case-status: active | open-investigation | cold-case | closed
+cold-since: YYYY-MM-DD
+```
+
+### Person أدوار إضافية
+`role` يقبل أيضاً: `crew` · `passenger` · `missing-person` · `informant`  
+`legal-status`: `convicted` · `acquitted` · `charged` · `suspected` · `unknown`

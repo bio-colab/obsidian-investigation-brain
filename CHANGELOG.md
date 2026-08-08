@@ -1,5 +1,39 @@
 # Changelog — obsidian-investigation-brain
 
+## 0.2.0 — 2026-08-08
+
+### أضيف / أصلح (من بنشماركين مستقلين على 20 قضية مشهورة)
+
+**Critical**
+- **source-provenance** كبديل منطقي لـ Chain-of-Custody للمصادر الأرشيفية/العامة (NARA, FBI Vault, NTSB…)
+- تحديث `audit_vault.py` لتجنب false-positive على المصادر الأرشيفية
+- أنواع `data-analysis` / محاكاة تقنية + مجلد `Data-Analysis/` و`Technical-Analysis/`
+- كيانات `System-Failures` و`Regulatory-Gaps`
+- سير عمل **Cold Case / Open Investigation** (`case-status`, مجلد `07-Cold-Case/`, قالب Cold-Case-Report)
+
+**Major**
+- طبقة **L-Archival** و**L-Technical** في Evidence Spectrum
+- توسيع **Vehicle** لدعم Vessel (IMO, flag-state) وAircraft (N-number, type-certificate)
+- قالب **Group-Entity** للضحايا/الركاب المتعددين
+- قوالب **Financial-Record**, **Wiretap-Evidence**, **Informant-Testimony**
+- بنية **Probable Cause + Contributing Factors + Safety Recommendations** في Reporting Pipeline
+- مجلد `06-Outputs/Recommendations/`
+- حقول `era` / `period` / `severity` في Timeline
+- `source-credibility` و`credibility-assessment` للمخبرين والشهادات
+- `status: cause-unknown` + بروتوكول الفجوة المفتوحة
+- أدوار Person إضافية: crew, passenger, missing-person, informant + legal-status
+
+**ملفات معدّلة**
+- SKILL.md, folder-structure, note-types-taxonomy, yaml-frontmatter-standards
+- anti-drift-rules, reporting-pipeline, audit_vault.py
+- قوالب جديدة: Source-Provenance, Group-Entity, Financial-Record, Wiretap-Evidence, Informant-Testimony, Data-Analysis, Cold-Case-Report
+- Vehicle.md موسّع
+
+### مبدأ
+كل إصلاح يجيب: هل يزيد قدرة المحقق على الدفاع عن سلامة الأدلة ومسار الاستدلال أمام جهة إشراف أو محكمة؟
+
+---
+
 ## 0.1.2 — 2026-08-08
 
 ### أصلح / حسّن (عامة — من تجربة Osage)
@@ -23,16 +57,5 @@
 ## 0.1.0 — 2026-08-08
 
 ### أضيف
-- SKILL.md كاملاً: المهمة، 11 مبدأ حاكم، أوضاع أ/ب/ج/د، طيف الأدلة التحقيقي، معايير الجودة
-- شجرة المجلدات المعيارية (Case-Vault) مع Chain-of-Custody و Counter و Timeline-first
-- قالب AGENTS.md خاص بالتحقيق
-- تصنيف أنواع الملاحظات + معايير YAML
-- 18+ قالب ملاحظة (Evidence بأنواعه، CoC، Person، Hypothesis، Timeline-Event، Alibi، Contradiction، Ledger، Review-Queue، …)
-- الطبقة البصرية: visual-investigation-layer، Canvas-Protocol، Graph-Setup، Dashboard
-- 5 لوحات Canvas بروتوكولية (Evidence Board، Crime Scene، Timeline، Suspect Profile، Link Analysis)
-- سكريبت `audit_vault.py` (فحص CoC، Primary بلا Counter، الملفات الحرجة، Gap Intelligence)
-- قائمة تدقيق الجودة، قواعد Anti-Drift، مسار Reporting
-- دليل استخدام مبسّط للمحقق غير التقني
-
-### مبني على
-- obsidian-research-brain v1.1.9 (Provenance · Human Gate · Exploration · Gap Intelligence · Visual Protocols)
+- SKILL.md كاملاً + شجرة المجلدات + قوالب + Canvas + audit_vault.py + Reporting
+- مبني على obsidian-research-brain v1.1.9
