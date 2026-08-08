@@ -1,5 +1,14 @@
 # Changelog — obsidian-investigation-brain
 
+## 0.1.2 — 2026-08-08
+
+### أصلح / حسّن (عامة — من تجربة Osage)
+- قالب **Organization.md** مع `org-kind` وأدوار الجهة
+- حقل **relationships** في قالب Person + دور `investigator`
+- دليل المحقق: قسم العلاقات والمنظمات + عدم اختلاق أسماء عند النطاق الأوسع
+- taxonomy و yaml-standards محدّثان
+- إرشاد ربط Link-Analysis canvas بالكيانات في Visual-README
+
 ## 0.1.1 — 2026-08-08
 
 ### أصلح / حسّن (عامة — مستفادة من تجربة vault تدريبي)

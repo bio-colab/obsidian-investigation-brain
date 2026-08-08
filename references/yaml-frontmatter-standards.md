@@ -52,3 +52,13 @@
 | `related-analysis` | list | ربط حدث زمني بتحليل نمط |
 | `related-events` | list | على Analysis و Hypothesis |
 | `source-kind` | string | public-archive / operational / other |
+
+
+## كيانات — حقول v0.1.2+
+
+| الحقل | على النوع | الاستخدام |
+|-------|-----------|-----------|
+| `relationships` | person | روابط أسرية/ارتباطية منظمة |
+| `org-kind` | organization | تصنيف الجهة |
+| `related-persons` | organization | أشخاص مرتبطون بالمنظمة |
+| `role: investigator` | person | محقق / وكيل ضمن الفريق أو الوكالة |

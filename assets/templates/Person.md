@@ -5,6 +5,9 @@ created: {{date}}
 updated: {{date}}
 role: person-of-interest
 aliases: []
+relationships: []
+# relationships example:
+#   - {person: "[[Other-Person]]", relation: sibling|spouse|parent|child|cousin|nephew|associate|other, note: ""}
 related-locations: []
 related-vehicles: []
 related-organizations: []
@@ -16,7 +19,7 @@ tags: [entity, person]
 # شخص: {{title}}
 
 ## الدور في القضية
-- **الدور الأساسي:** victim / suspect / witness / person-of-interest / other
+- **الدور الأساسي:** victim / suspect / witness / person-of-interest / investigator / other
 - **أدوار إضافية:** 
 
 ## بيانات تعريفية
@@ -25,11 +28,17 @@ tags: [entity, person]
 - **تاريخ الميلاد / العمر التقريبي:** 
 - **رقم هوية (إن وُجد وذو صلة):** 
 
-## العلاقات
-- **مواقع مرتبطة:** 
+## العلاقات بين الأشخاص (`relationships`)
+> استخدم الحقل في YAML أو الجدول أدناه — مهم في قضايا التآمر والعائلات.
+
+| الشخص | نوع العلاقة | ملاحظة |
+|-------|-------------|--------|
+| | sibling / spouse / parent / child / cousin / nephew / associate / other | |
+
+## كيانات غير شخصية مرتبطة
+- **مواقع:** 
 - **مركبات:** 
 - **منظمات / جهات:** 
-- **أشخاص آخرون:** 
 
 ## الظهور في الخط الزمني
 - 
@@ -42,5 +51,6 @@ tags: [entity, person]
 
 ## حالة الملف
 - [ ] بيانات أساسية مكتملة
+- [ ] علاقات أسرية/ارتباطية موثقة عند الحاجة
 - [ ] مرتبط بأحداث زمنية
 - [ ] مرتبط بفرضيات ذات صلة

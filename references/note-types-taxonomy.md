@@ -36,6 +36,10 @@
 
 ### 2.3 Person (Entity)
 
+- الحقل الاختياري `relationships`: قائمة روابط أشخاص (sibling/spouse/parent/child/cousin/nephew/associate/…).
+- الدور قد يشمل `investigator` إضافة إلى victim/suspect/witness/person-of-interest.
+
+
 | الحقل | مطلوب | وصف |
 |-------|--------|-----|
 | `type` | نعم | `person` |
@@ -49,6 +53,10 @@
 | `hypotheses-links` | مفضل | فرضيات يظهر فيها |
 
 ### 2.4 Location / Vehicle / Organization / Object
+
+- **Organization:** استخدم القالب `Organization.md` مع `org-kind` (law-enforcement / government / corporate / tribal / criminal-group / ngo / other).
+- لا تخلط المنظمة مع Person.
+
 
 حقول مماثلة مع `type` المناسب + علاقات بالأشخاص والأحداث.
 
@@ -108,3 +116,8 @@
 ### قالب Analysis
 
 استخدم `assets/templates/Analysis.md` لملاحظات النمط / الدافع / السلوك مع `related-events` إلزامي تقريباً عند الحديث عن سلسلة حوادث.
+
+
+### 2.10 ملاحظات النطاق الجماعي (قضايا تاريخية)
+
+- عند وجود عشرات الضحايا غير المسمّين في المصدر العام: أنشئ ملاحظة كيان جماعية أو أعلن الفجوة في Coverage-Ledger — **لا تختلق أسماء**.

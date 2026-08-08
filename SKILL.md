@@ -1,16 +1,16 @@
 ---
 name: obsidian-investigation-brain
-description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط (Evidence Board)، كشف فجوات وتحقيق، مقاومة التحيز التأكيدي، إنتاج تقرير قضية أو ملف محكمة. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.1.1 — Chain of Custody + Counter-Hypotheses + Timeline-first + Visual Protocols.
+description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط (Evidence Board)، كشف فجوات وتحقيق، مقاومة التحيز التأكيدي، إنتاج تقرير قضية أو ملف محكمة. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.1.2 — Chain of Custody + Counter-Hypotheses + Timeline-first + Visual Protocols.
 metadata:
   type: workflow
-  version: "0.1.1"
+  version: "0.1.2"
   based-on: obsidian-research-brain@1.1.9
 ---
 
 # 🕵️ مِحَكّ الدماغ التحقيقي
 ## بناء وإدارة second brain تحقيقي + تنسيق تقرير القضية — فوق أوبسيديان
 
-**الإصدار:** 0.1.1 (Chain of Custody · Counter-Hypotheses · Timeline-first · Human Gate · Gap Intelligence · Visual Protocols)  
+**الإصدار:** 0.1.2 (Chain of Custody · Counter-Hypotheses · Timeline-first · Human Gate · Gap Intelligence · Visual Protocols)  
 **مبني على:** `obsidian-research-brain` v1.1.9
 
 ---
@@ -218,4 +218,4 @@ metadata:
 
 | الإصدار | التغيير |
 |---------|---------|
-| 0.1.1 | الإصدار الأولي — تكييف كامل من research-brain للتحقيق: Chain of Custody، Counter-Hypotheses، Timeline-first، أوضاع أ/ب/ج/د، طيف أدلة تحقيقي، Visual Protocols |
+| 0.1.2 | الإصدار الأولي — تكييف كامل من research-brain للتحقيق: Chain of Custody، Counter-Hypotheses، Timeline-first، أوضاع أ/ب/ج/د، طيف أدلة تحقيقي، Visual Protocols |
