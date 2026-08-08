@@ -1,0 +1,65 @@
+{
+	"nodes":[
+		{
+			"id":"title",
+			"type":"text",
+			"text":"# لوحة الخيوط (Evidence Board)\n\n**الغرض:** ربط الأشخاص بالأدلة وبالأشخاص الآخرين بصرياً.\n\n**الحقيقة:** الملاحظات في 01-Evidence و 02-Entities و 03-Hypotheses — هذه اللوحة عرض/تفكير فقط.\n\nبعد كل جلسة: حدّث الروابط في الملاحظات + Coverage-Ledger.",
+			"x":-480,
+			"y":-420,
+			"width":560,
+			"height":240,
+			"color":"6"
+		},
+		{
+			"id":"proto",
+			"type":"text",
+			"text":"## بروتوكول الاستخدام\n1. اسحب ملاحظات Person و Evidence إلى اللوحة\n2. اربط بأسهم (يعرف / وُجد معه / يتصل بـ / يناقض)\n3. ضع الفرضيات في المنتصف أو الجانب\n4. Counter-Hypotheses بلون مختلف\n5. بعد الانتهاء → ثبّت الروابط في YAML",
+			"x":120,
+			"y":-420,
+			"width":420,
+			"height":240,
+			"color":"5"
+		},
+		{
+			"id":"legend",
+			"type":"text",
+			"text":"## مفتاح الألوان المقترح\n- أخضر/أزرق = Evidence verified\n- برتقالي = Persons\n- بنفسجي = Primary Hypothesis\n- أحمر/وردي = Counter\n- باهت = Rejected أو Exploration",
+			"x":-480,
+			"y":-140,
+			"width":400,
+			"height":180,
+			"color":"3"
+		},
+		{
+			"id":"zone-evidence",
+			"type":"text",
+			"text":"## منطقة الأدلة\n(اسحب هنا ملاحظات من 01-Evidence)",
+			"x":-480,
+			"y":80,
+			"width":280,
+			"height":120,
+			"color":"4"
+		},
+		{
+			"id":"zone-persons",
+			"type":"text",
+			"text":"## منطقة الأشخاص\n(اسحب هنا من 02-Entities/Persons)",
+			"x":-160,
+			"y":80,
+			"width":280,
+			"height":120,
+			"color":"2"
+		},
+		{
+			"id":"zone-hyp",
+			"type":"text",
+			"text":"## منطقة الفرضيات\nPrimary + Counter",
+			"x":160,
+			"y":80,
+			"width":280,
+			"height":120,
+			"color":"6"
+		}
+	],
+	"edges":[]
+}
