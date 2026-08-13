@@ -93,6 +93,15 @@ Case-Vault-XXXX/
 │   ├── Open-Leads/
 │   └── What-We-Know/
 │
+├── 08-Tooling/                               # v0.4.0 — self-tooling محلي ومقيد
+│   ├── Active/                                # أدوات القضية قيد التجربة
+│   ├── Library/                               # أدوات راجعها الإنسان لإعادة الاستخدام
+│   ├── Archive/                               # أدوات متقاعدة مع سبب الاحتفاظ
+│   ├── Manifests/                             # Tool-Manifest
+│   ├── Audits/                                # Tool-Audit ونتائج التشغيل
+│   ├── Fixtures/                              # مدخلات اختبار صغيرة وغير حساسة
+│   └── Runs/                                  # مخرجات تحليل/محاكاة قابلة لإعادة التشغيل
+│
 ├── 90-Reference-Sources/                     # مراجع عامة / أرشيف عام
 │
 └── 99-Attachments/
@@ -100,6 +109,12 @@ Case-Vault-XXXX/
     ├── Audio-Video/
     ├── Documents/
     └── Raw-Exports/
+
+case-logs/                                     # سجل جلسة وأحداث الأدوات خارج Evidence
+├── session.jsonl
+├── tool-runs.jsonl
+├── decisions.md
+└── redactions.md
 ```
 
 ## قواعد التسمية والمناطق (محدثة v0.2.0)
@@ -113,4 +128,6 @@ Case-Vault-XXXX/
 - **Cold Case**: عند `case-status: cold-case` أو `open-investigation` يُفعَّل مجلد `07-Cold-Case/` ويُستخدم قالب Cold-Case-Report.
 - **Group-Entity**: للضحايا/الركاب المتعددين غير المسمّين أو الجزئيين.
 - **Vessel / Aircraft**: تُسجَّل تحت Vehicles مع حقول متخصصة (IMO / N-number / flag-state / type-certificate).
-- أي مجلد جديد يُوثَّق في Meta/Changelog.md.
+- `08-Tooling` لا يُعامل كEvidence؛ مخرجاته Analysis/Exploration حتى Human Gate.
+- `case-logs` سجل تشغيل قابل للتتبع وليس بديلاً عن Chain-of-Custody.
+- أي أداة جديدة تُوثَّق في Tool-Manifest وTool-Audit، وأي مجلد جديد يُوثَّق في Meta/Changelog.md.

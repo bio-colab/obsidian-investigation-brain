@@ -179,3 +179,59 @@ gaps:
     phase_id: P2
     status: open  # open | mitigated | accepted-risk
 ```
+
+## إضافات v0.4.0 — Native Formats وSelf-Tooling
+
+### Tool Manifest
+```yaml
+type: tool-manifest
+status: draft
+tool-id: TOOL-001
+version: 0.1.0
+runtime: python3
+backend: docker
+network: denied
+entrypoint: 08-Tooling/Active/parser.py
+writes-to: [08-Tooling/Runs/]
+human-review: required
+```
+
+قاعدة: `entrypoint` و`writes-to` يجب أن يبقيا داخل case-root، و`writes-to` لا يتجاوز `08-Tooling/` أو `05-Analysis/` أو `02b-Exploration/` أو `case-logs/`. لا يملك manifest صلاحية رفع Evidence أو تغيير `status` تلقائياً.
+
+### Tool Audit
+```yaml
+type: tool-audit
+status: pending-human-review
+tool-id: TOOL-001
+tool-version: 0.1.0
+source-hash: "sha256:..."
+run-id: RUN-001
+backend: docker
+network: denied
+exit-code: 0
+input-hashes: []
+output-hashes: []
+tests-passed: true
+human-review: pending
+```
+
+### Simulation Run
+```yaml
+type: simulation-run
+status: draft
+simulation-id: SIM-001
+tool-id: TOOL-001
+prediction: ""
+result: ""
+delta: ""
+support-level: weak
+human-review: pending
+```
+
+### Case Log
+
+`case-logs/session.jsonl` و`case-logs/tool-runs.jsonl` سجلات تشغيل append-only. لا تُعامل كسلسلة حفظ؛ بل تحفظ command digest وhashes وexit code والقرارات التشغيلية التي تشرح كيفية إنتاج تحليل ما.
+
+### Native-format metadata
+
+يمكن للملاحظة أن تحمل `aliases` و`cssclasses` وخصائص Obsidian الأخرى. ملفات `.canvas` و`.base` لا تحمل frontmatter؛ تُفحص ببنية JSON/YAML عبر `scripts/validate_obsidian_native.py` قبل التدقيق المعرفي.

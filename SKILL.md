@@ -1,16 +1,16 @@
 ---
 name: obsidian-investigation-brain
-description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط (Evidence Board)، كشف فجوات وتحقيق، مقاومة التحيز التأكيدي، إنتاج تقرير قضية أو ملف محكمة. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.3.1 — Series-Linkage + Enterprise-Map + Claim-Trace + Readiness + structured gaps.
+description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز، مع طبقة Native Formats وSelf-Tooling معزولة قابلة للتتبع. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط، كشف فجوات، تشغيل أدوات تحليل مؤقتة، ومقاومة التحيز التأكيدي. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف والتحليل الآلي. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.4.0 — Native Formats + Self-Tooling + Series-Linkage + Enterprise-Map + Claim-Trace + Readiness.
 metadata:
   type: workflow
-  version: "0.3.1"
+  version: "0.4.0"
   based-on: obsidian-research-brain@1.1.9
 ---
 
 # 🕵️ مِحَكّ الدماغ التحقيقي
 ## بناء وإدارة second brain تحقيقي + تنسيق تقرير القضية — فوق أوبسيديان
 
-**الإصدار:** 0.3.1 (Series-Linkage · Enterprise-Map · Ledger gaps schema · فوق 0.3.0 Claim-Trace/Readiness)  
+**الإصدار:** 0.4.0 (Native Formats · Self-Tooling · Series-Linkage · Enterprise-Map · Ledger gaps schema · فوق 0.3.0 Claim-Trace/Readiness)
 **مبني على:** `obsidian-research-brain` v1.1.9
 
 ---
@@ -29,9 +29,12 @@ metadata:
 - ✅ خط زمني كعنصر أساسي (Timeline-first).
 - ✅ لوحة خيوط بصرية (Evidence Board) عبر Canvas كبروتوكول عمل.
 - ✅ مقاومة التحيز التأكيدي (Counter-Hypothesis إلزامي + مضمون substantive).
-- ✅ تدقيق قابل للقياس + Gap Intelligence تحقيقي (`audit_vault.py` v0.3).
+- ✅ تدقيق قابل للقياس + Gap Intelligence تحقيقي (`audit_vault.py` v0.4).
 - ✅ Human Gate قبل اعتماد فرضية أو إغلاق مرحلة.
 - ✅ **Claim Trace** يربط كل ادعاء جوهري في التقرير بأدلة.
+- ✅ Native Format Contract لصياغة Obsidian Markdown وJSON Canvas وBases، مع validator مستقل.
+- ✅ Self-Tooling للحالات: أدوات مؤقتة قابلة لإعادة التشغيل، manifests، audits، simulations، وسجل case خارجي.
+- ✅ عزل fail-closed: لا تشغيل للكود الذاتي التوليد على المضيف عند غياب Docker/Podman/bwrap، ولا شبكة افتراضياً.
 
 **ما لا تفعله:**
 - ❌ اختلاق أدلة أو شهادات أو نتائج في `01-Evidence`.
@@ -129,7 +132,27 @@ metadata:
 
 ---
 
-## 4. طيف الأدلة التحقيقية (Evidence Spectrum)
+## 4. طبقات التكامل الثلاث
+
+### 4.1 طبقة Obsidian Native Formats
+
+يضمن `references/native-format-contract.md` أن المخرجات قابلة للعرض والتحرير في Obsidian. تشمل الطبقة Markdown الخاص بـ Obsidian، wikilinks وembeds وcallouts، JSON Canvas، Bases، وObsidian CLI الاختياري. الصياغة لا تغيّر status أو support-level ولا تستبدل Human Gate.
+
+### 4.2 طبقة Investigation Brain
+
+تبقى قواعد Evidence وChain of Custody وCounter-Hypothesis وTimeline-first وClaim Trace وReadiness هي طبقة الحقيقة المنهجية. أي نتيجة آلية جديدة تُسجل أولاً كـ Analysis أو Exploration أو pending-human-review، مع رابط إلى الأداة والمدخلات.
+
+### 4.3 طبقة ARC-style Self-Tooling
+
+يمكن للوكيل أن ينشئ parser أو analyzer أو linker أو simulator صغيراً داخل `08-Tooling/Active/`. يجب أن يملك كل tool manifest وTool-Audit، وأن يعمل عبر `scripts/case_tooling.py` داخل backend عازل عند توفره. غياب backend عازل يؤدي إلى skip fail-closed، لا إلى تنفيذ صامت على المضيف. التفاصيل في `references/self-tooling-protocol.md`.
+
+### 4.4 الذاكرة والسجل
+
+السجل الآلي في `case-logs/*.jsonl` يحفظ أحداث الجلسة وتشغيل الأدوات، بينما تبقى القرارات البشرية في `case-logs/decisions.md`. هذا السجل يشرح كيف نتجت المخرجات ولا يحل محل Evidence أو CoC.
+
+---
+
+## 5. طيف الأدلة التحقيقية (Evidence Spectrum)
 
 | طبقة | أمثلة | متى تُطلب |
 |------|--------|-----------|
@@ -165,6 +188,7 @@ metadata:
 | Series-Linkage | `05-Analysis/Series-Linkage/` | v0.3.1 — سلاسل / overlinking discipline |
 | Enterprise-Map | `05-Analysis/Enterprise-Maps/` | v0.3.1 — جريمة منظمة / predicates |
 | Coverage Ledger | `00-Scaffold/` | مراحل × فجوات منظمة (`gaps:`) |
+| Tooling / Manifest / Audit / Simulation | `08-Tooling/` و`case-logs/` | أداة مؤقتة أو قابلة لإعادة الاستخدام، مع حدود وسجل تشغيل |
 | Readiness-Checklist | `00-Scaffold/` | v0.3 — بوابة جاهزية قابلة للتدقيق |
 | Case-Report / Court-File / Recommendations / Cold-Case-Report | `06-Outputs/` | + claim-trace + readiness-passed |
 | financial-record / wiretap-evidence / informant-testimony | `01-Evidence/` | قوالب متخصصة |
@@ -180,6 +204,9 @@ metadata:
 - لا يوجد محتوى verified بلا مصدر/دليل.
 - Human Gate غير متجاوز.
 - التقارير المعتمدة/Court-File تحمل claim-trace؛ Court-File فقط مع readiness-passed.
+- ملفات Markdown/Canvas/Bases تمر عبر validator native عند وجودها.
+- كل Self-Tooling له manifest وTool-Audit، ونتائج التشغيل قابلة لإعادة الحساب من hashes والسجل.
+- لا أداة تكتب خارج case-root أو ترفع Evidence/status تلقائياً.
 
 ### 6.2 Gap Intelligence تحقيقي
 - % مراحل الخطة التي لها صف في Coverage-Ledger.
@@ -212,7 +239,10 @@ metadata:
 9. Exploration حرية مضبوطة؛ الترقية لها بروتوكول صريح.
 10. القضايا الحقيقية الحساسة تبقى محلية ومشفرة — لا تُرفع إلى مستودعات عامة.
 11. Claim-trace قبل اعتماد التقرير؛ لا Court-File دون readiness.
-12. Informant/wiretap و group-entity: التزم بقواعد v0.3 في anti-drift و audit.
+12. **Informant/wiretap و group-entity: التزم بقواعد v0.3 في anti-drift و audit.
+13. طبقة Obsidian الأصلية تحافظ على wikilinks وembeds وcallouts وJSON Canvas وBases صالحة، لكنها لا تمنح أي ادعاء صحة معرفية.
+14. Self-Tooling يكتب فقط داخل حدود القضية، ويسجل command digest وhashes وexit code، ولا يرفع Evidence أو status تلقائياً.
+15. شغّل `scripts/validate_obsidian_native.py` قبل `scripts/audit_vault.py` عند التعامل مع `.canvas` أو `.base` أو تغييرات Markdown البنيوية.
 
 ---
 
@@ -228,8 +258,11 @@ metadata:
 | `references/vault-quality-checklist.md` | قائمة تدقيق |
 | `references/reporting-pipeline.md` | مسار إنتاج التقارير |
 | `references/visual-investigation-layer.md` | الطبقة البصرية + بروتوكولات Canvas |
-| `assets/templates/` | قوالب الملاحظات + Canvas |
-| `scripts/audit_vault.py` | تدقيق آلي v0.3 (CoC، Counter، claim-trace، informant/wiretap، group، court) |
+| `assets/templates/` | قوالب الملاحظات + Canvas + Tool Manifest/Audit/Case Log/Simulation |
+| `scripts/audit_vault.py` | تدقيق آلي v0.4 (CoC، Counter، claim-trace، informant/wiretap، group، court، tooling boundaries) |
+| `scripts/validate_obsidian_native.py` | فحص Markdown/frontmatter وCanvas JSON وBases YAML والروابط |
+| `scripts/case_tooling.py` | إنشاء workspace وتشغيل الأدوات داخل backend عازل وتسجيل hashes/events |
+| `scripts/tools-review.py` | مراجعة curation دون حذف أو promotion تلقائي |
 
 ---
 
@@ -237,6 +270,7 @@ metadata:
 
 | الإصدار | التغيير |
 |---------|---------|
+| 0.4.0 | Native Format Contract + validator · Self-Tooling workspace/executor/audit/logs · fail-closed sandbox policy |
 | 0.3.1 | Series-Linkage · Enterprise-Map · Coverage-Ledger gaps schema · Agent run protocol (benchmark) |
 | 0.3.0 | Claim Trace Matrix · Readiness-Checklist · Court-File gate · audit: INFORMANT/WIRETAP/GROUP/COURT/CLAIM_TRACE · من بنشمارك v1 |
 | 0.2.0 | source-provenance · Technical/Data-Analysis · Cold-Case · Probable-Cause · Group-Entity · Vessel/Aircraft · Financial/Wiretap/Informant |

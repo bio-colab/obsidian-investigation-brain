@@ -1,0 +1,69 @@
+{
+  "nodes": [
+    {
+      "id": "scope-node-0001",
+      "type": "file",
+      "x": 0,
+      "y": 0,
+      "width": 360,
+      "height": 220,
+      "file": "00-Scaffold/Case-Scope.md"
+    },
+    {
+      "id": "ledger-node-0002",
+      "type": "file",
+      "x": 460,
+      "y": 0,
+      "width": 360,
+      "height": 220,
+      "file": "00-Scaffold/Coverage-Ledger.md"
+    },
+    {
+      "id": "tool-node-0003",
+      "type": "file",
+      "x": 460,
+      "y": 320,
+      "width": 360,
+      "height": 220,
+      "file": "08-Tooling/README.md"
+    },
+    {
+      "id": "report-node-0004",
+      "type": "file",
+      "x": 920,
+      "y": 0,
+      "width": 360,
+      "height": 220,
+      "file": "06-Outputs/Case-Reports/Case-Report.md"
+    }
+  ],
+  "edges": [
+    {
+      "id": "scope-ledger-edge",
+      "fromNode": "scope-node-0001",
+      "fromSide": "right",
+      "toNode": "ledger-node-0002",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "scope → coverage"
+    },
+    {
+      "id": "ledger-report-edge",
+      "fromNode": "ledger-node-0002",
+      "fromSide": "right",
+      "toNode": "report-node-0004",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "coverage → report"
+    },
+    {
+      "id": "tool-analysis-edge",
+      "fromNode": "tool-node-0003",
+      "fromSide": "right",
+      "toNode": "ledger-node-0002",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "tool output → analysis"
+    }
+  ]
+}

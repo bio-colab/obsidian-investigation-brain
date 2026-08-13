@@ -1,5 +1,31 @@
 # Changelog — obsidian-investigation-brain
 
+## 0.4.0 — 2026-08-13
+
+### أضيف — Surgical Integration
+
+**Native Formats**
+- `references/native-format-contract.md` يربط Obsidian Markdown وJSON Canvas وBases وCLI بعقد التحقيق.
+- `scripts/validate_obsidian_native.py` يفحص frontmatter وwikilinks وCanvas JSON وBases YAML.
+- baseline vaults تنشئ Investigation Index بصيغة `.base` وCanvas بروتوكولياً صالحاً.
+
+**Self-Tooling**
+- مساحة `08-Tooling/` و`case-logs/` للأدوات المؤقتة، manifests، audits، fixtures، runs، والجلسات.
+- `scripts/case_tooling.py` لإنشاء workspace والتحقق من manifests وتشغيل الأدوات داخل Docker/Podman/bwrap عند توفره.
+- التنفيذ fail-closed عند غياب backend عازل؛ `--allow-host` مطلوب صراحةً للتطوير المحلي.
+- hashes وcommand digest وexit code وstdout/stderr مختصر تُسجل في `case-logs/tool-runs.jsonl` و`08-Tooling/Audits/`.
+- `scripts/tools-review.py` للـ curation دون حذف أو promotion تلقائي.
+
+**Audit / Benchmark / Docs**
+- `audit_vault.py` يعرف 07-Cold-Case و08-Tooling، ويفحص manifest write boundaries ووجود Tool-Audit.
+- Benchmark config/parser ومجرى agent protocol محدثة إلى skill target 0.4.0.
+- أضيفت قوالب Tool-Manifest وTool-Audit وCase-Log وSimulation-Run.
+- أضيفت اختبارات native validator وmanifest safety وfail-closed executor.
+
+> لا تمنح الطبقة الجديدة أي أداة حق الكتابة إلى Evidence أو تغيير status تلقائياً؛ تبقى Human Gate وChain-of-Custody وClaim Trace هي الحواجز الحاكمة.
+
+---
+
 ## 0.3.1 — 2026-08-08
 
 ### أضيف (P1 من خطة الإصلاح / البنchmark + شفافية الإصدار)

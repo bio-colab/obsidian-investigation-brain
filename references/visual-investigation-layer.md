@@ -25,7 +25,7 @@
 | **Dashboard** | بوابة يومية: فجوات، فرضيات بلا Counter، أدلة بلا سلسلة حفظ، طابور المراجعة |
 | **Dataview** | جداول حية من `type` / `status` / `hypothesis-kind` / `support-level` |
 | **Graph** | شبكة العلاقات بين الأشخاص والأدلة والفرضيات والأحداث |
-| **Canvas** | لوحات عمل: Evidence Board · Crime Scene · Timeline · Suspect Profile · Link Analysis |
+| **Canvas** | لوحات عمل: Evidence Board · Crime Scene · Timeline · Suspect Profile · Link Analysis · Native Format Protocol |
 | **Excalidraw + Image Toolkit + Leaflet** (إضافات موصى بها) | تعليق على الصور، تكبير، خرائط جغرافية |
 
 ---
@@ -40,6 +40,8 @@
 | `04-Timeline` | أحداث | محور زمني |
 | `05-Analysis` | تحليلات | حسب status |
 | `02b-Exploration` | استكشاف | لا يُخلط لونياً مع Evidence |
+| `08-Tooling` | أدوات ونتائج تحليلية | لا يُعرض كEvidence؛ يفضّل تجميعه منفصلاً |
+| `case-logs` | سجل تشغيل | لا يُستخدم كبديل عن Chain-of-Custody |
 | `00-Scaffold` | هيكل + لوحة | يُخفى من Graph الافتراضي |
 | `99-Attachments` | مرفقات | يُخفى من Graph العام (ضوضاء) |
 
@@ -75,6 +77,10 @@
 | `05-Link-Analysis.canvas` | شبكة علاقات موسّعة |
 
 **بروتوكول كامل:** `Canvas-Protocol.md`.
+
+**Canvas Native Format:** استخدم `assets/templates/canvases/Native-Format-Protocol.canvas` كنقطة بداية. يجب أن تكون IDs فريدة وأن تشير edges إلى nodes موجودة، وتُفحص JSON عبر `scripts/validate_obsidian_native.py`.
+
+**Tool relation:** يمكن لعقدة Canvas أن تشير إلى `08-Tooling/Runs/` أو `05-Analysis/`، لكن لا تُنقل نتيجة الأداة إلى Evidence من خلال الرسم.
 
 **قواعد Canvas:**
 - اللوحة ≠ Evidence. ما على اللوحة تفكير حتى يُثبَّت في ملاحظة + YAML.
@@ -112,6 +118,7 @@
 
 ```
 00-Scaffold/
+├── Investigation-Index.base
 ├── Dashboard.md
 └── Visual/
     ├── README-Visual.md
@@ -122,5 +129,18 @@
         ├── 02-Crime-Scene-Map.canvas
         ├── 03-Timeline-Canvas.canvas
         ├── 04-Suspect-Profile.canvas
-        └── 05-Link-Analysis.canvas
+        ├── 05-Link-Analysis.canvas
+        └── Native-Format-Protocol.canvas
+08-Tooling/
+├── Active/
+├── Library/
+├── Archive/
+├── Manifests/
+├── Audits/
+├── Fixtures/
+└── Runs/
+case-logs/
+├── session.jsonl
+├── tool-runs.jsonl
+└── decisions.md
 ```

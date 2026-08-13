@@ -21,9 +21,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
 from lib.io_utils import benchmark_root, dump_json, load_yaml, write_text
 from score_vault import render_md, score
+import validate_obsidian_native
 
 
 def discover_cases(cases_dir: Path, pattern: str = "CASE-*") -> list[Path]:
@@ -52,6 +54,8 @@ def main() -> int:
     ap.add_argument("--only", nargs="*", default=None, help="Optional explicit case_id list")
     ap.add_argument("--config", default=None)
     ap.add_argument("--no-audit", action="store_true")
+    ap.add_argument("--no-native-check", action="store_true", help="Do not run Obsidian native-format validation")
+    ap.add_argument("--strict-native", action="store_true", help="Treat native-format errors as a case failure")
     ap.add_argument("--skip-missing", action="store_true", help="Skip cases without vaults instead of failing")
     ap.add_argument(
         "--producer",
@@ -97,7 +101,18 @@ def main() -> int:
             continue
 
         print(f"Scoring {case_id} <- {vault}", file=sys.stderr)
+        native_result = None
+        native_error = None
+        if not args.no_native_check:
+            try:
+                native_result = validate_obsidian_native.validate(vault)
+                native_error = native_result["score"]["errors"] > 0
+            except Exception as exc:
+                native_error = True
+                native_result = {"vault": str(vault), "score": {"errors": 1, "warnings": 0, "total": 1}, "issues": [{"severity": "error", "code": "NATIVE_CHECK_FAILED", "message": str(exc)}]}
         try:
+            if args.strict_native and native_error:
+                raise ValueError("native-format validation failed in --strict-native mode")
             result = score(
                 vault=vault,
                 gt_path=gt_path,
@@ -117,8 +132,12 @@ def main() -> int:
             }
         result["run_id"] = args.run_id
         result.setdefault("producer", args.producer)
+        if native_result is not None:
+            result["native_validation"] = native_result["score"]
         case_out = out_dir / case_id
         case_out.mkdir(parents=True, exist_ok=True)
+        if native_result is not None:
+            dump_json(case_out / "native-validation.json", native_result)
         dump_json(case_out / "score.json", result)
         write_text(case_out / "score.md", render_md(result))
         results.append(result)
@@ -135,6 +154,8 @@ def main() -> int:
         ),
         "cases_scored": len(results),
         "missing_vaults": missing,
+        "native_checked": not args.no_native_check,
+        "native_error_cases": [r.get("case_id") for r in results if r.get("native_validation", {}).get("errors", 0) > 0],
         "mean_score": round(sum(r.get("case_score", 0) for r in results) / len(results), 4) if results else 0.0,
         "results": [
             {

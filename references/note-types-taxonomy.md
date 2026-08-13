@@ -151,3 +151,16 @@
 - **v0.3:** `informant-testimony` لا `verified` بلا `credibility-assessment`؛ `wiretap-evidence` لا `verified` بلا `legal-authorization`.
 - **v0.3.1:** قضايا serial/homicide series → `series-linkage` موصى به؛ organized-crime → `enterprise-map` موصى به.
 - **v0.3.1:** Coverage-Ledger يفضّل `gaps: [{id, description, phase_id, status}]`.
+
+## 2.12 إضافات v0.4.0 — Native Formats وSelf-Tooling
+
+| type | الغرض | الموضع المفضل |
+|---|---|---|
+| `tool-manifest` | تعريف أداة، مدخلاتها، مخرجاتها، backend، وحدود الكتابة | `08-Tooling/Manifests/` |
+| `tool-audit` | سجل البناء والاختبارات والتنفيذ والـ hashes والمراجعة | `08-Tooling/Audits/` |
+| `simulation-run` | نتيجة تشغيل محاكاة قبل الالتزام بإجراء أو فرضية | `08-Tooling/Runs/` أو `05-Analysis/` |
+| `case-log` | فهرس بشري لسجل الجلسة والأدوات والقرارات | `case-logs/` |
+
+**قاعدة الفصل:** tooling وcase logs ليست Evidence. نتيجة parser أو analyzer أو simulator تُسجل Analysis/Exploration أو `pending-human-review`، وتربط بالمصدر وبـ Tool-Audit. لا يجوز أن تجعل نتيجة الأداة وحدها ملاحظة ما `verified`.
+
+**قاعدة الصيغة:** Markdown يتبع wikilinks وembeds وcallouts الصحيحة، Canvas يتبع JSON Canvas مع IDs وedges قابلة للحل، وBases تتبع YAML مع formulas معرفة. استخدم `scripts/validate_obsidian_native.py` قبل `audit_vault.py`.

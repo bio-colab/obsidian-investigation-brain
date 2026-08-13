@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 audit_vault.py — تدقيق حتمي لـ vault أوبسيديان التحقيقي
-(obsidian-investigation-brain v0.3.0)
+(obsidian-investigation-brain v0.4.0)
 
 يفحص:
 - وجود الملفات الهيكلية الحرجة
@@ -59,6 +59,8 @@ ZONES = (
     "05-Analysis",
     "02b-Exploration",
     "06-Outputs",
+    "07-Cold-Case",
+    "08-Tooling",
     "90-Reference-Sources",
     "99-Attachments",
     "OTHER",
@@ -80,6 +82,8 @@ EVIDENCE_TYPES = {
 HYPOTHESIS_KINDS = {"primary", "alternative", "counter", "rejected"}
 REPORT_TYPES = {"case-report", "court-file", "cold-case-report", "briefing"}
 MIN_COUNTER_BODY_CHARS = 40
+TOOLING_TYPES = {"tool-manifest", "tool-audit", "simulation-run", "case-log"}
+TOOLING_ALLOWED_WRITE_PREFIXES = ("08-Tooling", "05-Analysis", "02b-Exploration", "case-logs")
 
 WIKILINK_RE = re.compile(r"\[\[([^\]]+?)(?:\|[^\]]+)?\]\]")
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
@@ -174,7 +178,9 @@ def audit_vault(vault: Path) -> dict[str, Any]:
         "evidence_count": 0,
         "hypothesis_count": 0,
         "coc_count": 0,
-        "skill_version_target": "0.3.1",
+        "skill_version_target": "0.4.0",
+        "tooling_manifests": [],
+        "tooling_audits": [],
     }
 
     # Collected for post-pass checks (v0.3)
@@ -183,6 +189,8 @@ def audit_vault(vault: Path) -> dict[str, Any]:
     report_notes: list[tuple[str, dict[str, Any], str]] = []
     readiness_notes: list[tuple[str, dict[str, Any]]] = []
     hypothesis_notes: list[tuple[str, dict[str, Any], str]] = []
+    tooling_manifests: list[tuple[str, dict[str, Any], str]] = []
+    tooling_audits: list[tuple[str, dict[str, Any], str]] = []
 
     # --- Critical files ---
     for rel in CRITICAL_FILES:
@@ -405,6 +413,14 @@ def audit_vault(vault: Path) -> dict[str, Any]:
         if ntype == "readiness-checklist" or rel.endswith("Readiness-Checklist.md"):
             readiness_notes.append((rel, fm))
 
+        # v0.4: self-tooling records must stay auditable and case-scoped
+        if ntype == "tool-manifest" or rel.startswith("08-Tooling/Manifests/"):
+            tooling_manifests.append((rel, fm, body))
+            result["tooling_manifests"].append(rel)
+        if ntype == "tool-audit" or rel.startswith("08-Tooling/Audits/"):
+            tooling_audits.append((rel, fm, body))
+            result["tooling_audits"].append(rel)
+
         # Broken wikilinks (sample)
         broken = find_broken_wikilinks(body, known_names)
         if broken:
@@ -501,7 +517,39 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                 "path": rel,
             })
 
-    # --- v0.3: reports claim-trace + court readiness ---
+        # --- v0.4: self-tooling manifest/audit consistency
+    audit_blob = "\n".join(f"{r}\n{b}" for r, _fm, b in tooling_audits)
+    for rel, fm, _body in tooling_manifests:
+        tool_id = str(fm.get("tool-id") or fm.get("tool_id") or "").strip()
+        entrypoint = str(fm.get("entrypoint") or "").strip()
+        if not tool_id or not entrypoint:
+            result["issues"].append({
+                "severity": "major",
+                "code": "TOOL_MANIFEST_INCOMPLETE",
+                "msg": "Tool-Manifest يحتاج tool-id وentrypoint",
+                "path": rel,
+            })
+        writes = fm.get("writes-to") or fm.get("writes_to") or []
+        if not isinstance(writes, list):
+            writes = [writes]
+        for write_target in writes:
+            clean = str(write_target).replace("\\", "/").lstrip("/")
+            if not any(clean == prefix or clean.startswith(prefix + "/") for prefix in TOOLING_ALLOWED_WRITE_PREFIXES):
+                result["issues"].append({
+                    "severity": "critical",
+                    "code": "TOOL_MANIFEST_WRITE_ESCAPE",
+                    "msg": f"Self-tooling writes outside allowed case prefixes: {write_target}",
+                    "path": rel,
+                })
+        if tool_id and tool_id not in audit_blob:
+            result["issues"].append({
+                "severity": "minor",
+                "code": "TOOL_MANIFEST_NO_AUDIT",
+                "msg": f"Tool-Manifest {tool_id} has no matching Tool-Audit yet",
+                "path": rel,
+            })
+
+    # --- v0.3: reports claim-trace + court readiness
     readiness_ok = False
     for rel, fm in readiness_notes:
         if fm.get("readiness-passed") is True or str(fm.get("readiness-passed")).lower() == "true":
@@ -594,6 +642,9 @@ def render_markdown(res: dict[str, Any], score: dict[str, int]) -> str:
     lines.append(f"**المسار:** `{res['vault']}`")
     lines.append(f"**إجمالي الملاحظات:** {res['notes_total']}")
     lines.append(f"**أدلة:** {res['evidence_count']} · **سجلات CoC:** {res['coc_count']} · **فرضيات:** {res['hypothesis_count']}")
+    if res.get("native_validation"):
+        native = res["native_validation"]
+        lines.append(f"**Native formats:** errors={native.get('errors', 0)} · warnings={native.get('warnings', 0)}")
     lines.append("")
     lines.append("## الدرجة")
     lines.append("")
@@ -695,6 +746,7 @@ def main() -> int:
     ap.add_argument("--json", default=None, help="Write full JSON report to this path")
     ap.add_argument("--md", default=None, help="Write Markdown report to this path (default: stdout)")
     ap.add_argument("--strict", action="store_true", help="Exit 1 on any critical or major issue")
+    ap.add_argument("--native", action="store_true", help="Also validate Markdown, Canvas, and Bases formats")
     args = ap.parse_args()
 
     vault = Path(args.vault)
@@ -706,6 +758,28 @@ def main() -> int:
     except Exception as e:
         print(f"ERROR: unexpected failure: {e}", file=sys.stderr)
         return 2
+
+    if args.native:
+        try:
+            from validate_obsidian_native import validate as validate_native
+            native = validate_native(vault)
+            res["native_validation"] = native["score"]
+            for item in native["issues"]:
+                severity = "major" if item["severity"] == "error" else "minor"
+                res["issues"].append({
+                    "severity": severity,
+                    "code": f"NATIVE_{item['code']}",
+                    "msg": item["message"],
+                    "path": item["path"],
+                })
+        except Exception as exc:
+            res["native_validation"] = {"errors": 1, "warnings": 0, "total": 1}
+            res["issues"].append({
+                "severity": "major",
+                "code": "NATIVE_VALIDATOR_FAILED",
+                "msg": str(exc),
+                "path": str(vault),
+            })
 
     score = compute_score(res)
 

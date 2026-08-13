@@ -70,3 +70,20 @@
 - **Series-Linkage (v0.3.1):** لا تدمج حوادث في سلسلة دون inclusion-criteria مكتوبة؛ احتفظ بـ peripheral و cluster counter.
 - **Enterprise-Map (v0.3.1):** لا ترفع مشروع إجرامي إلى verified من تدفق مالي وحده دون predicates مدعومة وحدود صريحة.
 - **Ledger gaps:** فضّل `gaps: [{id, description, phase_id, status}]` في Coverage-Ledger.
+
+## 11. قواعد v0.4.0 — Native Formats وSelf-Tooling
+
+### Native formats
+
+- استخدم wikilinks للملاحظات الداخلية، وMarkdown links للمصادر الخارجية.
+- تحقق من `.canvas` كـ JSON صالح مع IDs وedges قابلة للحل، ومن `.base` كـ YAML صالح مع formulas معرفة.
+- لا تخلط قابلية العرض بصحة الادعاء؛ Canvas وBases وDashboard طبقات عرض وتحليل.
+
+### Self-tooling
+
+- الأداة المؤقتة داخل `08-Tooling/Active/` فقط، مع `tool-manifest` و`tool-audit`.
+- لا شبكة ولا أسرار، والتنفيذ عبر backend عازل؛ عند غيابه skip fail-closed.
+- الأداة لا تكتب إلى `01-Evidence` ولا تغيّر `status` أو `support-level` تلقائياً.
+- نتائج التشغيل في `08-Tooling/Runs/` أو `05-Analysis/` أو `02b-Exploration/`، وسجل الأحداث في `case-logs/`.
+- promotion إلى `08-Tooling/Library/` يحتاج fixtures ناجحة وhash ثابتاً وHuman Gate.
+- لا تُحذف أداة فاشلة أو سجل مؤثر تلقائياً؛ تُنقل إلى Archive مع سبب وقرار موثق.

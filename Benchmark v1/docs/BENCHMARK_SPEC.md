@@ -154,6 +154,20 @@ Compare vault final hypothesis/report conclusion vs GT `truth_status`:
 
 **Score** from calibration matrix in `rubrics/scoring.yaml`.
 
+## 3.1 — Integrity gates (not a truth metric)
+
+تُسجل سلامة الصيغة والتشغيل منفصلة عن جودة الاستدلال، لأن صحة JSON/YAML أو وجود trace لا يثبت أن النتيجة صحيحة. عند تفعيل `run_benchmark.py` دون `--no-native-check` تُحفظ `native-validation.json` لكل قضية، وتشمل:
+
+| البوابة | الفشل |
+|---|---|
+| Native Markdown | frontmatter غير صالح أو wikilinks غير قابلة للحل، ويُبلغ عنها كتحذير/خطأ |
+| JSON Canvas | JSON غير صالح، IDs مكررة، أو edges معلقة |
+| Bases | YAML غير صالح أو formulas غير معرفة |
+| Tool trace | manifest ناقص، writes-to خارج الحدود، أو غياب Tool-Audit عند استخدام أداة |
+| Sandbox | تشغيل الكود على المضيف دون `--allow-host` لا يُعد تشغيل قضية مقبولاً |
+
+يفشل `--strict-native` عند أخطاء native، بينما لا يدخل تحذير التنسيق أو وجود tooling بحد ذاته في case score. يمكن تفسير `native_error_cases` في `summary.json` دون خلطه بمقياس المعرفة.
+
 ## 4. Aggregation
 
 - **Case score** = Σ (weight_i * metric_i) / Σ weights
@@ -174,9 +188,10 @@ Compare vault final hypothesis/report conclusion vs GT `truth_status`:
 
 1. Validate case packs (`validate_case.py --all`).
 2. For each case: run skill modes A→B→C→D with **only** source_packet.
-3. Score vault (`score_vault.py`).
-4. Aggregate (`aggregate_results.py`).
-5. Optional: human adjudication on M04/M08/M12 edge cases → `adjudication.yaml`.
+3. If the case creates tools, preserve `08-Tooling/` and `case-logs/`; do not expose ground truth.
+4. Score vault (`score_vault.py`) and run native validation unless explicitly disabled.
+5. Aggregate (`aggregate_results.py`).
+6. Optional: human adjudication on M04/M08/M12 edge cases → `adjudication.yaml`.
 
 ## 7. Out of scope for v1
 

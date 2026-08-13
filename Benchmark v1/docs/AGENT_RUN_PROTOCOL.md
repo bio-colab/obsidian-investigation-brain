@@ -10,7 +10,7 @@ For each case directory `cases/CASE-*/`:
 |---------|-----------|
 | `source_packet/**` | `ground_truth.yaml` |
 | `prompts/*.md` | `designer_notes.md` |
-| Skill tree: `SKILL.md`, `references/`, `assets/templates/`, `scripts/audit_vault.py` | Other cases' GT / designer notes |
+| Skill tree: `SKILL.md`, `references/`, `assets/templates/`, `scripts/`, `08-Tooling/` contract | Other cases' GT / designer notes |
 | This protocol | Scoring rubrics that reveal GT answers |
 
 ## 2. Modes (must announce)
@@ -26,6 +26,11 @@ For each case directory `cases/CASE-*/`:
 results/runs/<run_id>/<case_id>/vault/
   00-Scaffold/...
   01-Evidence/...
+  08-Tooling/Active/...
+  08-Tooling/Manifests/...
+  08-Tooling/Audits/...
+  case-logs/session.jsonl
+  case-logs/tool-runs.jsonl
   ...
 results/runs/<run_id>/<case_id>/agent_log.md   # optional short process log
 ```
@@ -69,9 +74,19 @@ Before finishing a case vault:
 - [ ] Report has `claim-trace` even if draft  
 - [ ] `readiness-passed: false` unless checklist truly complete  
 - [ ] ORG cases: consider `Enterprise-Map`  
-- [ ] Serial cases: consider `Series-Linkage`  
+- [ ] Serial cases: consider `Series-Linkage`
+- [ ] Native validator passes for Markdown/Canvas/Bases when present
+- [ ] Every self-tool has a manifest, bounded writes-to, and Tool-Audit
+- [ ] Tool execution was skipped or isolated when no sandbox backend was available
+- [ ] Simulation results remain Analysis/Exploration until Human Gate
 
-## 7. Suggested first agent batch (10)
+## 7. Self-tooling protocol
+
+A free-form agent may create a small parser, analyzer, linker, or simulator when the packet requires it. The tool must live under `08-Tooling/Active/`, have a `Tool-Manifest`, and be executed through `scripts/case_tooling.py`. The executor is fail-closed: with no Docker, Podman, or bubblewrap it records a skipped run rather than executing on the host. Tool outputs are analysis artifacts, never direct Evidence, and a Tool-Audit plus Human Gate are required before promotion or use in an approved report.
+
+The durable process record belongs in `case-logs/session.jsonl` and `case-logs/tool-runs.jsonl`. Do not treat those logs as Chain-of-Custody; they explain how an analysis was produced.
+
+## 8. Suggested first agent batch (10)
 
 **ORG:** 021–025 · **SK:** 026–030  
 Or mixed smoke: WAREHOUSE-014, INFORMANT-017, RICO-023, RIPPER-026, CORRIDOR-030.

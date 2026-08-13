@@ -1,0 +1,14 @@
+[
+  {
+    "id": "DOC-001",
+    "recorded_at": "2026-08-10",
+    "reference_date": "2026-08-08",
+    "tolerance_days": 1
+  },
+  {
+    "id": "DOC-002",
+    "recorded_at": "2026-08-08",
+    "reference_date": "2026-08-08",
+    "tolerance_days": 1
+  }
+]

@@ -55,12 +55,29 @@
 7. جريمة منظمة: هل يوجد Enterprise-Map عند الحاجة؟
 8. سلسلة جرائم: هل يوجد Series-Linkage عند الحاجة؟
 
+## ح. Native Formats وSelf-Tooling (v0.4.0)
+
+- [ ] `python3 scripts/validate_obsidian_native.py <vault>` يمر بلا أخطاء.
+- [ ] كل Canvas JSON صالح، IDs فريدة، وedges بلا مراجع معلقة.
+- [ ] كل Base YAML صالح، وكل formula مستخدمة معرفة.
+- [ ] كل أداة في `08-Tooling/Active/` لها `Tool-Manifest` و`writes-to` داخل حدود القضية.
+- [ ] كل تشغيل أداة يملك Tool-Audit مع command digest وinput/output hashes وexit code.
+- [ ] لا أداة تكتب إلى `01-Evidence` أو ترفع `status` تلقائياً.
+- [ ] عند غياب Docker/Podman/bwrap تم skip التنفيذ بدلاً من تشغيله على المضيف.
+- [ ] توجد Simulation-Run عند استخدام simulator قبل قرار تحليلي مهم.
+- [ ] `case-logs/tool-runs.jsonl` و`case-logs/session.jsonl` منقحان من الأسرار.
+- [ ] promotion إلى `08-Tooling/Library/` موثق بمراجعة بشرية.
+
 ## ز. التشغيل الآلي
 
 ```bash
 python3 scripts/audit_vault.py /path/to/case-vault
 python3 scripts/audit_vault.py /path/to/case-vault --md audit-report.md
-python3 scripts/audit_vault.py /path/to/case-vault --json audit.json --strict
+python3 scripts/audit_vault.py /path/to/case-vault --json audit.json --strict --native
+python3 scripts/validate_obsidian_native.py /path/to/case-vault --strict
+python3 scripts/case_tooling.py init /path/to/case-vault --session-id SESSION-001
+python3 scripts/case_tooling.py validate /path/to/case-vault 08-Tooling/Manifests/TOOL-001.yaml
+python3 scripts/tools-review.py /path/to/case-vault
 ```
 
 - Exit 0 = لا حرج

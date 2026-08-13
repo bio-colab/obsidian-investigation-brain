@@ -2,7 +2,7 @@
 
 مهارة (Skill) لبناء وإدارة **vault أوبسيديان** كمرجع تحقيقي موثوق مضاد للانحراف والتحيز.
 
-**الإصدار:** 0.3.1  
+**الإصدار:** 0.4.0
 **مبني على:** [Obsidian Research Brain Skill](https://github.com/bio-colab/obsidian-research-brain-skill) (v1.1.9)
 
 ### شفافية البنشمارك (يُرجى القراءة قبل تفسير أي درجات)
@@ -37,8 +37,10 @@
 - **Counter-Hypothesis** إلزامي لكل فرضية رئيسية
 - **Claim Trace Matrix** + **Readiness-Checklist** (v0.3) — لا Court-File دون جاهزية
 - **Series-Linkage** / **Enterprise-Map** (v0.3.1) لأنماط التسلسل والجريمة المنظمة
+- **Native Format Contract** لـ Markdown وJSON Canvas وBases وCLI، مع `validate_obsidian_native.py`
+- **Self-Tooling** لحالة القضية: أدوات مؤقتة، manifests، simulations، Tool-Audits، وcase logs
 - **Timeline-first** · **Human Gate** · **Gap Intelligence**
-- Canvas كبروتوكولات عمل + `audit_vault.py` (قواعد v0.3+)
+- Canvas كبروتوكولات عمل + `audit_vault.py` (قواعد v0.4+)
 - حزام بنشمارك اختياري: `Benchmark v1/` (30 قضية تدريبية + مقيّم)
 
 ---
@@ -49,9 +51,11 @@
 2. الوكيل يعمل بـ **الوضع أ (Scaffold)**.
 3. أضف الأدلة والكيانات والفرضيات في **الوضع ب** — Evidence فقط بأدلة حقيقية + سلسلة حفظ + Human Gate عند الحاجة.
 4. للتدقيق: **الوضع ج** أو شغّل `scripts/audit_vault.py`.
-5. لإنتاج تقرير: **الوضع د (Reporting)**.
+5. عند الحاجة إلى أداة تحليل مخصصة: أنشئها داخل `08-Tooling/Active/`، اكتب manifest، وشغّلها عبر `scripts/case_tooling.py`؛ التنفيذ fail-closed عند غياب backend عازل.
+6. لإنتاج تقرير: **الوضع د (Reporting)**.
 
 **دليل مبسّط للمحقق:** [`references/guide-for-investigator.md`](references/guide-for-investigator.md)
+**وثيقة الدمج التفصيلية:** [`docs/SELF_TOOLING_INTEGRATION.md`](docs/SELF_TOOLING_INTEGRATION.md)
 
 ---
 
@@ -70,15 +74,31 @@ obsidian-investigation-brain/
 │   ├── anti-drift-rules.md
 │   ├── vault-quality-checklist.md
 │   ├── visual-investigation-layer.md
+│   ├── native-format-contract.md     # عقد Markdown/Canvas/Bases/CLI
+│   ├── self-tooling-protocol.md      # الأدوات المؤقتة والعزل والسجلات
 │   ├── reporting-pipeline.md
 │   └── guide-for-investigator.md     # دليل المستخدم غير التقني
-├── assets/templates/                 # قوالب الملاحظات + Canvas
-│   └── canvases/                     # 5 لوحات بروتوكولية
+├── assets/templates/                 # قوالب الملاحظات + tooling + Canvas
+│   └── canvases/                     # لوحات بروتوكولية
+├── assets/tooling-examples/          # مثال metadata comparator + fixture + manifest
 └── scripts/
-    └── audit_vault.py                # تدقيق حتمي
+    ├── audit_vault.py                # تدقيق حتمي معرفي
+    ├── validate_obsidian_native.py   # تدقيق الصيغ الأصلية
+    ├── case_tooling.py               # executor/manifest/logs
+    └── tools-review.py               # curation دون حذف تلقائي
 ```
 
 ---
+
+## طبقات الدمج الثلاث
+
+| الطبقة | الوظيفة | حدودها |
+|---|---|---|
+| Obsidian Native Formats | كتابة Markdown وCanvas وBases وتشغيل CLI اختيارياً | لا تثبت صحة المعرفة |
+| Investigation Brain | Evidence، provenance، hypotheses، timeline، readiness | لا ينفذ كوداً ذاتياً غير معزول |
+| ARC-style Self-Tooling | بناء parsers/analyzers/simulators وقت الحاجة | لا يكتب Evidence ولا يرفع status تلقائياً |
+
+تفاصيل العقد في [`references/native-format-contract.md`](references/native-format-contract.md) و[`references/self-tooling-protocol.md`](references/self-tooling-protocol.md).
 
 ## الأوضاع الأربعة
 
@@ -97,6 +117,8 @@ obsidian-investigation-brain/
 - القضايا الحقيقية الحساسة تبقى **محلية ومشفرة**.
 - هذه أداة مساعدة للمحقق وليست بديلاً عن الإجراءات الرسمية أو الحكم القضائي.
 - لا تُستخدم لاختلاق أدلة أو شهادات.
+- الكود الذي ينشئه الوكيل يبقى داخل مساحة القضية، ولا يُشغّل على المضيف افتراضياً؛ يحتاج backend عازلاً مثل Docker/Podman/bwrap.
+- نتائج الأدوات المؤقتة تُصنف Analysis/Exploration إلى أن تجتاز Tool-Audit وHuman Gate.
 
 ---
 

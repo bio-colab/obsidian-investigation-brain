@@ -10,6 +10,7 @@ This is a disciplined Mode A–D producer for harness smoke / baseline runs.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -885,6 +886,14 @@ def build_vault(case_dir: Path, vault: Path) -> None:
         "06-Outputs/Cold-Case-Reports",
         "07-Cold-Case/Open-Leads",
         "07-Cold-Case/What-We-Know",
+        "08-Tooling/Active",
+        "08-Tooling/Library",
+        "08-Tooling/Archive",
+        "08-Tooling/Manifests",
+        "08-Tooling/Audits",
+        "08-Tooling/Fixtures",
+        "08-Tooling/Runs",
+        "case-logs",
         "90-Reference-Sources",
         "99-Attachments/Documents",
     ]
@@ -1149,6 +1158,40 @@ tags: [scaffold, gaps]
             "# Philosophy\n\nEvidence ≠ hypothesis ≠ exploration. Prefer declared gaps over invention.\n",
         ),
     )
+
+    # --- Native-format scaffold and case logs ---
+    write_text(
+        vault / "00-Scaffold/Investigation-Index.base",
+        """filters:\n  or:\n    - file.hasTag(\"evidence\")\n    - file.hasTag(\"hypothesis\")\n    - file.hasTag(\"gap\")\nviews:\n  - type: table\n    name: \"Investigation Index\"\n    order:\n      - file.name\n      - type\n      - status\n      - support-level\n      - file.mtime\n  - type: list\n    name: \"Pending Human Review\"\n    filters:\n      and:\n        - status == \"pending-human-review\"\n    order:\n      - file.name\n      - type\n      - status\n""",
+    )
+    write_text(
+        vault / "00-Scaffold/Visual/Canvases/00-Native-Format-Protocol.canvas",
+        json.dumps(
+            {
+                "nodes": [
+                    {"id": "scope", "type": "file", "x": 0, "y": 0, "width": 360, "height": 220, "file": "00-Scaffold/Case-Scope.md"},
+                    {"id": "ledger", "type": "file", "x": 460, "y": 0, "width": 360, "height": 220, "file": "00-Scaffold/Coverage-Ledger.md"},
+                    {"id": "report", "type": "file", "x": 920, "y": 0, "width": 360, "height": 220, "file": "06-Outputs/Case-Reports/Case-Report.md"},
+                ],
+                "edges": [
+                    {"id": "scope-ledger", "fromNode": "scope", "toNode": "ledger", "fromSide": "right", "toSide": "left", "toEnd": "arrow", "label": "scope → gaps"},
+                    {"id": "ledger-report", "fromNode": "ledger", "toNode": "report", "fromSide": "right", "toSide": "left", "toEnd": "arrow", "label": "coverage → report"},
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ) + "\n",
+    )
+    write_text(vault / "08-Tooling/README.md", fm(
+        {"type": "tooling-readme", "status": "verified", "created": TODAY, "updated": TODAY, "tags": ["tooling"]},
+        "# Case Tooling\n\nTools are optional, case-scoped, and never Evidence. Use Tool-Manifest, Tool-Audit, and the fail-closed executor.\n",
+    ))
+    write_text(vault / "case-logs/session.jsonl", "")
+    write_text(vault / "case-logs/tool-runs.jsonl", "")
+    write_text(vault / "case-logs/decisions.md", fm(
+        {"type": "case-log", "status": "draft", "created": TODAY, "updated": TODAY, "case-id": case_id, "tags": ["log", "decisions"]},
+        f"# Case Decisions — {case_id}\n\n| time | decision | reason | references |\n|---|---|---|---|\n",
+    ))
 
     # --- Evidence ---
     ev_links = []

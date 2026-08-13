@@ -43,6 +43,7 @@ ZONES = (
     "02b-Exploration",
     "06-Outputs",
     "07-Cold-Case",
+    "08-Tooling",
     "90-Reference-Sources",
     "99-Attachments",
 )

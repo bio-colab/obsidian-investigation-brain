@@ -28,7 +28,11 @@
 4. **كل دليل يحتاج Chain-of-Custody.** عند إضافة دليل جديد أنشئ سجل الحفظ فوراً.
 5. **Timeline-first.** أي ادعاء زمني يجب أن يرتبط بـ Event أو Alibi في `04-Timeline`.
 6. **Human Gate.** لا تعتمد فرضية قوية أو تقريراً نهائياً دون مرور بـ `pending-human-review` ثم موافقة بشرية.
-7. **العرض ≠ الحقيقة.** Canvas و Dashboard أدوات عمل. الحقيقة في الملفات + YAML + Ledger.
+7. **العرض ≠ الحقيقة.** Canvas و Dashboard وBases أدوات عمل. الحقيقة في الملفات + YAML + Ledger.
+8. **Native formats.** استخدم wikilinks للملاحظات الداخلية، تحقق من JSON Canvas وBases، ولا تخفِ ادعاءً جوهرياً في عرض بصري.
+9. **Self-Tooling.** أي parser/analyzer/simulator جديد يعيش في `08-Tooling/Active/` مع Tool-Manifest وTool-Audit.
+10. **Fail-closed.** شغّل الأدوات عبر `scripts/case_tooling.py`؛ عند غياب backend عازل لا تشغّل الكود على المضيف.
+11. **سجل القضية.** اكتب أحداث التشغيل في `case-logs/`، ولا تعاملها كبديل عن Evidence أو Chain-of-Custody.
 
 ---
 
@@ -43,6 +47,8 @@
 | `05-Analysis` | تحليلات (مع status واضح) | أدلة أصلية |
 | `02b-Exploration` | أفكار حرة مؤقتة | محتوى يُعامل كـ verified |
 | `06-Outputs` | تقارير ومسودات قابلة للتصدير | أدلة أصلية |
+| `08-Tooling` | أدوات مؤقتة، manifests، audits، fixtures، runs | Evidence مباشر أو status verified |
+| `case-logs` | سجل جلسات وأوامر وقرارات | حذف أحداث مؤثرة أو أسرار غير منقحة |
 
 ---
 
@@ -72,6 +78,8 @@
 - اقرأ هذا الملف + Case-Scope قبل أي تعديل جوهري.
 - حافظ على الروابط الحية بين الأدلة والكيانات والفرضيات والأحداث.
 - سجّل قرارات النطاق والرفض والترقية في Changelog.
+- شغّل `scripts/validate_obsidian_native.py` قبل `scripts/audit_vault.py` عند تعديل `.md` البنيوي أو `.canvas` أو `.base`.
+- سجّل tool runs وhashes وexit codes، وأنشئ Simulation-Run قبل الالتزام بتحليل تنبؤي.
 
 ## 7. ما يُمنع على الوكيل
 
@@ -80,6 +88,8 @@
 - نقل محتوى من Exploration إلى Evidence دون بروتوكول الترقية.
 - كتابة تقرير نهائي يتجاهل فجوات موثقة في Coverage-Ledger.
 - رفع أي محتوى حساس إلى مستودع عام أو مشترك غير آمن.
+- تشغيل كود ذاتي التوليد على المضيف دون `--allow-host` الصريح.
+- كتابة أداة أو مخرجاتها خارج `08-Tooling/` أو `05-Analysis/` أو `02b-Exploration/` أو `case-logs/`.
 
 ---
 

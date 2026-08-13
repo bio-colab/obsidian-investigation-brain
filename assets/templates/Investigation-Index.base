@@ -1,0 +1,40 @@
+filters:
+  or:
+    - file.hasTag("evidence")
+    - file.hasTag("hypothesis")
+    - file.hasTag("gap")
+
+formulas:
+  review_label: 'if(status == "pending-human-review", "REVIEW", if(status == "verified", "VERIFIED", status))'
+
+properties:
+  type:
+    displayName: "Type"
+  status:
+    displayName: "Status"
+  support-level:
+    displayName: "Support"
+  formula.review_label:
+    displayName: "Review"
+
+views:
+  - type: table
+    name: "Investigation Index"
+    order:
+      - file.name
+      - type
+      - status
+      - support-level
+      - formula.review_label
+      - file.mtime
+
+  - type: table
+    name: "Pending Human Review"
+    filters:
+      and:
+        - 'status == "pending-human-review"'
+    order:
+      - file.name
+      - type
+      - status
+      - formula.review_label
