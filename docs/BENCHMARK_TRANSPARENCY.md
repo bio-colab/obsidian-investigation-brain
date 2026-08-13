@@ -1,6 +1,6 @@
 # شفافية البنchmark وأثره على المهارة
 
-**المستند:** جزء من إصدارة `obsidian-investigation-brain` **v0.3.1**  
+**المستند:** جزء من إصدارة `obsidian-investigation-brain` **v0.4.2**
 **الغرض:** الإفصاح الصريح عما قيس، وكيف قيس، وما الذي تغيّر في المهارة بسببه — حتى لا تُقرأ درجات عالية كدليل زائف على اكتمال الوكيل الحر.
 
 ---
@@ -28,7 +28,28 @@
 
 Evidence coverage · Source provenance · Hypothesis coverage · Counter quality · Timeline · Contradiction · Missing-evidence · False inference · Confirmation-bias · Report traceability · Readiness-gate · Conclusion calibration  
 
-التعاريف: `Benchmark v1/docs/BENCHMARK_SPEC.md`.
+التعاريف: `Benchmark v1/docs/BENCHMARK_SPEC.md`، والأوزان والصيغ التنفيذية: `Benchmark v1/rubrics/scoring.yaml`.
+
+#### 2.2.1 المنهجية التنفيذية والأوزان
+
+الدرجة الكلية ليست متوسطاً غير موزون؛ هي مجموع موزون لمقاييس M01–M12 بعد حساب كل metric وفق rubric الخاص به. المقاييس الموسومة **inverted** تقيس إخفاقاً أو مخالفة، لذلك تُحوّل إلى مساهمة جودة عكسية قبل الجمع. لا تُفترض مساواة المقاييس ولا تُخلط نتائج `baseline` و`agent`.
+
+| المعرّف | المقياس | الوزن | اتجاه القياس |
+|---|---|---:|---|
+| M01 | `evidence_coverage` | 0.12 | أعلى أفضل |
+| M02 | `source_provenance_completeness` | 0.10 | أعلى أفضل |
+| M03 | `hypothesis_coverage` | 0.10 | أعلى أفضل |
+| M04 | `counter_hypothesis_quality` | 0.10 | أعلى أفضل |
+| M05 | `timeline_reconstruction` | 0.10 | أعلى أفضل |
+| M06 | `contradiction_detection` | 0.08 | أعلى أفضل |
+| M07 | `missing_evidence_detection` | 0.08 | أعلى أفضل |
+| M08 | `false_inference_rate` | 0.08 | **معكوس**: المعدل الأقل أفضل |
+| M09 | `confirmation_bias_resistance` | 0.08 | أعلى أفضل |
+| M10 | `report_traceability` | 0.06 | أعلى أفضل |
+| M11 | `readiness_gate_violations` | 0.05 | **معكوس**: المخالفات الأقل أفضل |
+| M12 | `final_conclusion_calibration` | 0.05 | أعلى أفضل |
+
+مجموع الأوزان **1.00**. يحفظ المشغّل درجات metrics الفردية، ودرجة المكوّن الموزونة، والـ producer، وcase/run identifiers حتى يمكن إعادة الحساب ومراجعة سبب التغير. تفاصيل matching وrubrics وground truth لا تُستنتج من هذا الجدول؛ المرجع التنفيذي هو `BENCHMARK_SPEC.md` و`scoring.yaml`.
 
 ### 2.3 مسارات الإنتاج (مهم للشفافية)
 
@@ -40,6 +61,14 @@ Evidence coverage · Source provenance · Hypothesis coverage · Counter quality
 
 **تحذير صريح:** درجات baseline القريبة من **1.0** لا تعني أن أي وكيل حر سينجح بنفس المستوى.  
 التقارير التي تخلط الاثنين مضلّلة.
+
+---
+
+## 2.4 Integrity gates وصحة المدخلات
+
+قبل تفسير الدرجة، يجب أن يمر run من حواجز السلامة التي تمنع احتساب artifact غير صالح كنجاح. يشمل ذلك `validate_case.py` للحزم، و`validate_obsidian_native.py` لصحة Markdown/YAML وCanvas وBases، ثم `audit_vault.py` للقواعد المنهجية. عند استخدام Swarm، يضاف `validate_swarm.py` للتحقق من Team/Run artifacts ووجود Human Gate. فشل الحاجز يجعل النتيجة غير صالحة للتفسير كنجاح، حتى لو أنتج evaluator رقماً.
+
+هذه الحواجز **integrity checks وليست metric جديدة**؛ لا تغيّر أوزان M01–M12 ولا تضيف نقاطاً. في الوضع الصارم (`--strict` أو `--native`) تكون أخطاء الصياغة والتحذيرات المحددة سبباً للفشل المبكر، ويجب تسجيل الحالة في مخرجات run بدلاً من إخفائها.
 
 ---
 
@@ -140,11 +169,13 @@ python scripts/audit_vault.py path/to/vault --strict
 
 | وثيقة | محتوى |
 |-------|--------|
-| `CHANGELOG.md` | 0.2.0 → 0.3.0 → 0.3.1 |
+| `CHANGELOG.md` | 0.2.0 → 0.3.0 → 0.3.1 → 0.4.0 → 0.4.1 → 0.4.2 |
 | `Benchmark v1/docs/BENCHMARK_SPEC.md` | تعريف المقاييس |
 | `Benchmark v1/docs/REFORM_PLAN_FROM_BENCHMARK.md` | خطة P0/P1 وحالة التنفيذ |
 | `Benchmark v1/docs/AGENT_RUN_PROTOCOL.md` | بروتوكول agent |
 | `docs/REFORM_PLAN_v0.3.md` | مؤشر مختصر |
+| `ARCHITECTURE.md` | خريطة الطبقات والتكاملات |
+| `OBSIDIAN_NATIVE_STRATEGY.md` | استراتيجية Dataview/Bases وnative validation |
 
 ---
 

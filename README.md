@@ -14,6 +14,8 @@
 
 باختصار: درجات **baseline** تقيس قابلية التعبير عن البروتوكول؛ درجات **agent** (منفصلة) تقيس الوكيل الحر. لا تُخلط الاثنتان.
 
+**خرائط القراءة:** [`ARCHITECTURE.md`](ARCHITECTURE.md) للمعمارية الموحدة، [`OBSIDIAN_NATIVE_STRATEGY.md`](OBSIDIAN_NATIVE_STRATEGY.md) لاستراتيجية Dataview/Bases، و[`DEVELOPMENT.md`](DEVELOPMENT.md) و[`CONTRIBUTING.md`](CONTRIBUTING.md) للمطورين.
+
 ---
 
 ## لماذا هذه المهارة؟
@@ -73,7 +75,13 @@
 obsidian-investigation-brain/
 ├── SKILL.md                          # تعريف المهارة والسلوك
 ├── README.md
+├── ARCHITECTURE.md                    # خريطة الطبقات والتكاملات
+├── OBSIDIAN_NATIVE_STRATEGY.md       # استراتيجية Dataview/Bases
+├── CONTRIBUTING.md
+├── DEVELOPMENT.md
 ├── CHANGELOG.md
+├── .github/workflows/ci.yml           # Linux CI
+├── tests/                             # اختبارات القواعد والتدقيق
 ├── references/
 │   ├── folder-structure.md
 │   ├── note-types-taxonomy.md
