@@ -1,0 +1,22 @@
+case_id: CASE-DEMO-SWARM-001
+team_id: TEAM-DEMO-001
+title: "Demo bounded investigation team"
+source_root: "01-Evidence"
+mode: dry-run
+max_workers: 3
+timeout_seconds: 30
+max_claims_per_agent: 10
+require_human_gate: true
+agents:
+  - agent_id: osint
+    role: OSINT analyst
+    task: "Extract source-bounded public leads and explicitly list missing corroboration."
+    jurisdiction: "general"
+  - agent_id: finance
+    role: Financial analyst
+    task: "Review the supplied financial notes for patterns, alternatives, and data gaps."
+    jurisdiction: "general"
+  - agent_id: redteam
+    role: Red-team reviewer
+    task: "Challenge candidate explanations and identify confirmation bias or unsupported leaps."
+    jurisdiction: "general"

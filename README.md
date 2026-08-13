@@ -2,7 +2,7 @@
 
 مهارة (Skill) لبناء وإدارة **vault أوبسيديان** كمرجع تحقيقي موثوق مضاد للانحراف والتحيز.
 
-**الإصدار:** 0.4.1
+**الإصدار:** 0.4.2
 **مبني على:** [Obsidian Research Brain Skill](https://github.com/bio-colab/obsidian-research-brain-skill) (v1.1.9)
 
 ### شفافية البنشمارك (يُرجى القراءة قبل تفسير أي درجات)
@@ -41,6 +41,7 @@
 - **Self-Tooling** لحالة القضية: أدوات مؤقتة، manifests، simulations، Tool-Audits، وcase logs
 - **Dynamic Tool Factory** لبناء scaffold صغير لكل سؤال تحليلي، مع discard-early بدلاً من مكتبة ضخمة
 - **External Decision Memory** مع decision trace وmemory snapshot للاستئناف والتدقيق
+- **Bounded Investigation Swarm MVP** لتنسيق proposals متعددة الوكلاء داخل namespace مستقل مع conflict report وHuman Gate
 - **Timeline-first** · **Human Gate** · **Gap Intelligence**
 - Canvas كبروتوكولات عمل + `audit_vault.py` (قواعد v0.4+)
 - حزام بنشمارك اختياري: `Benchmark v1/` (30 قضية تدريبية + مقيّم)
@@ -56,9 +57,13 @@
 5. عند الحاجة إلى أداة تحليل مخصصة: أنشئ scaffold عبر `scripts/tool_factory.py`، أضف fixture صغيراً، ثم شغّله عبر `scripts/case_tooling.py`؛ التنفيذ fail-closed عند غياب backend عازل.
 6. عند اتخاذ قرار أو استئناف جلسة استخدم `scripts/case_memory.py add/resume`؛ يسجل القرار المختصر ولا يسجل سلسلة التفكير السرية.
 7. لإنتاج تقرير: **الوضع د (Reporting)**.
+8. لتجربة فريق متعدد الوكلاء على قضية تدريبية: شغّل `swarm-wrapper/run.py` في `dry-run`، ثم افحص النتائج بـ `scripts/validate_swarm.py`. تبقى كل المخرجات Proposals/Analysis ويظل Human Gate إلزامياً.
 
 **دليل مبسّط للمحقق:** [`references/guide-for-investigator.md`](references/guide-for-investigator.md)
+
 **وثيقة الدمج التفصيلية:** [`docs/SELF_TOOLING_INTEGRATION.md`](docs/SELF_TOOLING_INTEGRATION.md)
+
+**Swarm Wrapper MVP:** [`swarm-wrapper/README.md`](swarm-wrapper/README.md)
 
 ---
 
@@ -84,13 +89,20 @@ obsidian-investigation-brain/
 ├── assets/templates/                 # قوالب الملاحظات + tooling + Canvas
 │   └── canvases/                     # لوحات بروتوكولية
 ├── assets/tooling-examples/          # مثال metadata comparator + fixture + manifest
+├── swarm-wrapper/                    # bounded multi-agent orchestration MVP
+│   ├── models.py                     # Team/Proposal/Conflict/Gate contracts
+│   ├── orchestrator.py               # dry-run + OpenMausBot adapter + fan-out
+│   ├── vault.py                      # bounded artifacts and decision events
+│   ├── run.py                        # validate/run CLI
+│   └── examples/                     # safe training manifest
 └── scripts/
     ├── audit_vault.py                # تدقيق حتمي معرفي
     ├── validate_obsidian_native.py   # تدقيق الصيغ الأصلية
     ├── case_tooling.py               # executor/manifest/logs
     ├── tool_factory.py               # scaffold صغير لكل سؤال تحليلي
     ├── case_memory.py                # decision trace + memory snapshot
-    └── tools-review.py               # curation دون حذف تلقائي
+    ├── tools-review.py               # curation دون حذف تلقائي
+    └── validate_swarm.py              # فحص artifacts وHuman Gate دون promotion
 ```
 
 ---

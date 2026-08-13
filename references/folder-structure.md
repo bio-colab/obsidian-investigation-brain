@@ -100,7 +100,13 @@ Case-Vault-XXXX/
 │   ├── Manifests/                             # Tool-Manifest
 │   ├── Audits/                                # Tool-Audit ونتائج التشغيل
 │   ├── Fixtures/                              # مدخلات اختبار صغيرة وغير حساسة
-│   └── Runs/                                  # مخرجات تحليل/محاكاة قابلة لإعادة التشغيل
+│   ├── Runs/                                  # مخرجات تحليل/محاكاة قابلة لإعادة التشغيل
+│   └── Swarm/                                 # v0.4.2 — orchestrated proposals only
+│       └── <team-id>/
+│           ├── agents/<agent-id>/             # namespace مستقل لكل وكيل
+│           ├── shared/conflicts/              # تعارضات غير محلولة
+│           ├── shared/consensus-drafts/       # مسودات لا ترفع Evidence
+│           └── runs/<run-id>/                 # run.json + proposals + Human Gate
 │
 ├── 90-Reference-Sources/                     # مراجع عامة / أرشيف عام
 │
@@ -130,6 +136,8 @@ case-logs/                                     # سجل جلسة وذاكرة ق
 - **Group-Entity**: للضحايا/الركاب المتعددين غير المسمّين أو الجزئيين.
 - **Vessel / Aircraft**: تُسجَّل تحت Vehicles مع حقول متخصصة (IMO / N-number / flag-state / type-certificate).
 - `08-Tooling` لا يُعامل كEvidence؛ مخرجاته Analysis/Exploration حتى Human Gate.
+- `08-Tooling/Swarm` لا يكتب إلى `01-Evidence`؛ كل agent proposal وconsensus draft يحتاج Human Gate.
+- Swarm fan-out محدود، ولكل run `case-id` و`team-id` و`run-id` وsource snapshot hash.
 - `case-logs` سجل تشغيل وقرار قابل للتتبع وليس بديلاً عن Chain-of-Custody.
 - `memory-snapshot.md` ملخص استئناف، لا سجل chain-of-thought ولا Evidence.
 - الأداة الجديدة تبدأ من `scripts/tool_factory.py`، ثم تُوثَّق في Tool-Manifest وTool-Audit، وأي مجلد جديد يُوثَّق في Meta/Changelog.md.

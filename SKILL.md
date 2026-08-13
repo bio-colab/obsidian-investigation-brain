@@ -1,16 +1,16 @@
 ---
 name: obsidian-investigation-brain
-description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز، مع طبقة Native Formats وSelf-Tooling معزولة قابلة للتتبع. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط، كشف فجوات، تشغيل أدوات تحليل مؤقتة، ومقاومة التحيز التأكيدي. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف والتحليل الآلي. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.4.1 — Native Formats + Dynamic Tool Factory + External Decision Memory + Self-Tooling + Series-Linkage + Enterprise-Map + Claim-Trace + Readiness.
+description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز، مع طبقة Native Formats وSelf-Tooling معزولة قابلة للتتبع. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط، كشف فجوات، تشغيل أدوات تحليل مؤقتة، ومقاومة التحيز التأكيدي. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف والتحليل الآلي. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.4.2 — Native Formats + Dynamic Tool Factory + External Decision Memory + Bounded Investigation Swarm + Self-Tooling + Series-Linkage + Enterprise-Map + Claim-Trace + Readiness.
 metadata:
   type: workflow
-  version: "0.4.1"
+  version: "0.4.2"
   based-on: obsidian-research-brain@1.1.9
 ---
 
 # 🕵️ مِحَكّ الدماغ التحقيقي
 ## بناء وإدارة second brain تحقيقي + تنسيق تقرير القضية — فوق أوبسيديان
 
-**الإصدار:** 0.4.1 (Native Formats · Dynamic Tool Factory · External Decision Memory · Self-Tooling · Series-Linkage · Enterprise-Map · Ledger gaps schema · فوق 0.3.0 Claim-Trace/Readiness)
+**الإصدار:** 0.4.2 (Native Formats · Dynamic Tool Factory · External Decision Memory · Bounded Investigation Swarm · Self-Tooling · Series-Linkage · Enterprise-Map · Ledger gaps schema · فوق 0.3.0 Claim-Trace/Readiness)
 **مبني على:** `obsidian-research-brain` v1.1.9
 
 ---
@@ -37,6 +37,8 @@ metadata:
 - ✅ Tool Factory خفيف يبني scaffold واحداً لكل سؤال، بدلاً من تثبيت مكتبة أدوات ضخمة مسبقاً.
 - ✅ External Decision Memory: `session.jsonl` للأحداث الملحوظة و`memory-snapshot.md` للاستئناف، دون حفظ سلسلة التفكير السرية.
 - ✅ عزل fail-closed: لا تشغيل للكود الذاتي التوليد على المضيف عند غياب Docker/Podman/bwrap، ولا شبكة افتراضياً.
+- ✅ Swarm Wrapper MVP: fan-out محدود، proposals مهيكلة، conflict report، consensus draft، وHuman Gate داخل namespace مستقل.
+- ✅ OpenMausBot adapter اختياري: يستخدم bots محددة عبر loopback، ولا يعتمد على ask_bot الداخلي لتنسيق الفريق.
 
 **ما لا تفعله:**
 - ❌ اختلاق أدلة أو شهادات أو نتائج في `01-Evidence`.
@@ -47,6 +49,8 @@ metadata:
 - ❌ اختلاق أسماء ضحايا/ركاب عند استخدام group-entity.
 - ❌ استخدام قضايا محلية حقيقية في مستودع عام أو مفتوح المصدر.
 - ❌ استبدال الحكم المهني للمحقق أو المدعي العام.
+- ❌ اعتبار اتفاق الوكلاء دليلاً مستقلاً أو ترقية Proposal إلى Evidence/Court-File تلقائياً.
+- ❌ تشغيل swarm حي على قضية حساسة قبل تعطيل computer/Composio ووضع retention وredaction واضحين.
 
 ---
 
@@ -148,7 +152,11 @@ metadata:
 
 يمكن للوكيل أن ينشئ parser أو analyzer أو linker أو simulator صغيراً داخل `08-Tooling/Active/`. يبدأ ذلك عبر `scripts/tool_factory.py` الذي ينشئ scaffold واحداً وmanifest وaudit، ثم يُعدّل بأقل قدر ويُختبر على fixture صغير. يجب أن يعمل كل tool عبر `scripts/case_tooling.py` داخل backend عازل عند توفره. غياب backend عازل يؤدي إلى skip fail-closed، لا إلى تنفيذ صامت على المضيف. التفاصيل في `references/self-tooling-protocol.md`.
 
-### 4.4 الذاكرة والسجل
+### 4.4 Swarm Wrapper MVP
+
+`swarm-wrapper/` طبقة اختيارية تنسق أدواراً متعددة فوق vault القضية. تبدأ بـ Team Manifest، تثبت source snapshot hash، تشغّل fan-out محدوداً في `dry-run` أو عبر OpenMausBot loopback، ثم تكتب `proposals/` و`conflicts.md` و`consensus-draft.md` وHuman Gate داخل `08-Tooling/Swarm/`. لا تملك الطبقة دالة promotion ولا تكتب إلى `01-Evidence`. افحص المخرجات بـ `scripts/validate_swarm.py`. التفاصيل في `docs/INVESTIGATION_SWARM_MVP.md`.
+
+### 4.5 الذاكرة والسجل
 
 السجل الآلي في `case-logs/session.jsonl` يحفظ الأحداث الملحوظة: observation وdecision وuncertainty وnext-action وrefs، وتُفهرس تشغيلات الأدوات أيضاً في `case-logs/tool-runs.jsonl`. أما `case-logs/memory-snapshot.md` فهو عرض مختصر للاستئناف، لا نسخة من كامل السياق ولا سلسلة تفكير سرية. تبقى القرارات البشرية في `case-logs/decisions.md`. هذه السجلات تشرح كيف نتجت المخرجات ولا تحل محل Evidence أو CoC.
 
@@ -247,6 +255,7 @@ metadata:
 13. طبقة Obsidian الأصلية تحافظ على wikilinks وembeds وcallouts وJSON Canvas وBases صالحة، لكنها لا تمنح أي ادعاء صحة معرفية.
 14. Self-Tooling يكتب فقط داخل حدود القضية، ويسجل command digest وhashes وexit code، ولا يرفع Evidence أو status تلقائياً.
 15. شغّل `scripts/validate_obsidian_native.py` قبل `scripts/audit_vault.py` عند التعامل مع `.canvas` أو `.base` أو تغييرات Markdown البنيوية.
+16. شغّل Swarm Wrapper أولاً في `dry-run`؛ كل Proposal غير معتمد، وكل consensus draft يحتاج Human Gate، و`validate_swarm.py` قبل أي مراجعة بشرية.
 
 ---
 
@@ -267,6 +276,8 @@ metadata:
 | `scripts/validate_obsidian_native.py` | فحص Markdown/frontmatter وCanvas JSON وBases YAML والروابط |
 | `scripts/case_tooling.py` | إنشاء workspace وتشغيل الأدوات داخل backend عازل وتسجيل hashes/events |
 | `scripts/tools-review.py` | مراجعة curation دون حذف أو promotion تلقائي |
+| `swarm-wrapper/` | تنسيق bounded multi-agent proposals وHuman Gate دون promotion |
+| `scripts/validate_swarm.py` | فحص مخرجات Swarm وحدودها وسجلها |
 
 ---
 
@@ -274,6 +285,7 @@ metadata:
 
 | الإصدار | التغيير |
 |---------|---------|
+| 0.4.2 | Bounded Investigation Swarm MVP · Team/Proposal/Conflict/Gate contracts · OpenMausBot adapter · vault validator |
 | 0.4.1 | Dynamic Tool Factory · External Decision Memory · compact recovery snapshots · audit health checks |
 | 0.4.0 | Native Format Contract + validator · Self-Tooling workspace/executor/audit/logs · fail-closed sandbox policy |
 | 0.3.1 | Series-Linkage · Enterprise-Map · Coverage-Ledger gaps schema · Agent run protocol (benchmark) |

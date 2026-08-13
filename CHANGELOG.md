@@ -1,5 +1,20 @@
 # Changelog — obsidian-investigation-brain
 
+## 0.4.2 — 2026-08-13
+
+### أضيف — Bounded Investigation Swarm MVP
+
+- `swarm-wrapper/models.py` يعرّف Team Manifest وAgent Spec وProposal وClaim وConflict وHuman Gate.
+- `swarm-wrapper/orchestrator.py` ينفذ fan-out محدوداً في `dry-run` أو عبر OpenMausBot loopback، مع source snapshot hash وtimeouts وfailures واضحة.
+- `swarm-wrapper/vault.py` يكتب proposals وconflicts وconsensus drafts وHuman Gates حصراً في `08-Tooling/Swarm/`، ولا يملك promotion API.
+- `scripts/validate_swarm.py` يدقق حدود المخرجات وrun identity وJSONL وHuman Gate دون لمس Evidence.
+- أضيف مثال manifest وقضية تدريبية واختبارات تغطي fan-out وconflicts وmissing bot ids ومحاولات الهروب من case-root.
+- أضيفت وثيقة `docs/INVESTIGATION_SWARM_MVP.md` وربطت الطبقة في README وSKILL وقائمة الإصدار.
+
+> اتفاق الوكلاء لا يصنع دليلاً مستقلاً. كل المخرجات Proposal/Analysis حتى يقرر المحقق البشري خلاف ذلك ضمن بروتوكول منفصل.
+
+---
+
 ## 0.4.1 — 2026-08-13
 
 ### أضيف — Dynamic Tool Factory + External Decision Memory

@@ -71,6 +71,9 @@
 - [ ] `case-logs/memory-snapshot.md` موجود ومحدّث للاستئناف.
 - [ ] الذاكرة لا تحتوي أسراراً ولا سلسلة تفكير خاماً ولا كل أوامر shell.
 - [ ] `audit_vault.py` يبلّغ `memory_invalid_lines` و`memory_snapshot_present` عند تفعيل tooling.
+- [ ] **عند استخدام Swarm Wrapper:** كل run في `08-Tooling/Swarm/` يملك `run.json` وproposals وconflicts وconsensus draft وHuman Gate واحداً.
+- [ ] **عند استخدام Swarm Wrapper:** لا يوجد Proposal أو consensus draft مرفوع إلى Evidence، و`python3 scripts/validate_swarm.py <vault> --team-id <team> --run-id <run>` يمر.
+- [ ] **عند استخدام OpenMausBot:** العنوان loopback فقط، وتبقى computer/Composio معطلة ما لم تعتمد السياسة البشرية خلاف ذلك.
 
 ## ز. التشغيل الآلي
 
@@ -82,6 +85,8 @@ python3 scripts/validate_obsidian_native.py /path/to/case-vault --strict
 python3 scripts/case_tooling.py init /path/to/case-vault --session-id SESSION-001
 python3 scripts/case_tooling.py validate /path/to/case-vault 08-Tooling/Manifests/TOOL-001.yaml
 python3 scripts/tools-review.py /path/to/case-vault
+python3 swarm-wrapper/run.py run --manifest swarm-wrapper/examples/team-manifest.yaml --vault-root /path/to/training-vault --run-id RUN-001
+python3 scripts/validate_swarm.py /path/to/training-vault --team-id TEAM-DEMO-001 --run-id RUN-001
 ```
 
 - Exit 0 = لا حرج

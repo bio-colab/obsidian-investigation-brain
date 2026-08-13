@@ -1,6 +1,6 @@
 # Investigation Benchmark v1 — global config
 version: "1.0.0"
-skill_version_target: "0.4.1"
+skill_version_target: "0.4.2"
 skill_root: ".."   # relative to this folder
 
 paths:

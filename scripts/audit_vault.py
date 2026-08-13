@@ -179,7 +179,7 @@ def audit_vault(vault: Path) -> dict[str, Any]:
         "evidence_count": 0,
         "hypothesis_count": 0,
         "coc_count": 0,
-        "skill_version_target": "0.4.1",
+        "skill_version_target": "0.4.2",
         "tooling_manifests": [],
         "tooling_audits": [],
         "memory_events": 0,
