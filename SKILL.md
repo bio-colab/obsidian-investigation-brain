@@ -1,16 +1,16 @@
 ---
 name: obsidian-investigation-brain
-description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز، مع طبقة Native Formats وSelf-Tooling معزولة قابلة للتتبع. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط، كشف فجوات، تشغيل أدوات تحليل مؤقتة، ومقاومة التحيز التأكيدي. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف والتحليل الآلي. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.4.0 — Native Formats + Self-Tooling + Series-Linkage + Enterprise-Map + Claim-Trace + Readiness.
+description: مِحَكّ الدماغ التحقيقي — بناء وإدارة vault أوبسيديان كمرجع تحقيقي موثوق مضاد للانحراف والتحيز، مع طبقة Native Formats وSelf-Tooling معزولة قابلة للتتبع. استخدم عند بناء قضية من نطاق وخطة تحقيق، إدارة أدلة وكيانات وفرضيات، سلسلة حفظ أدلة، خط زمني، لوحة خيوط، كشف فجوات، تشغيل أدوات تحليل مؤقتة، ومقاومة التحيز التأكيدي. تفصل صارماً بين Evidence المتحقق والفرضيات والاستكشاف والتحليل الآلي. تُكمّل obsidian-research-brain ولا تستبدلها. الإصدار 0.4.1 — Native Formats + Dynamic Tool Factory + External Decision Memory + Self-Tooling + Series-Linkage + Enterprise-Map + Claim-Trace + Readiness.
 metadata:
   type: workflow
-  version: "0.4.0"
+  version: "0.4.1"
   based-on: obsidian-research-brain@1.1.9
 ---
 
 # 🕵️ مِحَكّ الدماغ التحقيقي
 ## بناء وإدارة second brain تحقيقي + تنسيق تقرير القضية — فوق أوبسيديان
 
-**الإصدار:** 0.4.0 (Native Formats · Self-Tooling · Series-Linkage · Enterprise-Map · Ledger gaps schema · فوق 0.3.0 Claim-Trace/Readiness)
+**الإصدار:** 0.4.1 (Native Formats · Dynamic Tool Factory · External Decision Memory · Self-Tooling · Series-Linkage · Enterprise-Map · Ledger gaps schema · فوق 0.3.0 Claim-Trace/Readiness)
 **مبني على:** `obsidian-research-brain` v1.1.9
 
 ---
@@ -34,6 +34,8 @@ metadata:
 - ✅ **Claim Trace** يربط كل ادعاء جوهري في التقرير بأدلة.
 - ✅ Native Format Contract لصياغة Obsidian Markdown وJSON Canvas وBases، مع validator مستقل.
 - ✅ Self-Tooling للحالات: أدوات مؤقتة قابلة لإعادة التشغيل، manifests، audits، simulations، وسجل case خارجي.
+- ✅ Tool Factory خفيف يبني scaffold واحداً لكل سؤال، بدلاً من تثبيت مكتبة أدوات ضخمة مسبقاً.
+- ✅ External Decision Memory: `session.jsonl` للأحداث الملحوظة و`memory-snapshot.md` للاستئناف، دون حفظ سلسلة التفكير السرية.
 - ✅ عزل fail-closed: لا تشغيل للكود الذاتي التوليد على المضيف عند غياب Docker/Podman/bwrap، ولا شبكة افتراضياً.
 
 **ما لا تفعله:**
@@ -144,11 +146,13 @@ metadata:
 
 ### 4.3 طبقة ARC-style Self-Tooling
 
-يمكن للوكيل أن ينشئ parser أو analyzer أو linker أو simulator صغيراً داخل `08-Tooling/Active/`. يجب أن يملك كل tool manifest وTool-Audit، وأن يعمل عبر `scripts/case_tooling.py` داخل backend عازل عند توفره. غياب backend عازل يؤدي إلى skip fail-closed، لا إلى تنفيذ صامت على المضيف. التفاصيل في `references/self-tooling-protocol.md`.
+يمكن للوكيل أن ينشئ parser أو analyzer أو linker أو simulator صغيراً داخل `08-Tooling/Active/`. يبدأ ذلك عبر `scripts/tool_factory.py` الذي ينشئ scaffold واحداً وmanifest وaudit، ثم يُعدّل بأقل قدر ويُختبر على fixture صغير. يجب أن يعمل كل tool عبر `scripts/case_tooling.py` داخل backend عازل عند توفره. غياب backend عازل يؤدي إلى skip fail-closed، لا إلى تنفيذ صامت على المضيف. التفاصيل في `references/self-tooling-protocol.md`.
 
 ### 4.4 الذاكرة والسجل
 
-السجل الآلي في `case-logs/*.jsonl` يحفظ أحداث الجلسة وتشغيل الأدوات، بينما تبقى القرارات البشرية في `case-logs/decisions.md`. هذا السجل يشرح كيف نتجت المخرجات ولا يحل محل Evidence أو CoC.
+السجل الآلي في `case-logs/session.jsonl` يحفظ الأحداث الملحوظة: observation وdecision وuncertainty وnext-action وrefs، وتُفهرس تشغيلات الأدوات أيضاً في `case-logs/tool-runs.jsonl`. أما `case-logs/memory-snapshot.md` فهو عرض مختصر للاستئناف، لا نسخة من كامل السياق ولا سلسلة تفكير سرية. تبقى القرارات البشرية في `case-logs/decisions.md`. هذه السجلات تشرح كيف نتجت المخرجات ولا تحل محل Evidence أو CoC.
+
+لتسجيل قرار مهم أو استئناف جلسة استخدم `scripts/case_memory.py add/resume`. لا تسجل كل أمر shell؛ سجّل ما يغيّر الفرضية أو الاختيار أو الخطوة التالية.
 
 ---
 
@@ -270,6 +274,7 @@ metadata:
 
 | الإصدار | التغيير |
 |---------|---------|
+| 0.4.1 | Dynamic Tool Factory · External Decision Memory · compact recovery snapshots · audit health checks |
 | 0.4.0 | Native Format Contract + validator · Self-Tooling workspace/executor/audit/logs · fail-closed sandbox policy |
 | 0.3.1 | Series-Linkage · Enterprise-Map · Coverage-Ledger gaps schema · Agent run protocol (benchmark) |
 | 0.3.0 | Claim Trace Matrix · Readiness-Checklist · Court-File gate · audit: INFORMANT/WIRETAP/GROUP/COURT/CLAIM_TRACE · من بنشمارك v1 |

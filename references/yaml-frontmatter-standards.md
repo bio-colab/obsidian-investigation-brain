@@ -232,6 +232,21 @@ human-review: pending
 
 `case-logs/session.jsonl` و`case-logs/tool-runs.jsonl` سجلات تشغيل append-only. لا تُعامل كسلسلة حفظ؛ بل تحفظ command digest وhashes وexit code والقرارات التشغيلية التي تشرح كيفية إنتاج تحليل ما.
 
+### External Decision Memory — v0.4.1
+
+ملف `case-logs/memory-snapshot.md` يستخدم frontmatter خفيفاً:
+
+```yaml
+type: case-memory-snapshot
+status: working
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+append-source: case-logs/session.jsonl
+tags: [memory, trace]
+```
+
+أما أحداث `case-logs/session.jsonl` فهي JSONL وليست ملاحظات Evidence. يفضّل أن تحمل الأحداث المهمة `event_id` و`event` و`summary` و`observation` و`decision` و`uncertainty` و`next_action` و`confidence` و`refs`. لا تُسجل سلسلة التفكير السرية ولا الأسرار ولا كل أوامر shell. الذاكرة تشرح مسار القرار ولا ترفع `status` ولا تستبدل Chain-of-Custody.
+
 ### Native-format metadata
 
 يمكن للملاحظة أن تحمل `aliases` و`cssclasses` وخصائص Obsidian الأخرى. ملفات `.canvas` و`.base` لا تحمل frontmatter؛ تُفحص ببنية JSON/YAML عبر `scripts/validate_obsidian_native.py` قبل التدقيق المعرفي.

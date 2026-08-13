@@ -28,14 +28,18 @@ tags: [tooling, log, trace]
 كل سطر في `session.jsonl` كائن JSON يتضمن، قدر الإمكان:
 
 ```json
-{"ts":"YYYY-MM-DDTHH:MM:SSZ","event":"tool.run","session_id":"SESSION-000","tool_id":"TOOL-000","backend":"none","command_digest":"sha256:...","inputs":["sha256:..."],"outputs":["sha256:..."],"exit_code":0}
+{"ts":"YYYY-MM-DDTHH:MM:SSZ","event_id":"EV-000","event":"decision","session_id":"SESSION-000","summary":"...","observation":"...","decision":"...","uncertainty":"...","next_action":"...","confidence":"medium","refs":["[[Note]]"]}
 ```
 
 ## Durable decisions
 
-| الوقت | القرار | السبب | المراجع |
-|---|---|---|---|
-| | | | |
+| الوقت | القرار | الملاحظة/السبب | عدم اليقين | الخطوة التالية | المراجع |
+|---|---|---|---|---|---|
+| | | | | | |
+
+## Recovery
+
+استخدم `python3 scripts/case_memory.py resume <case-root> --last 12` لعرض snapshot مختصر. لا تطبع `session.jsonl` كاملاً داخل سياق الوكيل، ولا تسجل سلسلة التفكير السرية؛ سجّل فقط ما يمكن مراجعته من ملاحظة وقرار ومصدر وخطوة تالية.
 
 ## Redaction policy
 

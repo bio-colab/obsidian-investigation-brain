@@ -48,6 +48,45 @@ case-logs/
 
 لا يُسمح للأداة بالخروج من `case-root`. تُحظر الأسرار وملفات `.git` وبيئات المستخدم، ويُمرر `PATH` محدود. لا يُرفع أي ملف إلى الشبكة. إذا لم يتوفر runtime عازل، يخرج executor برسالة واضحة بدلاً من تنفيذ الكود على المضيف.
 
+## Tool Factory — بناء صغير لا عبء دائم
+
+يُستخدم `scripts/tool_factory.py` عندما لا تكفي الأدوات الموجودة. ينشئ الأمر scaffold واحداً صغيراً، وTool-Manifest، وTool-Audit، ويسجل سبب الإنشاء في الذاكرة الخارجية. لا يستدعي نموذجاً ولا ينفذ الكود؛ يترك للوكيل أو المحقق تعديل أقل جزء ممكن ثم إضافة fixture وتشغيله عبر `case_tooling.py`.
+
+```bash
+python3 scripts/tool_factory.py create <case-root> \\
+  --tool-id TOOL-INVOICE-001 \\
+  --kind analyzer \\
+  --question "detect repeated invoice patterns" \\
+  --input 08-Tooling/Fixtures/invoices.json
+```
+
+الهدف هو **أداة واحدة صغيرة لكل سؤال**، لا بناء مكتبة ضخمة مسبقاً. إذا لم يثبت scaffold فائدته في fixture صغير، يُؤرشف ولا يُوسع.
+
+## الذاكرة الخارجية
+
+السجل الكامل المهيكل هو `case-logs/session.jsonl`. يسجل الأحداث الملحوظة فقط: `summary` و`observation` و`decision` و`uncertainty` و`next_action` و`confidence` و`refs`، مع `event_id` ووقت التنفيذ. لا يسجل سلسلة التفكير السرية أو كل محتوى السياق.
+
+يُنشأ تلقائياً `case-logs/memory-snapshot.md` كواجهة استئناف مختصرة. عند بدء جلسة أو استئنافها:
+
+```bash
+python3 scripts/case_memory.py resume <case-root> --last 12
+```
+
+وعند اتخاذ قرار أو تسجيل ملاحظة مهمة:
+
+```bash
+python3 scripts/case_memory.py add <case-root> \\
+  --event-type decision \\
+  --summary "تأجيل توسيع parser" \\
+  --observation "fixture الأولي لا يغطي الحالات المركبة" \\
+  --decision "نبقي الأداة صغيرة ونضيف fixture واحداً" \\
+  --uncertainty "لم تُختبر مصادر متعددة بعد" \\
+  --next-action "إضافة fixture ثانٍ" \\
+  --ref 08-Tooling/Manifests/TOOL-INVOICE-001.md
+```
+
+تُسجل قرارات العمل المهمة فقط، لا كل أمر shell. هذا يجعل الذاكرة خفيفة ويمنح الوكيل نقطة استئناف قابلة للتدقيق من دون إغراق الـ vault أو السياق.
+
 ## Tool Manifest
 
 كل أداة تملك manifest يثبت:

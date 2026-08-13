@@ -61,6 +61,7 @@ ZONES = (
     "06-Outputs",
     "07-Cold-Case",
     "08-Tooling",
+    "case-logs",
     "90-Reference-Sources",
     "99-Attachments",
     "OTHER",
@@ -178,9 +179,12 @@ def audit_vault(vault: Path) -> dict[str, Any]:
         "evidence_count": 0,
         "hypothesis_count": 0,
         "coc_count": 0,
-        "skill_version_target": "0.4.0",
+        "skill_version_target": "0.4.1",
         "tooling_manifests": [],
         "tooling_audits": [],
+        "memory_events": 0,
+        "memory_invalid_lines": 0,
+        "memory_snapshot_present": False,
     }
 
     # Collected for post-pass checks (v0.3)
@@ -202,6 +206,48 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                 "code": "MISSING_CRITICAL_FILE",
                 "msg": f"ملف هيكلي مفقود: {rel}",
                 "path": rel,
+            })
+
+    # v0.4: optional external decision memory health. It becomes actionable
+    # only when the vault opted into 08-Tooling or case-logs.
+    memory_dir = vault / "case-logs"
+    session_path = memory_dir / "session.jsonl"
+    snapshot_path = memory_dir / "memory-snapshot.md"
+    opted_into_memory = (vault / "08-Tooling").is_dir() or memory_dir.is_dir()
+    if opted_into_memory:
+        result["memory_snapshot_present"] = snapshot_path.is_file()
+        if session_path.is_file():
+            for line in session_path.read_text(encoding="utf-8", errors="replace").splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    row = json.loads(line)
+                    if isinstance(row, dict):
+                        result["memory_events"] += 1
+                    else:
+                        result["memory_invalid_lines"] += 1
+                except json.JSONDecodeError:
+                    result["memory_invalid_lines"] += 1
+            if result["memory_invalid_lines"]:
+                result["issues"].append({
+                    "severity": "major",
+                    "code": "CASE_MEMORY_INVALID_JSONL",
+                    "msg": f"case-logs/session.jsonl يحوي {result['memory_invalid_lines']} سطر غير صالح",
+                    "path": "case-logs/session.jsonl",
+                })
+        else:
+            result["issues"].append({
+                "severity": "minor",
+                "code": "CASE_MEMORY_SESSION_MISSING",
+                "msg": "تم تفعيل tooling دون case-logs/session.jsonl",
+                "path": "case-logs/session.jsonl",
+            })
+        if not snapshot_path.is_file():
+            result["issues"].append({
+                "severity": "minor",
+                "code": "CASE_MEMORY_SNAPSHOT_MISSING",
+                "msg": "لا يوجد memory-snapshot.md للاستئناف المختصر",
+                "path": "case-logs/memory-snapshot.md",
             })
 
     known_names = collect_note_basenames(vault)
@@ -642,6 +688,8 @@ def render_markdown(res: dict[str, Any], score: dict[str, int]) -> str:
     lines.append(f"**المسار:** `{res['vault']}`")
     lines.append(f"**إجمالي الملاحظات:** {res['notes_total']}")
     lines.append(f"**أدلة:** {res['evidence_count']} · **سجلات CoC:** {res['coc_count']} · **فرضيات:** {res['hypothesis_count']}")
+    if "memory_events" in res:
+        lines.append(f"**External memory:** events={res['memory_events']} · invalid={res['memory_invalid_lines']} · snapshot={'yes' if res['memory_snapshot_present'] else 'no'}")
     if res.get("native_validation"):
         native = res["native_validation"]
         lines.append(f"**Native formats:** errors={native.get('errors', 0)} · warnings={native.get('warnings', 0)}")

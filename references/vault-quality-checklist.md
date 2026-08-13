@@ -67,6 +67,10 @@
 - [ ] توجد Simulation-Run عند استخدام simulator قبل قرار تحليلي مهم.
 - [ ] `case-logs/tool-runs.jsonl` و`case-logs/session.jsonl` منقحان من الأسرار.
 - [ ] promotion إلى `08-Tooling/Library/` موثق بمراجعة بشرية.
+- [ ] `case-logs/session.jsonl` صالح JSONL، وكل قرار مهم يحمل summary/decision/uncertainty/next-action/refs.
+- [ ] `case-logs/memory-snapshot.md` موجود ومحدّث للاستئناف.
+- [ ] الذاكرة لا تحتوي أسراراً ولا سلسلة تفكير خاماً ولا كل أوامر shell.
+- [ ] `audit_vault.py` يبلّغ `memory_invalid_lines` و`memory_snapshot_present` عند تفعيل tooling.
 
 ## ز. التشغيل الآلي
 

@@ -25,6 +25,12 @@ try:
 except ImportError:  # pragma: no cover
     yaml = None  # type: ignore
 
+try:
+    from case_memory import append_event as append_memory_event, write_snapshot as write_memory_snapshot
+except ImportError:  # pragma: no cover
+    append_memory_event = None  # type: ignore
+    write_memory_snapshot = None  # type: ignore
+
 WRITE_PREFIXES = ("08-Tooling", "05-Analysis", "02b-Exploration", "case-logs")
 DEFAULT_RUNTIME = "python3"
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
@@ -62,6 +68,15 @@ def relative(root: Path, path: Path) -> str:
 
 
 def append_event(case_root: Path, event: str, **payload: Any) -> None:
+    if append_memory_event is not None:
+        append_memory_event(
+            case_root,
+            event,
+            tool_event=event.startswith("tool."),
+            **payload,
+        )
+        return
+    # Compatibility fallback for a copied standalone case_tooling.py.
     log_dir = case_root / "case-logs"
     log_dir.mkdir(parents=True, exist_ok=True)
     row = {"ts": now(), "event": event, **payload}
@@ -134,6 +149,8 @@ def init_case(case_root: Path, session_id: str) -> None:
             encoding="utf-8",
         )
     append_event(case_root, "session.init", session_id=session_id, case_root_path=str(case_root.resolve()))
+    if write_memory_snapshot is not None:
+        write_memory_snapshot(case_root)
     print(f"initialized tooling workspace: {case_root}")
 
 

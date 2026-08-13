@@ -110,10 +110,11 @@ Case-Vault-XXXX/
     ├── Documents/
     └── Raw-Exports/
 
-case-logs/                                     # سجل جلسة وأحداث الأدوات خارج Evidence
-├── session.jsonl
-├── tool-runs.jsonl
-├── decisions.md
+case-logs/                                     # سجل جلسة وذاكرة قرار خارج Evidence
+├── session.jsonl                              # المصدر append-only للأحداث الملحوظة
+├── tool-runs.jsonl                            # فهرس تشغيلات الأدوات
+├── memory-snapshot.md                         # واجهة استئناف مختصرة
+├── decisions.md                               # قرارات بشرية وترقيات/رفض
 └── redactions.md
 ```
 
@@ -129,5 +130,6 @@ case-logs/                                     # سجل جلسة وأحداث ا
 - **Group-Entity**: للضحايا/الركاب المتعددين غير المسمّين أو الجزئيين.
 - **Vessel / Aircraft**: تُسجَّل تحت Vehicles مع حقول متخصصة (IMO / N-number / flag-state / type-certificate).
 - `08-Tooling` لا يُعامل كEvidence؛ مخرجاته Analysis/Exploration حتى Human Gate.
-- `case-logs` سجل تشغيل قابل للتتبع وليس بديلاً عن Chain-of-Custody.
-- أي أداة جديدة تُوثَّق في Tool-Manifest وTool-Audit، وأي مجلد جديد يُوثَّق في Meta/Changelog.md.
+- `case-logs` سجل تشغيل وقرار قابل للتتبع وليس بديلاً عن Chain-of-Custody.
+- `memory-snapshot.md` ملخص استئناف، لا سجل chain-of-thought ولا Evidence.
+- الأداة الجديدة تبدأ من `scripts/tool_factory.py`، ثم تُوثَّق في Tool-Manifest وTool-Audit، وأي مجلد جديد يُوثَّق في Meta/Changelog.md.

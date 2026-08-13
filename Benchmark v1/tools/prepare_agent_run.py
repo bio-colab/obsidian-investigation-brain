@@ -32,10 +32,12 @@ You are building an Obsidian investigation vault using **obsidian-investigation-
 6. Reports need `claim-trace`; Court-File forbidden unless readiness-passed.
 7. Organized crime → consider Enterprise-Map. Serial patterns → consider Series-Linkage.
 8. Declare gaps in Coverage-Ledger (`gaps:` YAML preferred).
-9. If a packet-specific parser/analyzer/simulator is needed, create it only under `08-Tooling/Active/` and record a Tool-Manifest.
+9. If a packet-specific parser/analyzer/simulator is needed, create it with `scripts/tool_factory.py`, keep it under `08-Tooling/Active/`, and record a Tool-Manifest.
 10. Run self-tooling only through `scripts/case_tooling.py`; default is fail-closed when no Docker/Podman/bwrap backend exists.
 11. Keep tool output in `08-Tooling/Runs/`, `05-Analysis/`, or `02b-Exploration/`; never write to `01-Evidence` or raise status automatically.
 12. Record tool runs in `case-logs/tool-runs.jsonl` and create Tool-Audit before promotion or report use.
+13. At session start, read `case-logs/memory-snapshot.md`; after a meaningful decision, append a compact event with `scripts/case_memory.py add`.
+14. Record observations, decisions, uncertainty, references, and next actions only; do not dump hidden chain-of-thought or every shell command.
 
 ## Deliverable
 Write the full vault under the sibling folder `../vault/` (created by you).
@@ -81,7 +83,7 @@ def main() -> int:
         "## Next",
         "1. Run agent per case using agent_input only.",
         "2. Write vault to `.../<case_id>/vault/`.",
-        "3. If tooling is used, keep `08-Tooling/` and `case-logs/` inside the vault and preserve manifests/audits.",
+        "3. If tooling is used, keep `08-Tooling/` and `case-logs/` inside the vault and preserve manifests/audits and `memory-snapshot.md`.",
         "4. Score with `--producer agent`.",
         "",
         "See `docs/AGENT_RUN_PROTOCOL.md`.",

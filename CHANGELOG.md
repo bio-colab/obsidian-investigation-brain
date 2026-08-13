@@ -1,5 +1,20 @@
 # Changelog — obsidian-investigation-brain
 
+## 0.4.1 — 2026-08-13
+
+### أضيف — Dynamic Tool Factory + External Decision Memory
+
+- `scripts/tool_factory.py` ينشئ scaffold صغيراً لكل سؤال تحليلي مع manifest وaudit، دون تنفيذ أو استدعاء نموذج، لتطبيق build-small/discard-early.
+- `scripts/case_memory.py` يضيف أحداثاً مهيكلة إلى `case-logs/session.jsonl` ويولد `memory-snapshot.md` للاستئناف دون حفظ سلسلة التفكير السرية أو كل أوامر shell.
+- `case_tooling.py` يربط تشغيل الأدوات بسجل الجلسة، ويدعم snapshot أولياً عند init.
+- `audit_vault.py` يفحص JSONL وصحة snapshot عند تفعيل tooling، ويبلغ events وinvalid lines وsnapshot presence دون كسر vaults القديمة التي لا تستخدم الطبقة.
+- baseline builder وAgent Run Protocol وREADME وSKILL وقائمة الجودة محدثة لتطبيق المسار الجديد.
+- أضيفت اختبارات factory وdecision memory، وارتفعت حزمة regression إلى 10 اختبارات.
+
+> الذاكرة الجديدة تسجل قرارات وملاحظات قابلة للمراجعة، لا chain-of-thought خاماً. والأداة المؤقتة تبقى Analysis/Exploration حتى Human Gate.
+
+---
+
 ## 0.4.0 — 2026-08-13
 
 ### أضيف — Surgical Integration

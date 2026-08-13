@@ -30,9 +30,11 @@
 6. **Human Gate.** لا تعتمد فرضية قوية أو تقريراً نهائياً دون مرور بـ `pending-human-review` ثم موافقة بشرية.
 7. **العرض ≠ الحقيقة.** Canvas و Dashboard وBases أدوات عمل. الحقيقة في الملفات + YAML + Ledger.
 8. **Native formats.** استخدم wikilinks للملاحظات الداخلية، تحقق من JSON Canvas وBases، ولا تخفِ ادعاءً جوهرياً في عرض بصري.
-9. **Self-Tooling.** أي parser/analyzer/simulator جديد يعيش في `08-Tooling/Active/` مع Tool-Manifest وTool-Audit.
-10. **Fail-closed.** شغّل الأدوات عبر `scripts/case_tooling.py`؛ عند غياب backend عازل لا تشغّل الكود على المضيف.
-11. **سجل القضية.** اكتب أحداث التشغيل في `case-logs/`، ولا تعاملها كبديل عن Evidence أو Chain-of-Custody.
+9. **Self-Tooling.** أنشئ parser/analyzer/simulator جديداً عبر `scripts/tool_factory.py`، ثم اتركه في `08-Tooling/Active/` مع Tool-Manifest وTool-Audit.
+10. **Build small, discard early.** اختبر scaffold على fixture صغير قبل إضافة تعقيد؛ إذا لم يفد فاسجّل سبب الأرشفة ولا توسّعه.
+11. **Fail-closed.** شغّل الأدوات عبر `scripts/case_tooling.py`؛ عند غياب backend عازل لا تشغّل الكود على المضيف.
+12. **الذاكرة الخارجية.** سجّل observation/decision/uncertainty/next-action/refs عبر `scripts/case_memory.py`، ولا تسجل سلسلة التفكير السرية أو كل أمر shell.
+13. **سجل القضية.** اكتب أحداث التشغيل في `case-logs/`، ولا تعاملها كبديل عن Evidence أو Chain-of-Custody.
 
 ---
 
@@ -80,6 +82,7 @@
 - سجّل قرارات النطاق والرفض والترقية في Changelog.
 - شغّل `scripts/validate_obsidian_native.py` قبل `scripts/audit_vault.py` عند تعديل `.md` البنيوي أو `.canvas` أو `.base`.
 - سجّل tool runs وhashes وexit codes، وأنشئ Simulation-Run قبل الالتزام بتحليل تنبؤي.
+- عند استئناف جلسة اقرأ `case-logs/memory-snapshot.md` أو شغّل `scripts/case_memory.py resume` قبل اتخاذ قرار جديد.
 
 ## 7. ما يُمنع على الوكيل
 

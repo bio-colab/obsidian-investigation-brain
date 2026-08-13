@@ -2,7 +2,7 @@
 
 مهارة (Skill) لبناء وإدارة **vault أوبسيديان** كمرجع تحقيقي موثوق مضاد للانحراف والتحيز.
 
-**الإصدار:** 0.4.0
+**الإصدار:** 0.4.1
 **مبني على:** [Obsidian Research Brain Skill](https://github.com/bio-colab/obsidian-research-brain-skill) (v1.1.9)
 
 ### شفافية البنشمارك (يُرجى القراءة قبل تفسير أي درجات)
@@ -39,6 +39,8 @@
 - **Series-Linkage** / **Enterprise-Map** (v0.3.1) لأنماط التسلسل والجريمة المنظمة
 - **Native Format Contract** لـ Markdown وJSON Canvas وBases وCLI، مع `validate_obsidian_native.py`
 - **Self-Tooling** لحالة القضية: أدوات مؤقتة، manifests، simulations، Tool-Audits، وcase logs
+- **Dynamic Tool Factory** لبناء scaffold صغير لكل سؤال تحليلي، مع discard-early بدلاً من مكتبة ضخمة
+- **External Decision Memory** مع decision trace وmemory snapshot للاستئناف والتدقيق
 - **Timeline-first** · **Human Gate** · **Gap Intelligence**
 - Canvas كبروتوكولات عمل + `audit_vault.py` (قواعد v0.4+)
 - حزام بنشمارك اختياري: `Benchmark v1/` (30 قضية تدريبية + مقيّم)
@@ -51,8 +53,9 @@
 2. الوكيل يعمل بـ **الوضع أ (Scaffold)**.
 3. أضف الأدلة والكيانات والفرضيات في **الوضع ب** — Evidence فقط بأدلة حقيقية + سلسلة حفظ + Human Gate عند الحاجة.
 4. للتدقيق: **الوضع ج** أو شغّل `scripts/audit_vault.py`.
-5. عند الحاجة إلى أداة تحليل مخصصة: أنشئها داخل `08-Tooling/Active/`، اكتب manifest، وشغّلها عبر `scripts/case_tooling.py`؛ التنفيذ fail-closed عند غياب backend عازل.
-6. لإنتاج تقرير: **الوضع د (Reporting)**.
+5. عند الحاجة إلى أداة تحليل مخصصة: أنشئ scaffold عبر `scripts/tool_factory.py`، أضف fixture صغيراً، ثم شغّله عبر `scripts/case_tooling.py`؛ التنفيذ fail-closed عند غياب backend عازل.
+6. عند اتخاذ قرار أو استئناف جلسة استخدم `scripts/case_memory.py add/resume`؛ يسجل القرار المختصر ولا يسجل سلسلة التفكير السرية.
+7. لإنتاج تقرير: **الوضع د (Reporting)**.
 
 **دليل مبسّط للمحقق:** [`references/guide-for-investigator.md`](references/guide-for-investigator.md)
 **وثيقة الدمج التفصيلية:** [`docs/SELF_TOOLING_INTEGRATION.md`](docs/SELF_TOOLING_INTEGRATION.md)
@@ -85,6 +88,8 @@ obsidian-investigation-brain/
     ├── audit_vault.py                # تدقيق حتمي معرفي
     ├── validate_obsidian_native.py   # تدقيق الصيغ الأصلية
     ├── case_tooling.py               # executor/manifest/logs
+    ├── tool_factory.py               # scaffold صغير لكل سؤال تحليلي
+    ├── case_memory.py                # decision trace + memory snapshot
     └── tools-review.py               # curation دون حذف تلقائي
 ```
 
@@ -96,7 +101,8 @@ obsidian-investigation-brain/
 |---|---|---|
 | Obsidian Native Formats | كتابة Markdown وCanvas وBases وتشغيل CLI اختيارياً | لا تثبت صحة المعرفة |
 | Investigation Brain | Evidence، provenance، hypotheses، timeline، readiness | لا ينفذ كوداً ذاتياً غير معزول |
-| ARC-style Self-Tooling | بناء parsers/analyzers/simulators وقت الحاجة | لا يكتب Evidence ولا يرفع status تلقائياً |
+| ARC-style Self-Tooling | بناء parsers/analyzers/simulators وقت الحاجة عبر Tool Factory | لا يكتب Evidence ولا يرفع status تلقائياً |
+| External Decision Memory | session.jsonl وmemory-snapshot للاستئناف والتدقيق | لا يحفظ chain-of-thought الخام ولا يحل محل Evidence |
 
 تفاصيل العقد في [`references/native-format-contract.md`](references/native-format-contract.md) و[`references/self-tooling-protocol.md`](references/self-tooling-protocol.md).
 

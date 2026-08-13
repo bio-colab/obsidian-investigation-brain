@@ -1186,8 +1186,12 @@ tags: [scaffold, gaps]
         {"type": "tooling-readme", "status": "verified", "created": TODAY, "updated": TODAY, "tags": ["tooling"]},
         "# Case Tooling\n\nTools are optional, case-scoped, and never Evidence. Use Tool-Manifest, Tool-Audit, and the fail-closed executor.\n",
     ))
-    write_text(vault / "case-logs/session.jsonl", "")
+    write_text(vault / "case-logs/session.jsonl", json.dumps({"ts": TODAY + "T00:00:00Z", "event_id": "EV-SCAFFOLD", "event": "session.init", "session_id": case_id, "summary": "baseline vault initialized", "uncertainty": "no agent session has run yet", "next_action": "read AGENTS and Case-Scope"}, ensure_ascii=False) + "\n")
     write_text(vault / "case-logs/tool-runs.jsonl", "")
+    write_text(vault / "case-logs/memory-snapshot.md", fm(
+        {"type": "case-memory-snapshot", "status": "working", "created": TODAY, "updated": TODAY, "append-source": "case-logs/session.jsonl", "tags": ["memory", "trace"]},
+        "# External Decision Memory\n\n> This is a compact decision trace, not hidden chain-of-thought and not Evidence.\n\n| Time | Event | Summary | Decision | Uncertainty | Next action | References |\n|---|---|---|---|---|---|---|\n| " + TODAY + " | session.init | baseline vault initialized | — | no agent session yet | read AGENTS and Case-Scope | — |\n",
+    ))
     write_text(vault / "case-logs/decisions.md", fm(
         {"type": "case-log", "status": "draft", "created": TODAY, "updated": TODAY, "case-id": case_id, "tags": ["log", "decisions"]},
         f"# Case Decisions — {case_id}\n\n| time | decision | reason | references |\n|---|---|---|---|\n",

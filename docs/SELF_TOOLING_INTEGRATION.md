@@ -16,11 +16,24 @@
 
 ## دورة تشغيل الأداة
 
-يبدأ الوكيل بسؤال تحليلي محدد ومدخلات معلنة. إذا لم تكفِ الأدوات الموجودة، ينشئ ملفاً داخل `08-Tooling/Active/`، ثم يكتب manifest يحدد runtime وentrypoint وinputs وwrites-to وnetwork. قبل التشغيل، يفحص `case_tooling.py validate` manifest ويمنع أي مسار خارج case-root أو خارج مناطق الكتابة المسموحة.
+يبدأ الوكيل بسؤال تحليلي محدد ومدخلات معلنة. إذا لم تكفِ الأدوات الموجودة، يستدعي `scripts/tool_factory.py` لينشئ scaffold صغيراً وmanifest وaudit. بعدها يعدّل أقل جزء ممكن، يضيف fixture صغيراً، ويكتب manifest يحدد runtime وentrypoint وinputs وwrites-to وnetwork. قبل التشغيل، يفحص `case_tooling.py validate` manifest ويمنع أي مسار خارج case-root أو خارج مناطق الكتابة المسموحة.
 
 بعد ذلك تُنفذ الأداة داخل Docker أو Podman أو bubblewrap مع شبكة مغلقة وcase-root للقراءة فقط، ولا تُفتح للكتابة إلا المسارات المعلنة. إذا لم يتوفر backend عازل، يسجل executor حدث `tool.run.skipped` ويخرج بحالة واضحة بدلاً من تنفيذ الكود على المضيف. يمكن استخدام `--allow-host` فقط في تطوير محلي مقصود، وليس في تشغيل قضية أو Benchmark.
 
-يسجل التشغيل command digest وhashes للمدخلات والمخرجات وexit code وملخص stdout/stderr في `case-logs/tool-runs.jsonl`، ويكتب audit JSON في `08-Tooling/Audits/`. إذا كان الناتج تنبؤياً أو سيغيّر قراراً تحليلياً، تنشأ `Simulation-Run` قبل الالتزام. لا تُرقّى الأداة إلى Library ولا تُستخدم في تقرير معتمد دون Human Gate.
+يسجل التشغيل command digest وhashes للمدخلات والمخرجات وexit code وملخص stdout/stderr في `case-logs/tool-runs.jsonl`، ويكتب audit JSON في `08-Tooling/Audits/`. ويسجل factory حدث `tool.scaffold` في `case-logs/session.jsonl` كي يعرف المستأنف لماذا ظهرت الأداة وما الخطوة التالية. إذا كان الناتج تنبؤياً أو سيغيّر قراراً تحليلياً، تنشأ `Simulation-Run` قبل الالتزام. لا تُرقّى الأداة إلى Library ولا تُستخدم في تقرير معتمد دون Human Gate.
+
+## الذاكرة الخارجية والاستئناف
+
+`case-logs/session.jsonl` هو السجل append-only للأحداث الملحوظة، وليس مستودعاً لسلسلة التفكير السرية. ينبغي أن تحتوي الأحداث المهمة على `summary` و`observation` و`decision` و`uncertainty` و`next_action` و`confidence` و`refs`. يولّد `scripts/case_memory.py` ملف `memory-snapshot.md` من آخر الأحداث، فيستطيع الوكيل استئناف العمل دون إعادة قراءة سجل ضخم أو تخمين ما حدث.
+
+```bash
+python3 scripts/case_memory.py resume /path/to/case-vault --last 12
+python3 scripts/case_memory.py add /path/to/case-vault --event-type decision \\
+  --summary "..." --observation "..." --decision "..." \\
+  --uncertainty "..." --next-action "..." --ref "[[Note]]"
+```
+
+تُحفظ القرارات ذات القيمة فقط؛ لا يُسجل كل أمر shell. هذه الموازنة تعطي trace مفيداً عند الخطأ من دون تحويل vault إلى transcript أو عبء token.
 
 ## مناطق الكتابة
 
@@ -44,6 +57,11 @@ python3 scripts/validate_obsidian_native.py /path/to/case-vault --strict
 
 # فحص manifest Markdown أو YAML
 python3 scripts/case_tooling.py validate /path/to/case-vault 08-Tooling/Manifests/TOOL-001.md
+
+# إنشاء scaffold صغير عند الحاجة
+python3 scripts/tool_factory.py create /path/to/case-vault \
+  --tool-id TOOL-INVOICE-001 --kind analyzer \
+  --question "detect repeated invoice patterns"
 
 # تشغيل مع fail-closed تلقائي
 python3 scripts/case_tooling.py run /path/to/case-vault \

@@ -8,7 +8,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import case_memory  # noqa: E402
 import case_tooling  # noqa: E402
+import tool_factory  # noqa: E402
 import validate_obsidian_native  # noqa: E402
 
 
@@ -76,6 +78,48 @@ def test_markdown_manifest_is_supported(tmp_path: Path) -> None:
     )
     assert case_tooling.load_manifest(manifest)["tool-id"] == "TOOL-001"
     assert case_tooling.validate_manifest(tmp_path, manifest) == []
+
+
+def test_tool_factory_creates_small_scaffold_and_trace(tmp_path: Path) -> None:
+    case_tooling.init_case(tmp_path, "SESSION-FACTORY")
+    tool_factory.create(
+        Namespace(
+            case_root=str(tmp_path),
+            tool_id="TOOL-FACTORY-001",
+            kind="analyzer",
+            question="find repeatable patterns",
+            input=[],
+            write_to=["08-Tooling/Runs/"],
+            force=False,
+        )
+    )
+    manifest = tmp_path / "08-Tooling/Manifests/TOOL-FACTORY-001.md"
+    assert (tmp_path / "08-Tooling/Active/TOOL-FACTORY-001.py").is_file()
+    assert manifest.is_file()
+    assert case_tooling.validate_manifest(tmp_path, manifest) == []
+    events, invalid = case_memory.read_events(tmp_path)
+    assert invalid == 0
+    assert any(row.get("event") == "tool.scaffold" for row in events)
+    assert (tmp_path / "case-logs/memory-snapshot.md").is_file()
+
+
+def test_memory_snapshot_records_decision_fields(tmp_path: Path) -> None:
+    case_tooling.init_case(tmp_path, "SESSION-MEMORY")
+    case_memory.append_event(
+        tmp_path,
+        "memory.decision",
+        summary="keep the parser small",
+        observation="fixture is incomplete",
+        decision="do not expand yet",
+        uncertainty="multi-source behavior is untested",
+        next_action="add one fixture",
+        refs=["08-Tooling/Fixtures/sample.json"],
+    )
+    path = case_memory.write_snapshot(tmp_path)
+    text = path.read_text(encoding="utf-8")
+    assert "keep the parser small" in text
+    assert "add one fixture" in text
+    assert "not a dump of hidden chain-of-thought" in text
 
 
 def test_executor_is_fail_closed_without_backend(tmp_path: Path) -> None:

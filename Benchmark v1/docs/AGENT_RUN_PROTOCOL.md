@@ -31,6 +31,7 @@ results/runs/<run_id>/<case_id>/vault/
   08-Tooling/Audits/...
   case-logs/session.jsonl
   case-logs/tool-runs.jsonl
+  case-logs/memory-snapshot.md
   ...
 results/runs/<run_id>/<case_id>/agent_log.md   # optional short process log
 ```
@@ -80,11 +81,11 @@ Before finishing a case vault:
 - [ ] Tool execution was skipped or isolated when no sandbox backend was available
 - [ ] Simulation results remain Analysis/Exploration until Human Gate
 
-## 7. Self-tooling protocol
+## 7. Self-tooling and external memory protocol
 
-A free-form agent may create a small parser, analyzer, linker, or simulator when the packet requires it. The tool must live under `08-Tooling/Active/`, have a `Tool-Manifest`, and be executed through `scripts/case_tooling.py`. The executor is fail-closed: with no Docker, Podman, or bubblewrap it records a skipped run rather than executing on the host. Tool outputs are analysis artifacts, never direct Evidence, and a Tool-Audit plus Human Gate are required before promotion or use in an approved report.
+A free-form agent may create a small parser, analyzer, linker, or simulator when the packet requires it. Start with `scripts/tool_factory.py` so the tool has a bounded scaffold, manifest, and audit stub. The tool must live under `08-Tooling/Active/` and be executed through `scripts/case_tooling.py`. The executor is fail-closed: with no Docker, Podman, or bubblewrap it records a skipped run rather than executing on the host. Tool outputs are analysis artifacts, never direct Evidence, and a Tool-Audit plus Human Gate are required before promotion or use in an approved report.
 
-The durable process record belongs in `case-logs/session.jsonl` and `case-logs/tool-runs.jsonl`. Do not treat those logs as Chain-of-Custody; they explain how an analysis was produced.
+The durable process record belongs in `case-logs/session.jsonl` and `case-logs/tool-runs.jsonl`; `case-logs/memory-snapshot.md` is the compact recovery view. After a meaningful decision, append a structured event with `scripts/case_memory.py add` containing the observation, decision, uncertainty, next action, and references. Do not treat these logs as Chain-of-Custody, and do not record hidden chain-of-thought or every shell command.
 
 ## 8. Suggested first agent batch (10)
 
