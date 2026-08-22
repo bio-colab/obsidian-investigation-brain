@@ -208,7 +208,10 @@ class CaseVault:
         body.extend(["", "## Claims to review", "", "| Agent | Claim ID | Text | Supporting refs | Counter refs |", "|---|---|---|---|---|"])
         for proposal in proposals_list:
             for claim in proposal.claims:
-                body.append(f"| {proposal.agent_id} | {claim.claim_id} | {claim.text.replace('|', '\\|')} | {', '.join(claim.supporting_refs) or '—'} | {', '.join(claim.counter_refs) or '—'} |")
+                escaped_text = claim.text.replace("|", "\\|")
+                supporting_refs = ", ".join(claim.supporting_refs) or "—"
+                counter_refs = ", ".join(claim.counter_refs) or "—"
+                body.append(f"| {proposal.agent_id} | {claim.claim_id} | {escaped_text} | {supporting_refs} | {counter_refs} |")
         body.extend(["", "## Required human decisions", "", "- Are any claims supported by source notes rather than agent assertions?", "- Are counter-hypotheses substantive and represented?", "- Are jurisdiction and limitations explicit?", "- Which gaps must remain open?", ""])
         draft.write_text("\n".join(body), encoding="utf-8")
         gate_path = run / "human-gates" / f"{gate.gate_id}.md"

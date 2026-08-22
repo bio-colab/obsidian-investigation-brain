@@ -296,6 +296,7 @@ def run_tool(args: argparse.Namespace) -> int:
     record.update({"finished_at": now(), "output_hash_before": output_before, "output_hash_after": sha256_path(output_dir)})
     append_event(case_root, "tool.run.finish", **record)
     audit_path = case_root / "08-Tooling" / "Audits" / f"{run_id}.json"
+    audit_path.parent.mkdir(parents=True, exist_ok=True)
     audit_path.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: record[k] for k in ("run_id", "tool_id", "backend", "exit_code", "entrypoint", "output_dir")}, ensure_ascii=False, indent=2))
     return int(record["exit_code"])
