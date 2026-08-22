@@ -4,6 +4,7 @@ import json
 import sys
 from argparse import Namespace
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -198,18 +199,19 @@ def test_executor_is_fail_closed_without_backend(tmp_path: Path) -> None:
         "tool-id: TOOL-001\nversion: 0.1.0\nentrypoint: 08-Tooling/Active/tool.py\nnetwork: denied\nwrites-to: [08-Tooling/Runs/]\n",
         encoding="utf-8",
     )
-    code = case_tooling.run_tool(
-        Namespace(
-            case_root=str(tmp_path),
-            manifest=str(manifest),
-            backend="auto",
-            allow_host=False,
-            run_id="RUN-TEST",
-            output_dir="08-Tooling/Runs",
-            timeout=10,
-            tool_arg=[],
+    with patch.object(case_tooling.shutil, "which", return_value=None):
+        code = case_tooling.run_tool(
+            Namespace(
+                case_root=str(tmp_path),
+                manifest=str(manifest),
+                backend="auto",
+                allow_host=False,
+                run_id="RUN-TEST",
+                output_dir="08-Tooling/Runs",
+                timeout=10,
+                tool_arg=[],
+            )
         )
-    )
     assert code == 3
     log = tmp_path / "case-logs" / "tool-runs.jsonl"
     assert log.exists()
