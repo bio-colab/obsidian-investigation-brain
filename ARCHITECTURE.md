@@ -122,7 +122,7 @@ python3 scripts/validate_swarm.py /path/to/training-vault \
 | تضيف أداة مؤقتة | `references/self-tooling-protocol.md` ثم `scripts/tool_factory.py` |
 | تختبر Swarm | `docs/INVESTIGATION_SWARM_MVP.md` ثم `swarm-wrapper/README.md` |
 | تطور المشروع | `DEVELOPMENT.md` و`CONTRIBUTING.md` |
-| تفسر Benchmark | `docs/BENCHMARK_TRANSPARENCY.md` و`Benchmark v1/docs/BENCHMARK_SPEC.md` |
+| تفسر Benchmark | `docs/BENCHMARK_TRANSPARENCY.md` و[`BENCHMARK_SPEC.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/BENCHMARK_SPEC.md) |
 
 ## حدود مهمة
 

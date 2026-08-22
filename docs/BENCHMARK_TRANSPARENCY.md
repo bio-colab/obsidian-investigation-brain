@@ -10,9 +10,9 @@
 | المكوّن | الموقع | الدور |
 |---------|--------|--------|
 | المهارة (Skill) | `SKILL.md` + `references/` + `assets/templates/` + `scripts/audit_vault.py` | بروتوكول بناء/تدقيق vault تحقيقي |
-| حزام البنchmark | `Benchmark v1/` | حزم قضايا + مقيّم + تشغيلات |
-| خطة الإصلاح | `Benchmark v1/docs/REFORM_PLAN_FROM_BENCHMARK.md` | تحويل نتائج القياس إلى backlog |
-| بروتوكول الوكيل | `Benchmark v1/docs/AGENT_RUN_PROTOCOL.md` | مسار agent منفصل عن baseline |
+| حزام البنchmark | [المستودع المستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark) | حزم قضايا + مقيّم + تشغيلات |
+| خطة الإصلاح | [`REFORM_PLAN_FROM_BENCHMARK.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/REFORM_PLAN_FROM_BENCHMARK.md) | تحويل نتائج القياس إلى backlog |
+| بروتوكول الوكيل | [`AGENT_RUN_PROTOCOL.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/AGENT_RUN_PROTOCOL.md) | مسار agent منفصل عن baseline |
 
 ---
 
@@ -28,7 +28,7 @@
 
 Evidence coverage · Source provenance · Hypothesis coverage · Counter quality · Timeline · Contradiction · Missing-evidence · False inference · Confirmation-bias · Report traceability · Readiness-gate · Conclusion calibration  
 
-التعاريف: `Benchmark v1/docs/BENCHMARK_SPEC.md`، والأوزان والصيغ التنفيذية: `Benchmark v1/rubrics/scoring.yaml`.
+التعاريف: [`BENCHMARK_SPEC.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/BENCHMARK_SPEC.md)، والأوزان والصيغ التنفيذية: [`scoring.yaml`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/rubrics/scoring.yaml).
 
 #### 2.2.1 المنهجية التنفيذية والأوزان
 
@@ -82,8 +82,7 @@ Evidence coverage · Source provenance · Hypothesis coverage · Counter quality
 | `run-v03-smoke` / `run-v031-p1` | 2–5 | baseline | ~1.00 | تحقق بعد إصلاحات 0.3.x |
 | Fixtures good/bad | — | synthetic | good ≫ bad | وحدة المقيّم |
 
-المخرجات التفصيلية تحت: `Benchmark v1/results/runs/`  
-(قد تُستثنى بعض مجلدات النتائج من النشر؛ المنهجية تبقى موثّقة هنا.)
+المخرجات التفصيلية تُحفظ محلياً تحت `results/runs/` في مستودع Benchmark المستقل، ولا تُحفظ داخل core. قد تُستثنى بعض مجلدات النتائج من النشر؛ المنهجية تبقى موثّقة هنا.
 
 ### 3.1 إشارات كمية مفيدة (حتى مع سقف baseline)
 
@@ -134,8 +133,9 @@ Evidence coverage · Source provenance · Hypothesis coverage · Counter quality
 ## 6) كيف تعيد إنتاج القياس؟
 
 ```powershell
-cd "Benchmark v1"
-pip install -r requirements.txt
+git clone https://github.com/bio-colab/obsidian-investigation-brain-benchmark.git benchmark
+cd benchmark
+python3 -m pip install -r requirements-dev.txt
 python tools/check_environment.py
 python tools/validate_case.py --all
 python tools/sanitize_packets.py          # لا تسرّب Truth band
@@ -149,10 +149,11 @@ python tools/prepare_agent_run.py --run-id agent-01 --cases CASE-ORG-RICO-SHELL-
 python tools/run_benchmark.py --run-id agent-01 --vaults-root results/runs/agent-01 --producer agent --only CASE-ORG-RICO-SHELL-023
 ```
 
-Skill audit:
+Skill audit من checkout core:
 
 ```powershell
-python scripts/audit_vault.py path/to/vault --strict
+cd ../obsidian-investigation-brain
+python3 scripts/audit_vault.py path/to/vault --strict
 ```
 
 ---
@@ -160,7 +161,7 @@ python scripts/audit_vault.py path/to/vault --strict
 ## 7) سياسة النشر والخصوصية
 
 - لا ترفع vaults قضايا حقيقية حسّاسة.
-- حزم `Benchmark v1/cases` مصممة للتدريب العام/الخيالي.
+- حزم `cases/` في مستودع Benchmark المستقل مصممة للتدريب العام/الخيالي.
 - `designer_notes.md` و `ground_truth.yaml` **ليست** لمدخلات الوكيل؛ للتصميم والتحكيم فقط.
 
 ---
@@ -170,9 +171,9 @@ python scripts/audit_vault.py path/to/vault --strict
 | وثيقة | محتوى |
 |-------|--------|
 | `CHANGELOG.md` | 0.2.0 → 0.3.0 → 0.3.1 → 0.4.0 → 0.4.1 → 0.4.2 |
-| `Benchmark v1/docs/BENCHMARK_SPEC.md` | تعريف المقاييس |
-| `Benchmark v1/docs/REFORM_PLAN_FROM_BENCHMARK.md` | خطة P0/P1 وحالة التنفيذ |
-| `Benchmark v1/docs/AGENT_RUN_PROTOCOL.md` | بروتوكول agent |
+| [`BENCHMARK_SPEC.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/BENCHMARK_SPEC.md) | تعريف المقاييس |
+| [`REFORM_PLAN_FROM_BENCHMARK.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/REFORM_PLAN_FROM_BENCHMARK.md) | خطة P0/P1 وحالة التنفيذ |
+| [`AGENT_RUN_PROTOCOL.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/AGENT_RUN_PROTOCOL.md) | بروتوكول agent |
 | `docs/REFORM_PLAN_v0.3.md` | مؤشر مختصر |
 | `ARCHITECTURE.md` | خريطة الطبقات والتكاملات |
 | `OBSIDIAN_NATIVE_STRATEGY.md` | استراتيجية Dataview/Bases وnative validation |

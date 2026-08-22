@@ -7,7 +7,7 @@
 
 ### Benchmark اختياري للمطورين
 
-`Benchmark v1/` ليس مطلوباً لاستخدام المهارة أو لإدارة قضية يومية. هو حزام Advanced لتقييم البروتوكول على حزم تدريبية ومقارنة baseline مع agent. عند استخدامه، راجع [`docs/BENCHMARK_TRANSPARENCY.md`](docs/BENCHMARK_TRANSPARENCY.md)، ولا تخلط درجات **baseline** بدرجات **agent**.
+[Benchmark المستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark) ليس مطلوباً لاستخدام المهارة أو لإدارة قضية يومية. هو حزام Advanced اختياري لتقييم البروتوكول على حزم تدريبية ومقارنة baseline مع agent. عند استخدامه، راجع [`docs/BENCHMARK_TRANSPARENCY.md`](docs/BENCHMARK_TRANSPARENCY.md)، ولا تخلط درجات **baseline** بدرجات **agent**.
 
 **خرائط القراءة:** [`ARCHITECTURE.md`](ARCHITECTURE.md) للمعمارية الموحدة، [`OBSIDIAN_NATIVE_STRATEGY.md`](OBSIDIAN_NATIVE_STRATEGY.md) لاستراتيجية Dataview/Bases، و[`DEVELOPMENT.md`](DEVELOPMENT.md) و[`CONTRIBUTING.md`](CONTRIBUTING.md) للمطورين.
 
@@ -18,7 +18,7 @@
 | **Basic** | الهاوي أو المحقق الذي يريد تنظيم قضية واحدة | [`references/guide-for-investigator.md`](references/guide-for-investigator.md)، ثم أوضاع Scaffold/Management/Audit/Reporting | Benchmark، Self-Tooling، وSwarm |
 | **Advanced** | المطور أو الفريق الذي يحتاج أدوات قابلة للتتبع أو مقارنة منهجية | [`ARCHITECTURE.md`](ARCHITECTURE.md)، [`docs/SELF_TOOLING_INTEGRATION.md`](docs/SELF_TOOLING_INTEGRATION.md)، و[`swarm-wrapper/README.md`](swarm-wrapper/README.md) | لا تستخدم هذه الطبقة قبل استقرار vault الأساسي |
 
-**قاعدة عملية:** ابدأ بـBasic، ولا تنتقل إلى Advanced إلا عند وجود سؤال تحليلي أو حاجة تشغيلية محددة. `Benchmark v1/` حزام تطوير اختياري، وليس جزءاً من العمل اليومي أو شرطاً لاستخدام المهارة.
+**قاعدة عملية:** ابدأ بـBasic، ولا تنتقل إلى Advanced إلا عند وجود سؤال تحليلي أو حاجة تشغيلية محددة. [Benchmark المستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark) حزام تطوير اختياري، وليس جزءاً من العمل اليومي أو شرطاً لاستخدام المهارة.
 
 ---
 
@@ -50,7 +50,7 @@
 - **Bounded Investigation Swarm MVP** لتنسيق proposals متعددة الوكلاء داخل namespace مستقل مع conflict report وHuman Gate
 - **Timeline-first** · **Human Gate** · **Gap Intelligence**
 - Canvas كبروتوكولات عمل + `audit_vault.py` (قواعد v0.4+)
-- حزام بنشمارك اختياري: `Benchmark v1/` (30 قضية تدريبية + مقيّم)
+- حزام بنشمارك اختياري: [المستودع المستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark) (30 قضية تدريبية + مقيّم)
 
 ---
 

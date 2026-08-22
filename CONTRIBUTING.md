@@ -13,7 +13,7 @@
 | قاعدة منهجية | `SKILL.md` و`references/anti-drift-rules.md` | مثال، سبب، واختبار أو حالة تحقق |
 | قالب أو منطقة | `assets/templates/` و`references/folder-structure.md` | frontmatter صالح وتحديث taxonomy |
 | مدقق | `scripts/` | اختبار regression ومخرج JSON مستقر |
-| Benchmark | `Benchmark v1/` | تحديث spec وشفافية producer وfixture مستقل |
+| Benchmark | [المستودع المستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark) | تحديث spec وشفافية producer وfixture مستقل |
 | Swarm/Tooling | `swarm-wrapper/` و`08-Tooling` | حدود كتابة، Human Gate، واختبار fail-closed |
 | توثيق | `ARCHITECTURE.md` أو `docs/` | روابط صحيحة وعدم تكرار متضارب |
 
@@ -29,7 +29,7 @@ python3 scripts/validate_obsidian_native.py /path/to/vault --strict
 python3 scripts/audit_vault.py /path/to/vault --strict --native
 ```
 
-قبل فتح Pull Request شغّل `git diff --check`، وتأكد أن نتائج Benchmark أو ملفات `/tmp` لم تدخل Git، وأن كل تغيير في قاعدة حرجة يملك اختباراً أو تفسيراً موثقاً لسبب عدم الاختبار.
+قبل فتح Pull Request شغّل `git diff --check`، وتأكد أن نتائج Benchmark أو ملفات `/tmp` لم تدخل Git، وأن كل تغيير في قاعدة حرجة يملك اختباراً أو تفسيراً موثقاً لسبب عدم الاختبار. تغييرات Benchmark تُراجع وتُختبر في [مستودعه المستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark)، ولا تُضاف حزم القضايا إلى core.
 
 ## قواعد السلامة
 

@@ -1,5 +1,13 @@
 # Changelog — obsidian-investigation-brain
 
+## Unreleased — 2026-08-23
+
+### P3 — استخراج Benchmark إلى مستودع مستقل
+
+- نُقل Benchmark v1 إلى [مستودع مستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark) خاص وقابل لإعادة التشغيل، مع أدواته وحزمه واختباراته وCI منفصلة.
+- أزيلت حزم القضايا ونتائج التشغيل من core؛ بقيت وثيقة الشفافية وروابط المواصفات، وبقيت اختبارات native/tooling ضمن core.
+- لا يستدعي CI الأساسي Benchmark؛ التوزيع المستقل يفحص بيئته وcase packs وRuff وpytest وPython compilation بصورة مستقلة.
+
 ## 0.4.2 — 2026-08-13
 
 ### أضيف — Bounded Investigation Swarm MVP
@@ -70,7 +78,7 @@
 - `docs/AGENT_RUN_PROTOCOL.md` — بروتوكول وكيل حر
 - `tools/prepare_agent_run.py` — تجهيز agent_input بلا GT
 - `score_vault` / `run_benchmark`: hard_fail حسب `producer` (agent on / baseline off)
-- **إثراء كامل لحزم ORG/SK 021–030** (جداول، حدود، TRAP notes) — انظر `Benchmark v1/docs/PACKET_ENRICHMENT_LOG.md`
+- **إثراء كامل لحزم ORG/SK 021–030** (جداول، حدود، TRAP notes) — انظر [`PACKET_ENRICHMENT_LOG.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/PACKET_ENRICHMENT_LOG.md)
 - **شفافية الإصدار:** `docs/BENCHMARK_TRANSPARENCY.md` — ماذا قيس، حدود baseline vs agent، وأثر البنchmark على 0.2→0.3.1
 
 ---

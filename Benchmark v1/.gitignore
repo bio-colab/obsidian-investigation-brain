@@ -1,7 +1,0 @@
-results/runs/
-__pycache__/
-*.pyc
-.pytest_cache/
-.venv/
-venv/
-*.json.bak

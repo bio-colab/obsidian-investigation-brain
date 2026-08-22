@@ -32,7 +32,7 @@ jobs:
         run: python -m pip install -r requirements-dev.txt
 
       - name: Compile Python sources
-        run: python -m py_compile scripts/*.py swarm-wrapper/*.py "Benchmark v1/tools/"*.py "Benchmark v1/tools/lib/"*.py
+        run: python -m py_compile scripts/*.py swarm-wrapper/*.py
 
       - name: Run tests
         run: python -m pytest -q

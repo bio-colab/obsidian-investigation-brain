@@ -2,7 +2,7 @@
 
 الخطة التفصيلية المبنية على نتائج البنchmark موجودة في:
 
-**[`Benchmark v1/docs/REFORM_PLAN_FROM_BENCHMARK.md`](../Benchmark%20v1/docs/REFORM_PLAN_FROM_BENCHMARK.md)**
+**[`REFORM_PLAN_FROM_BENCHMARK.md`](https://github.com/bio-colab/obsidian-investigation-brain-benchmark/blob/main/docs/REFORM_PLAN_FROM_BENCHMARK.md)**
 
 ### أولويات مختصرة
 

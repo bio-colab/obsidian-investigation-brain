@@ -2,7 +2,7 @@
 
 ## الصورة السريعة
 
-المشروع Python/Markdown/YAML في جوهره. لا يحتاج إلى خادم أو build frontend. توجد أربع دوائر مترابطة: المهارة والوثائق، قوالب Obsidian، سكربتات التدقيق وSelf-Tooling، وحزام Benchmark v1. طبقة `swarm-wrapper/` اختيارية وتعمل محلياً في `dry-run` أو مع OpenMausBot loopback.
+المشروع Python/Markdown/YAML في جوهره. لا يحتاج إلى خادم أو build frontend. توجد ثلاث دوائر في core: المهارة والوثائق، قوالب Obsidian، وسكربتات التدقيق وSelf-Tooling. طبقة `swarm-wrapper/` اختيارية وتعمل محلياً في `dry-run` أو مع OpenMausBot loopback. Benchmark موجود كتوزيع تطوير مستقل.
 
 ## إعداد البيئة
 
@@ -18,7 +18,7 @@ pip install -r requirements-dev.txt
 
 | الأمر | الغرض |
 |---|---|
-| `pytest -q` | كل اختبارات المشروع، بما فيها `tests/` و`swarm-wrapper/tests/` وBenchmark tests |
+| `pytest -q` | كل اختبارات core، بما فيها `tests/` و`swarm-wrapper/tests/` |
 | `python3 -m py_compile scripts/*.py swarm-wrapper/*.py` | فحص syntax |
 | `python3 scripts/validate_obsidian_native.py <vault> --strict` | Markdown/YAML/Canvas/Bases |
 | `python3 scripts/audit_vault.py <vault> --strict --native` | قواعد التحقيق والذاكرة والصيغ |
@@ -30,23 +30,11 @@ pip install -r requirements-dev.txt
 
 ابدأ بتحديد المنطقة التي تنتمي إليها القاعدة. إذا كانت القاعدة تتعلق بالدليل أو الفرضيات، حدّث `SKILL.md` و`references/anti-drift-rules.md` وtaxonomy أو checklist عند الحاجة، ثم أضف حالة اختبار. إذا كانت القاعدة تخص native formats، حدّث `native-format-contract.md` وvalidator. إذا كانت تخص Swarm، لا تسمح بالمخرجات المشتركة قبل Human Gate.
 
-بعد ذلك شغّل الاختبار المستهدف، ثم `pytest -q`، ثم native/audit على fixture، ثم فحص diff. لا تعتبر نجاح baseline في Benchmark نجاحاً لوكيل حر؛ يجب أن يظل `producer` واضحاً في النتائج.
+بعد ذلك شغّل الاختبار المستهدف، ثم `pytest -q`، ثم native/audit على fixture، ثم فحص diff. لا تعتبر نجاح أي benchmark نجاحاً لوكيل حر؛ يجب أن يظل `producer` واضحاً في النتائج.
 
-## تطوير Benchmark
+## Benchmark (اختياري)
 
-كل case pack يجب أن يمر عبر:
-
-```bash
-cd "Benchmark v1"
-python tools/validate_case.py --all
-python tools/sanitize_packets.py
-python tools/build_run_vaults.py --run-id local-baseline
-# البناء الافتراضي preset 5a؛ استخدم --skip-missing للتشغيل الجزئي المقصود
-python tools/run_benchmark.py --run-id local-baseline --vaults-root results/runs/local-baseline --producer baseline --strict-native --skip-missing
-python tools/aggregate_results.py --run-id local-baseline
-```
-
-لا تجعل `ground_truth.yaml` أو `designer_notes.md` متاحين لمسار الوكيل. عند تغيير metric، حدّث `docs/BENCHMARK_SPEC.md` و`docs/BENCHMARK_TRANSPARENCY.md` وrubric/fixtures، واذكر أثر التغيير على المقارنة التاريخية.
+يعيش Benchmark في مستودع مستقل: [obsidian-investigation-brain-benchmark](https://github.com/bio-colab/obsidian-investigation-brain-benchmark). لا يحتاج core إلى حزم القضايا أو ground truth أو أدوات القياس. راجع README لذلك المستودع عند تطوير المقاييس أو تشغيل baseline/agent، ولا تجعل `ground_truth.yaml` أو `designer_notes.md` متاحين لمسار الوكيل.
 
 ## تطوير Swarm Wrapper
 
@@ -56,8 +44,8 @@ python tools/aggregate_results.py --run-id local-baseline
 
 ## CI
 
-تعمل CI على Python 3.10 و3.11 و3.12. لا تحتاج CI إلى OpenMausBot حي أو secrets أو Docker؛ تستخدم `dry-run` وfake HTTP harness. فحوص native وBenchmark baseline اختيارية في job منفصل إذا توفرت الاعتماديات، لكن فشلها يجب أن يكون مرئياً لا مخفياً.
+تعمل CI الخاصة بـcore على Python 3.10 و3.11 و3.12. لا تحتاج إلى OpenMausBot حي أو secrets أو Docker؛ تستخدم `dry-run` وfake HTTP harness. يملك Benchmark المستقل CI منفصلة لفحوصه، ولا يجعل core نجاحها شرطاً لمسار الاستخدام الأساسي.
 
 ## ملاحظات الصيانة
 
-لا تعدّل `Benchmark v1/results/` أو الملفات المولدة خارج غرض توثيقي واضح. لا تضف اعتماديات ثقيلة لعملية يمكن تنفيذها بمكتبة Python القياسية. حافظ على مخرجات JSON قابلة للاستهلاك الآلي، وعلى رسائل أخطاء تفيد المطور دون كشف أسرار أو محتوى قضية.
+لا تحفظ نتائج تشغيل مولدة داخل core. لا تضف اعتماديات ثقيلة لعملية يمكن تنفيذها بمكتبة Python القياسية. حافظ على مخرجات JSON قابلة للاستهلاك الآلي، وعلى رسائل أخطاء تفيد المطور دون كشف أسرار أو محتوى قضية.

@@ -5,7 +5,7 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import case_memory  # noqa: E402
@@ -181,6 +181,13 @@ def test_run_id_is_bounded_before_audit_write(tmp_path: Path) -> None:
     )
     assert code == 2
     assert not (tmp_path / "escaped-audit.json").exists()
+
+
+def test_core_keeps_benchmark_external_only() -> None:
+    benchmark_url = "https://github.com/bio-colab/obsidian-investigation-brain-benchmark"
+    assert not (ROOT / "Benchmark v1").exists()
+    assert benchmark_url in (ROOT / "README.md").read_text(encoding="utf-8")
+    assert benchmark_url in (ROOT / "docs/BENCHMARK_TRANSPARENCY.md").read_text(encoding="utf-8")
 
 
 def test_executor_is_fail_closed_without_backend(tmp_path: Path) -> None:
