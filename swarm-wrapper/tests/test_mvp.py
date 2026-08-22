@@ -14,6 +14,7 @@ sys.path.insert(0, str(WRAPPER))
 
 from models import AgentSpec, TeamManifest  # noqa: E402
 from orchestrator import OpenMausBotClient, detect_conflicts, run_team  # noqa: E402
+from vault import append_event  # noqa: E402
 
 
 @pytest.fixture
@@ -52,6 +53,8 @@ def test_dry_run_fanout_writes_only_bounded_artifacts(tmp_path: Path, manifest: 
     assert (run_root / "consensus-draft.md").exists()
     assert list((run_root / "proposals").glob("*.md"))
     assert (run_root / "human-gates" / "GATE-TEAM-TEST-001-RUN-TEST-001.md").exists()
+    assert not (run_root.parent.parent / "agents").exists()
+    assert not (run_root.parent.parent / "shared").exists()
     assert source.read_text(encoding="utf-8").startswith("---")
     assert {p.relative_to(tmp_path).parts[0] for p in tmp_path.rglob("*") if p.is_file()} >= {"01-Evidence", "08-Tooling", "case-logs"}
 
@@ -204,3 +207,38 @@ def test_openmausbot_url_must_be_loopback() -> None:
                 "agents": [{"agent_id": "a1", "role": "analyst", "task": "inspect", "bot_id": "bot-1"}],
             }
         )
+
+
+def test_human_gate_cannot_be_disabled() -> None:
+    with pytest.raises(ValueError, match="Human Gate is mandatory"):
+        TeamManifest.from_mapping(
+            {
+                "case_id": "CASE-TEST-SWARM-007",
+                "team_id": "TEAM-TEST-007",
+                "title": "No bypass",
+                "source_root": "01-Evidence",
+                "require_human_gate": False,
+                "agents": [{"agent_id": "a1", "role": "analyst", "task": "inspect"}],
+            }
+        )
+
+
+def test_swarm_event_ids_are_unique_under_rapid_writes(tmp_path: Path) -> None:
+    for index in range(200):
+        append_event(tmp_path, "test.event", index=index)
+    rows = [json.loads(line) for line in (tmp_path / "case-logs" / "session.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert len({row["event_id"] for row in rows}) == len(rows)
+
+
+@pytest.mark.parametrize("run_id", ["/tmp/escaped-run", "../escaped-run", "runs/escaped"])
+def test_run_id_is_bounded_before_any_artifact_write(tmp_path: Path, manifest: TeamManifest, run_id: str) -> None:
+    evidence = tmp_path / "01-Evidence"
+    evidence.mkdir()
+    (evidence / "source.md").write_text("source\n", encoding="utf-8")
+    outside = tmp_path.parent / "escaped-run"
+
+    with pytest.raises(ValueError, match="safe identifier"):
+        run_team(manifest, tmp_path, run_id=run_id)
+
+    assert not outside.exists()
+    assert not (tmp_path / "08-Tooling" / "Swarm").exists()

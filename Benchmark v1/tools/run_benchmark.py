@@ -96,8 +96,6 @@ def main() -> int:
         if not vault:
             missing.append(case_id)
             print(f"MISSING vault for {case_id}", file=sys.stderr)
-            if not args.skip_missing:
-                continue
             continue
 
         print(f"Scoring {case_id} <- {vault}", file=sys.stderr)
@@ -141,6 +139,10 @@ def main() -> int:
         dump_json(case_out / "score.json", result)
         write_text(case_out / "score.md", render_md(result))
         results.append(result)
+
+    if missing and not args.skip_missing:
+        print(f"ERROR: {len(missing)} vault(s) missing; use --skip-missing for an intentional partial run", file=sys.stderr)
+        return 2
 
     summary = {
         "run_id": args.run_id,

@@ -6,17 +6,19 @@ source of truth.
 """
 from __future__ import annotations
 
-from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import json
+import re
+import uuid
 from pathlib import Path
 from typing import Any, Iterable
 
-from models import Conflict, Gate, Proposal, TeamManifest, to_jsonable
+from models import Conflict, Gate, Proposal, TeamManifest
 
 
 ALLOWED_ROOT = "08-Tooling/Swarm"
+RUN_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
 
 
 def utc_now() -> str:
@@ -34,7 +36,7 @@ def sha256_file(path: Path) -> str:
 def append_event(case_root: Path, event: str, **payload: Any) -> None:
     log_dir = case_root / "case-logs"
     log_dir.mkdir(parents=True, exist_ok=True)
-    row = {"ts": utc_now(), "event_id": f"SW-{int(datetime.now().timestamp() * 1000)}", "event": event, **payload}
+    row = {"ts": utc_now(), "event_id": f"SW-{uuid.uuid4().hex[:12]}", "event": event, **payload}
     with (log_dir / "session.jsonl").open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
 
@@ -67,20 +69,20 @@ class CaseVault:
         self.team_root = (self.root / ALLOWED_ROOT / manifest.team_id).resolve()
         if not _inside(self.root, self.team_root):
             raise ValueError("team workspace escapes case root")
-        self.agent_root = self.team_root / "agents"
-        self.shared_root = self.team_root / "shared"
         self.run_root = self.team_root / "runs"
 
+    def _run_root(self, run_id: str) -> Path:
+        if not RUN_ID_RE.fullmatch(run_id):
+            raise ValueError("run_id must be a safe identifier (letters, numbers, . _ -)")
+        path = (self.run_root / run_id).resolve()
+        if not _inside(self.run_root, path):
+            raise ValueError("run workspace escapes run namespace")
+        return path
+
     def prepare(self, run_id: str) -> Path:
-        for path in (
-            self.agent_root,
-            self.shared_root / "conflicts",
-            self.shared_root / "consensus-drafts",
-            self.shared_root / "human-gates",
-            self.run_root / run_id / "proposals",
-        ):
-            path.mkdir(parents=True, exist_ok=True)
-        return self.run_root / run_id
+        run = self._run_root(run_id)
+        (run / "proposals").mkdir(parents=True, exist_ok=True)
+        return run
 
     def source_snapshot(self) -> tuple[str, list[dict[str, str]]]:
         source = (self.root / self.manifest.source_root).resolve()
@@ -108,13 +110,12 @@ class CaseVault:
             "source_hash": source_hash,
             "source_files": source_files,
             "created_at": utc_now(),
-            "human_gate_required": self.manifest.require_human_gate,
         }
         (run / "run.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         append_event(self.root, "swarm.run.created", case_id=self.manifest.case_id, team_id=self.manifest.team_id, run_id=run_id, source_hash=source_hash)
 
     def write_proposal(self, run_id: str, proposal: Proposal) -> Path:
-        path = self.run_root / run_id / "proposals" / f"{proposal.agent_id}.md"
+        path = self._run_root(run_id) / "proposals" / f"{proposal.agent_id}.md"
         body: list[str] = [
             _frontmatter({
                 "type": "agent-proposal",
@@ -166,7 +167,7 @@ class CaseVault:
 
     def write_conflicts(self, run_id: str, conflicts: Iterable[Conflict]) -> Path:
         items = list(conflicts)
-        path = self.run_root / run_id / "conflicts.md"
+        path = self._run_root(run_id) / "conflicts.md"
         body = [
             _frontmatter({"type": "swarm-conflict-report", "status": "pending-human-review" if items else "draft", "created": utc_now()[:10], "updated": utc_now()[:10], "case-id": self.manifest.case_id, "team-id": self.manifest.team_id, "run-id": run_id, "tags": ["swarm", "conflict", "human-gate"]}),
             f"# Conflicts — {run_id}",
@@ -186,7 +187,8 @@ class CaseVault:
     def write_consensus(self, run_id: str, proposals: Iterable[Proposal], conflicts: Iterable[Conflict]) -> tuple[Path, Path]:
         proposals_list = list(proposals)
         conflicts_list = list(conflicts)
-        draft = self.run_root / run_id / "consensus-draft.md"
+        run = self._run_root(run_id)
+        draft = run / "consensus-draft.md"
         gate = Gate(gate_id=f"GATE-{self.manifest.team_id}-{run_id}", case_id=self.manifest.case_id, team_id=self.manifest.team_id, run_id=run_id)
         body = [
             _frontmatter({"type": "consensus-draft", "status": "pending-human-review", "created": utc_now()[:10], "updated": utc_now()[:10], "case-id": self.manifest.case_id, "team-id": self.manifest.team_id, "run-id": run_id, "human-gate": gate.gate_id, "tags": ["swarm", "consensus", "draft"]}),
@@ -209,7 +211,7 @@ class CaseVault:
                 body.append(f"| {proposal.agent_id} | {claim.claim_id} | {claim.text.replace('|', '\\|')} | {', '.join(claim.supporting_refs) or '—'} | {', '.join(claim.counter_refs) or '—'} |")
         body.extend(["", "## Required human decisions", "", "- Are any claims supported by source notes rather than agent assertions?", "- Are counter-hypotheses substantive and represented?", "- Are jurisdiction and limitations explicit?", "- Which gaps must remain open?", ""])
         draft.write_text("\n".join(body), encoding="utf-8")
-        gate_path = self.run_root / run_id / "human-gates" / f"{gate.gate_id}.md"
+        gate_path = run / "human-gates" / f"{gate.gate_id}.md"
         gate_path.parent.mkdir(parents=True, exist_ok=True)
         gate_path.write_text(
             _frontmatter({"type": "human-gate", "status": gate.status, "created": utc_now()[:10], "updated": utc_now()[:10], "case-id": gate.case_id, "team-id": gate.team_id, "run-id": gate.run_id, "gate-id": gate.gate_id, "tags": ["swarm", "human-gate"]})

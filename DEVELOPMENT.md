@@ -41,7 +41,8 @@ cd "Benchmark v1"
 python tools/validate_case.py --all
 python tools/sanitize_packets.py
 python tools/build_run_vaults.py --run-id local-baseline
-python tools/run_benchmark.py --run-id local-baseline --vaults-root results/runs/local-baseline --producer baseline --strict-native
+# البناء الافتراضي preset 5a؛ استخدم --skip-missing للتشغيل الجزئي المقصود
+python tools/run_benchmark.py --run-id local-baseline --vaults-root results/runs/local-baseline --producer baseline --strict-native --skip-missing
 python tools/aggregate_results.py --run-id local-baseline
 ```
 

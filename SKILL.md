@@ -22,6 +22,15 @@ metadata:
 > **(أ) الوعاء:** تحويل قضية (نطاق + خطة تحقيق + فريق) إلى vault أوبسيديان منظم يمنع التوهان واختلاط الأدلة بالتخمين، مع فصل صارم بين المتحقق والفرضيات.  
 > **(ب) التقرير:** عند وجود خطة تحقيق، تشغيل مسار إنتاج موجه بالمراحل عبر Coverage Ledger + سلسلة إثبات (Hypotheses + support-level) + **Claim Trace Matrix** + **Readiness Gate**، دون اختلاق أدلة ودون تجاهل الفرضيات المضادة.
 
+### مسار الاستخدام الافتراضي
+
+ابدأ دائماً بالمسار **Basic**: Scaffold ثم Management ثم Audit ثم Reporting. لا تُنشئ Self-Tooling أو Swarm ولا تشغّل Benchmark إلا إذا طلب المستخدم ذلك أو وُجد سؤال تحليلي محدد يبررها. هذا فصل في العرض وسير العمل، وليس تخفيفاً لقواعد Evidence أو Chain-of-Custody أو Human Gate.
+
+| المستوى | ما يظهر أولاً | متى تنتقل؟ |
+|---|---|---|
+| **Basic** | vault، Evidence، Hypotheses، Timeline، Audit، Report | هذا هو المسار المعتاد للهاوي والمحقق |
+| **Advanced** | Self-Tooling، External Memory، Swarm، Native validators، Benchmark | عند الحاجة إلى تحليل مخصص أو إعادة تشغيل أو مقارنة منهجية |
+
 **ما تفعله:**
 - ✅ سقالة كاملة لقضية واحدة من نطاق + خطة + أدوار فريق + **Readiness-Checklist**.
 - ✅ إدارة أدلة → كيانات → فرضيات (Primary / Alternative / Counter / Rejected).
@@ -63,7 +72,7 @@ metadata:
 
 2. **لا معرفة مخترعة في Evidence** — أي توليد بلا مصدر/دليل/إفادة موثقة → Hypotheses أو Exploration أو رفض.
 
-3. **كل ملاحظة تحمل `status`:** `verified` | `unverified` | `draft` | `stub` | `deprecated` | `exploration` | `pending-human-review` | `rejected`.
+3. **كل ملاحظة تحمل `status`:** `verified` | `unverified` | `draft` | `stub` | `deprecated` | `exploration` | `working` | `pending-human-review` | `rejected`.
 
 4. **الـ vault يحمل تعليماته** — `AGENTS.md` إلزامي.
 
@@ -271,7 +280,7 @@ metadata:
 | `references/vault-quality-checklist.md` | قائمة تدقيق |
 | `references/reporting-pipeline.md` | مسار إنتاج التقارير |
 | `references/visual-investigation-layer.md` | الطبقة البصرية + بروتوكولات Canvas |
-| `assets/templates/` | قوالب الملاحظات + Canvas + Tool Manifest/Audit/Case Log/Simulation |
+| `assets/templates/` | قوالب الملاحظات + Canvas + Tool Manifest/Audit/Simulation |
 | `scripts/audit_vault.py` | تدقيق آلي v0.4 (CoC، Counter، claim-trace، informant/wiretap، group، court، tooling boundaries) |
 | `scripts/validate_obsidian_native.py` | فحص Markdown/frontmatter وCanvas JSON وBases YAML والروابط |
 | `scripts/case_tooling.py` | إنشاء workspace وتشغيل الأدوات داخل backend عازل وتسجيل hashes/events |

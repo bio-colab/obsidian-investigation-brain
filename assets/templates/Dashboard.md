@@ -1,8 +1,8 @@
 ---
 type: dashboard
 status: verified
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 tags: [dashboard, visual]
 ---
 

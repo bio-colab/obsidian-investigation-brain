@@ -1,8 +1,8 @@
 ---
 type: simulation-run
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 simulation-id: SIM-000
 tool-id: TOOL-000
 manifest-ref: "[[Tool-Manifest]]"

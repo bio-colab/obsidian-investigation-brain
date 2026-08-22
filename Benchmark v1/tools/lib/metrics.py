@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Optional
 
 from .text_match import alias_hit, any_pattern_hit, normalize, similarity

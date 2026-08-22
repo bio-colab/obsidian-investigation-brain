@@ -1,8 +1,8 @@
 ---
 type: series-linkage
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 series-id: SER-001
 linkage-confidence: weak
 # weak | moderate | strong

@@ -1,8 +1,8 @@
 ---
 type: readiness-checklist
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 readiness-passed: false
 tags: [scaffold, readiness]
 ---

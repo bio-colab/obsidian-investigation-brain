@@ -103,10 +103,7 @@ Case-Vault-XXXX/
 │   ├── Runs/                                  # مخرجات تحليل/محاكاة قابلة لإعادة التشغيل
 │   └── Swarm/                                 # v0.4.2 — orchestrated proposals only
 │       └── <team-id>/
-│           ├── agents/<agent-id>/             # namespace مستقل لكل وكيل
-│           ├── shared/conflicts/              # تعارضات غير محلولة
-│           ├── shared/consensus-drafts/       # مسودات لا ترفع Evidence
-│           └── runs/<run-id>/                 # run.json + proposals + Human Gate
+│           └── runs/<run-id>/                 # run.json + proposals + conflicts + Human Gate
 │
 ├── 90-Reference-Sources/                     # مراجع عامة / أرشيف عام
 │

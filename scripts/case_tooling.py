@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -32,6 +31,7 @@ except ImportError:  # pragma: no cover
     write_memory_snapshot = None  # type: ignore
 
 WRITE_PREFIXES = ("08-Tooling", "05-Analysis", "02b-Exploration", "case-logs")
+RUN_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
 DEFAULT_RUNTIME = "python3"
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 
@@ -67,6 +67,17 @@ def relative(root: Path, path: Path) -> str:
     return path.resolve().relative_to(root.resolve()).as_posix()
 
 
+def safe_case_path(case_root: Path, raw: str, *, label: str) -> Path:
+    value = str(raw).replace("\\", "/")
+    normalized = value.rstrip("/")
+    if value.startswith("/") or any(part in {"", ".", ".."} for part in normalized.split("/")):
+        raise ValueError(f"{label} contains unsafe path segments: {raw}")
+    path = (case_root / value).resolve()
+    if not inside(case_root, path):
+        raise ValueError(f"{label} escapes case root: {raw}")
+    return path
+
+
 def append_event(case_root: Path, event: str, **payload: Any) -> None:
     if append_memory_event is not None:
         append_memory_event(
@@ -99,6 +110,33 @@ def load_manifest(path: Path) -> dict[str, Any]:
     return data
 
 
+def _validate_entrypoint(case_root: Path, entrypoint: Any, errors: list[str]) -> None:
+    if not entrypoint:
+        return
+    try:
+        entry = safe_case_path(case_root, str(entrypoint), label="entrypoint")
+    except ValueError as exc:
+        errors.append(str(exc))
+    else:
+        if not entry.is_file():
+            errors.append(f"entrypoint does not exist: {entrypoint}")
+
+
+def _validate_writes(case_root: Path, writes: Any, errors: list[str]) -> None:
+    if not isinstance(writes, list):
+        errors.append("writes-to must be a list")
+        return
+    for item in writes:
+        try:
+            target = safe_case_path(case_root, str(item), label="writes-to")
+            text = relative(case_root, target)
+        except ValueError as exc:
+            errors.append(str(exc))
+            continue
+        if not any(text == prefix or text.startswith(prefix + "/") for prefix in WRITE_PREFIXES):
+            errors.append(f"writes-to outside allowed prefixes: {item}")
+
+
 def validate_manifest(case_root: Path, path: Path) -> list[str]:
     errors: list[str] = []
     try:
@@ -108,24 +146,11 @@ def validate_manifest(case_root: Path, path: Path) -> list[str]:
     for field in ("tool-id", "version", "entrypoint"):
         if not data.get(field):
             errors.append(f"missing {field}")
-    entrypoint = data.get("entrypoint")
-    if entrypoint:
-        entry = (case_root / str(entrypoint)).resolve()
-        if not inside(case_root, entry):
-            errors.append("entrypoint escapes case root")
-        elif not entry.is_file():
-            errors.append(f"entrypoint does not exist: {entrypoint}")
+    _validate_entrypoint(case_root, data.get("entrypoint"), errors)
     network = str(data.get("network", "denied")).lower()
     if network not in {"denied", "none"}:
         errors.append("network must be denied/none")
-    writes = data.get("writes-to") or data.get("writes_to") or []
-    if not isinstance(writes, list):
-        errors.append("writes-to must be a list")
-    else:
-        for item in writes:
-            text = str(item).replace("\\", "/").lstrip("/")
-            if not any(text == prefix or text.startswith(prefix + "/") for prefix in WRITE_PREFIXES):
-                errors.append(f"writes-to outside allowed prefixes: {item}")
+    _validate_writes(case_root, data.get("writes-to") or data.get("writes_to") or [], errors)
     return errors
 
 
@@ -164,17 +189,15 @@ def choose_backend(requested: str) -> str:
 
 
 def build_command(case_root: Path, manifest_path: Path, manifest: dict[str, Any], backend: str, tool_args: list[str]) -> tuple[list[str], Path]:
-    entrypoint = (case_root / str(manifest["entrypoint"])).resolve()
+    entrypoint = safe_case_path(case_root, str(manifest["entrypoint"]), label="entrypoint")
     runtime = str(manifest.get("runtime") or DEFAULT_RUNTIME)
     writes = manifest.get("writes-to") or manifest.get("writes_to") or []
     if not isinstance(writes, list):
         writes = [writes]
     write_targets = []
     for raw in writes:
-        target = (case_root / str(raw)).resolve()
+        target = safe_case_path(case_root, str(raw), label="writes-to")
         target.mkdir(parents=True, exist_ok=True)
-        if not inside(case_root, target):
-            raise ValueError(f"writes-to escapes case root: {raw}")
         write_targets.append((target, "/workspace/" + relative(case_root, target)))
     raw_command = manifest.get("command")
     if raw_command:
@@ -198,6 +221,24 @@ def build_command(case_root: Path, manifest_path: Path, manifest: dict[str, Any]
     return base, entrypoint
 
 
+def _hash_inputs(case_root: Path, inputs: Any) -> list[dict[str, str]]:
+    paths = []
+    for raw in inputs or []:
+        path = safe_case_path(case_root, str(raw), label="input")
+        paths.append({"path": relative(case_root, path), "hash": sha256_path(path)})
+    return paths
+
+
+def _run_process(command: list[str], case_root: Path, timeout: int) -> dict[str, Any]:
+    try:
+        completed = subprocess.run(command, cwd=case_root, capture_output=True, text=True, timeout=timeout, check=False)
+        return {"exit_code": completed.returncode, "stdout": completed.stdout[-4000:], "stderr": completed.stderr[-4000:]}
+    except subprocess.TimeoutExpired as exc:
+        return {"exit_code": 124, "stdout": str(exc.stdout or "")[-4000:], "stderr": "timeout"}
+    except OSError as exc:
+        return {"exit_code": 126, "stderr": str(exc)}
+
+
 def run_tool(args: argparse.Namespace) -> int:
     case_root = Path(args.case_root).resolve()
     manifest_path = Path(args.manifest)
@@ -213,6 +254,10 @@ def run_tool(args: argparse.Namespace) -> int:
             print(f"ERROR: {error}", file=sys.stderr)
         return 2
     manifest = load_manifest(manifest_path)
+    run_id = args.run_id or f"RUN-{int(time.time())}"
+    if not RUN_ID_RE.fullmatch(run_id):
+        print("ERROR: run-id must be a safe identifier (letters, numbers, . _ -)", file=sys.stderr)
+        return 2
     backend = choose_backend(args.backend)
     if backend == "host" and not args.allow_host:
         print("ERROR: host execution requires --allow-host", file=sys.stderr)
@@ -221,21 +266,19 @@ def run_tool(args: argparse.Namespace) -> int:
         append_event(case_root, "tool.run.skipped", tool_id=manifest["tool-id"], reason="no sandbox backend available")
         print("SKIPPED: no Docker, Podman, or bubblewrap backend available; fail-closed")
         return 3
-    output_dir = (case_root / str(args.output_dir or "08-Tooling/Runs"))
-    output_dir.mkdir(parents=True, exist_ok=True)
-    if not inside(case_root, output_dir):
-        print("ERROR: output directory escapes case root", file=sys.stderr)
+    try:
+        output_dir = safe_case_path(case_root, str(args.output_dir or "08-Tooling/Runs"), label="output directory")
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
         return 2
+    output_dir.mkdir(parents=True, exist_ok=True)
     command, entrypoint = build_command(case_root, manifest_path, manifest, backend, args.tool_arg or [])
-    input_paths = []
-    for raw in manifest.get("inputs") or []:
-        path = (case_root / str(raw)).resolve()
-        if not inside(case_root, path):
-            print(f"ERROR: input escapes case root: {raw}", file=sys.stderr)
-            return 2
-        input_paths.append({"path": relative(case_root, path), "hash": sha256_path(path)})
+    try:
+        input_paths = _hash_inputs(case_root, manifest.get("inputs"))
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
     output_before = sha256_path(output_dir)
-    run_id = args.run_id or f"RUN-{int(time.time())}"
     record = {
         "run_id": run_id,
         "tool_id": manifest["tool-id"],
@@ -249,13 +292,7 @@ def run_tool(args: argparse.Namespace) -> int:
         "started_at": now(),
     }
     append_event(case_root, "tool.run.start", **record)
-    try:
-        completed = subprocess.run(command, cwd=case_root, capture_output=True, text=True, timeout=args.timeout, check=False)
-        record.update({"exit_code": completed.returncode, "stdout": completed.stdout[-4000:], "stderr": completed.stderr[-4000:]})
-    except subprocess.TimeoutExpired as exc:
-        record.update({"exit_code": 124, "stdout": str(exc.stdout or "")[-4000:], "stderr": "timeout"})
-    except OSError as exc:
-        record.update({"exit_code": 126, "stderr": str(exc)})
+    record.update(_run_process(command, case_root, args.timeout))
     record.update({"finished_at": now(), "output_hash_before": output_before, "output_hash_after": sha256_path(output_dir)})
     append_event(case_root, "tool.run.finish", **record)
     audit_path = case_root / "08-Tooling" / "Audits" / f"{run_id}.json"

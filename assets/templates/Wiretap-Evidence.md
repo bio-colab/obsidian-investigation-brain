@@ -1,8 +1,8 @@
 ---
 type: wiretap-evidence
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 evidence-kind: wiretap
 transcript: 
 audio-file: 

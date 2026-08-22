@@ -1,8 +1,8 @@
 ---
 type: financial-record
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 record-kind: 
 amount: 
 currency: USD

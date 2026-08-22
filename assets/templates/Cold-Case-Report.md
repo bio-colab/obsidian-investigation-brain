@@ -1,8 +1,8 @@
 ---
 type: cold-case-report
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 case-status: cold-case
 cold-since: 
 prose_status: outline

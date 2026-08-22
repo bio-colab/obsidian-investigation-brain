@@ -1,8 +1,8 @@
 ---
 type: investigation-plan
 status: verified
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 case-id: 
 tags: [plan]
 ---

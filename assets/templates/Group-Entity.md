@@ -1,8 +1,8 @@
 ---
 type: group-entity
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 role: victims
 estimated-count: 
 named-individuals: []

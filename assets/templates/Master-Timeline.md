@@ -1,8 +1,8 @@
 ---
 type: master-timeline
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 case-id: 
 tags: [timeline]
 ---

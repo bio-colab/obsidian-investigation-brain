@@ -1,8 +1,8 @@
 ---
 type: person
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 role: person-of-interest
 aliases: []
 relationships: []

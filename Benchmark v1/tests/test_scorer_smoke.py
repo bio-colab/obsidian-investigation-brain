@@ -3,14 +3,18 @@
 
 from __future__ import annotations
 
+import shutil
 import sys
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from score_vault import score  # noqa: E402
+import run_benchmark  # noqa: E402
 
 
 class ScorerSmoke(unittest.TestCase):
@@ -38,6 +42,32 @@ class ScorerSmoke(unittest.TestCase):
             call_audit=False,
         )
         self.assertLess(bad["metrics"]["false_inference_rate"]["score"], 1.0)
+
+    def test_missing_vaults_fail_by_default(self):
+        run_id = "test-missing-vaults"
+        output = ROOT / "results" / "runs" / run_id
+        with tempfile.TemporaryDirectory() as td:
+            cases_dir = Path(td) / "cases" / "CASE-TEST-MISSING"
+            cases_dir.mkdir(parents=True)
+            (cases_dir / "ground_truth.yaml").write_text("case_id: CASE-TEST-MISSING\n", encoding="utf-8")
+            vaults_root = Path(td) / "vaults"
+            try:
+                with patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "run_benchmark.py",
+                        "--run-id",
+                        run_id,
+                        "--vaults-root",
+                        str(vaults_root),
+                        "--cases-dir",
+                        str(Path(td) / "cases"),
+                    ],
+                ):
+                    self.assertEqual(run_benchmark.main(), 2)
+            finally:
+                shutil.rmtree(output, ignore_errors=True)
 
     def test_good_has_counter_score(self):
         good = score(

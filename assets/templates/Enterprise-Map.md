@@ -1,8 +1,8 @@
 ---
 type: enterprise-map
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 enterprise-id: ENT-001
 enterprise-confidence: moderate
 # weak | moderate | strong

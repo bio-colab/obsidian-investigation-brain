@@ -1,8 +1,8 @@
 ---
 type: vehicle
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 vehicle-class: road
 plate: 
 make-model: 

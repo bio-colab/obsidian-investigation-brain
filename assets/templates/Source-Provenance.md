@@ -1,8 +1,8 @@
 ---
 type: source-provenance
 status: verified
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 evidence-ref: 
 source-kind: public-archive
 tags: []

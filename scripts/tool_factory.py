@@ -14,7 +14,6 @@ import json
 import re
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 try:
     from case_memory import append_event, write_snapshot
@@ -37,10 +36,13 @@ def safe_rel(case_root: Path, value: str) -> Path:
 
 
 def validate_write_target(value: str) -> str:
-    normalized = value.replace("\\", "/").lstrip("/")
+    normalized = value.replace("\\", "/")
+    if normalized.startswith("/") or any(part in {"", ".", ".."} for part in normalized.rstrip("/").split("/")):
+        raise ValueError(f"writes-to contains unsafe path segments: {value}")
+    normalized = normalized.rstrip("/")
     if not any(normalized == prefix or normalized.startswith(prefix + "/") for prefix in ALLOWED_WRITES):
         raise ValueError(f"writes-to outside allowed prefixes: {value}")
-    return normalized.rstrip("/") + "/"
+    return normalized + "/"
 
 
 def py_scaffold(tool_id: str, kind: str, question: str) -> str:

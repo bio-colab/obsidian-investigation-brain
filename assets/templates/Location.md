@@ -1,8 +1,8 @@
 ---
 type: location
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 location-kind: crime-scene
 coordinates: 
 related-persons: []

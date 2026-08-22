@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
-import hashlib
 import json
 from pathlib import Path
 import time
@@ -129,14 +127,6 @@ Every claim must carry supporting_refs or remain low/unknown confidence. This is
 Allowed source files:
 {refs}
 """
-
-
-def _source_hash(source_files: list[dict[str, str]]) -> str:
-    digest = hashlib.sha256()
-    for item in source_files:
-        digest.update(item["path"].encode())
-        digest.update(item["hash"].encode())
-    return f"sha256:{digest.hexdigest()}"
 
 
 def detect_conflicts(proposals: list[Proposal]) -> list[Conflict]:

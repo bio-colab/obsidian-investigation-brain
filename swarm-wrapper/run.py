@@ -19,7 +19,6 @@ def validate(args: argparse.Namespace) -> int:
         "mode": manifest.mode,
         "agents": [agent.agent_id for agent in manifest.agents if agent.enabled],
         "source_root": manifest.source_root,
-        "human_gate_required": manifest.require_human_gate,
     }, ensure_ascii=False, indent=2))
     return 0
 
@@ -38,7 +37,6 @@ def run(args: argparse.Namespace) -> int:
                     "role": agent.role,
                     "task": agent.task,
                     "bot_id": agent.bot_id,
-                    "model": agent.model,
                     "jurisdiction": agent.jurisdiction,
                     "enabled": agent.enabled,
                 }
@@ -49,7 +47,6 @@ def run(args: argparse.Namespace) -> int:
             "max_workers": manifest.max_workers,
             "timeout_seconds": manifest.timeout_seconds,
             "max_claims_per_agent": manifest.max_claims_per_agent,
-            "require_human_gate": manifest.require_human_gate,
         }
         manifest = TeamManifest.from_mapping(raw)
     result = run_team(manifest, Path(args.vault_root).resolve(), run_id=args.run_id)

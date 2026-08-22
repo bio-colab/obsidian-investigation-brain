@@ -1,8 +1,8 @@
 ---
 type: coverage-ledger
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 case-id: 
 plan-ref: "[[Investigation-Plan]]"
 # v0.3.1 structured gaps (preferred for audit + benchmark M07)

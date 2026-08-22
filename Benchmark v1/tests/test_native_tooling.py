@@ -67,6 +67,41 @@ def test_manifest_rejects_write_escape(tmp_path: Path) -> None:
     assert any("outside allowed prefixes" in error for error in errors)
 
 
+def test_manifest_rejects_dotdot_and_symlink_write_targets(tmp_path: Path) -> None:
+    active = tmp_path / "08-Tooling/Active"
+    active.mkdir(parents=True)
+    entry = active / "tool.py"
+    entry.write_text("print('ok')\n", encoding="utf-8")
+    outside = tmp_path.parent / "outside-write"
+    outside.mkdir()
+    (tmp_path / "08-Tooling/link").symlink_to(outside, target_is_directory=True)
+
+    for target in ("08-Tooling/../01-Evidence", "08-Tooling/link/out"):
+        manifest = tmp_path / f"manifest-{len(list(tmp_path.glob('manifest-*')))}.yaml"
+        manifest.write_text(
+            f"tool-id: TOOL-001\nversion: 0.1.0\nentrypoint: 08-Tooling/Active/tool.py\nnetwork: denied\nwrites-to: [{target}]\n",
+            encoding="utf-8",
+        )
+        errors = case_tooling.validate_manifest(tmp_path, manifest)
+        assert errors
+        before = list(outside.iterdir())
+        try:
+            case_tooling.build_command(tmp_path, manifest, case_tooling.load_manifest(manifest), "bwrap", [])
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("unsafe write target was accepted")
+        assert list(outside.iterdir()) == before
+
+
+def test_tool_factory_rejects_dotdot_write_target() -> None:
+    try:
+        tool_factory.validate_write_target("08-Tooling/../01-Evidence")
+    except ValueError:
+        return
+    raise AssertionError("Tool Factory accepted a traversal write target")
+
+
 def test_markdown_manifest_is_supported(tmp_path: Path) -> None:
     (tmp_path / "08-Tooling/Active").mkdir(parents=True)
     (tmp_path / "08-Tooling/Active/tool.py").write_text("print('ok')\n", encoding="utf-8")
@@ -120,6 +155,32 @@ def test_memory_snapshot_records_decision_fields(tmp_path: Path) -> None:
     assert "keep the parser small" in text
     assert "add one fixture" in text
     assert "not a dump of hidden chain-of-thought" in text
+
+
+def test_run_id_is_bounded_before_audit_write(tmp_path: Path) -> None:
+    active = tmp_path / "08-Tooling/Active"
+    (tmp_path / "08-Tooling/Audits").mkdir(parents=True)
+    active.mkdir(parents=True)
+    (active / "tool.py").write_text("print('ok')\n", encoding="utf-8")
+    manifest = tmp_path / "08-Tooling/manifest.yaml"
+    manifest.write_text(
+        "tool-id: TOOL-001\nversion: 0.1.0\nentrypoint: 08-Tooling/Active/tool.py\nnetwork: denied\nwrites-to: [08-Tooling/Runs/]\n",
+        encoding="utf-8",
+    )
+    code = case_tooling.run_tool(
+        Namespace(
+            case_root=str(tmp_path),
+            manifest=str(manifest),
+            backend="host",
+            allow_host=True,
+            run_id="../../escaped-audit",
+            output_dir="08-Tooling/Runs",
+            timeout=10,
+            tool_arg=[],
+        )
+    )
+    assert code == 2
+    assert not (tmp_path / "escaped-audit.json").exists()
 
 
 def test_executor_is_fail_closed_without_backend(tmp_path: Path) -> None:

@@ -1,8 +1,8 @@
 ---
 type: hypothesis
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 hypothesis-kind: primary
 support-level: weak
 support-history: []

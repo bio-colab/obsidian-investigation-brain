@@ -1,8 +1,8 @@
 ---
 type: informant-testimony
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 witness-kind: informant
 credibility-assessment:
   reliability: medium

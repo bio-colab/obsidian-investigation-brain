@@ -1,8 +1,8 @@
 ---
 type: court-file
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 readiness-passed: false
 claim-trace: []
 tags: [report, court, output]

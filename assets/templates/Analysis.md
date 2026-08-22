@@ -1,8 +1,8 @@
 ---
 type: analysis
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 analysis-kind: modus-operandi
 # analysis-kind: modus-operandi | motive | behavioral | link | other
 related-events: []

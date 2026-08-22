@@ -1,8 +1,8 @@
 ---
 type: contradiction
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 conflicting-items: []
 severity-level: medium
 resolution-status: open

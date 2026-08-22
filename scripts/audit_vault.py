@@ -31,7 +31,7 @@ import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 try:
     import yaml
@@ -46,7 +46,7 @@ except ImportError:
 REQUIRED_FIELDS = {"type", "status", "created", "updated"}
 VALID_STATUSES = {
     "verified", "unverified", "draft", "stub", "deprecated",
-    "exploration", "pending-human-review", "rejected",
+    "exploration", "working", "pending-human-review", "rejected",
     "open-investigation", "cold-case", "cause-unknown"
 }
 

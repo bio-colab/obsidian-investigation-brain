@@ -94,7 +94,7 @@ python3 scripts/case_memory.py add <case-root> \\
 - `tool-id` و`version` و`status`.
 - الغرض، المدخلات، المخرجات، وحدود الاستخدام.
 - `entrypoint` و`runtime` و`network: denied`.
-- `writes-to`، ويجب أن تكون داخل `08-Tooling/` أو `05-Analysis/` أو `02b-Exploration/` أو `case-logs/`.
+- `writes-to`، ويجب أن تكون مسارات نسبية بلا `.` أو `..`، وأن تحل داخل `08-Tooling/` أو `05-Analysis/` أو `02b-Exploration/` أو `case-logs/`؛ تُرفض symlink الخارجية قبل إنشاء المجلد أو mount.
 - hash للكود، وhash للمدخلات عند التشغيل.
 - `human-review: required` قبل promotion أو استخدام النتيجة في تقرير معتمد.
 

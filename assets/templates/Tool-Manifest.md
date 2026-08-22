@@ -1,8 +1,8 @@
 ---
 type: tool-manifest
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 tool-id: TOOL-000
 version: 0.1.0
 runtime: python3

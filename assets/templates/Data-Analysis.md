@@ -1,8 +1,8 @@
 ---
 type: data-analysis
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 analysis-kind: simulation
 methodology: 
 input-data: []

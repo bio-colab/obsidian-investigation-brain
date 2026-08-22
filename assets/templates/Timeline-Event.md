@@ -1,8 +1,8 @@
 ---
 type: timeline-event
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 timestamp: 
 precision: approximate
 source: 

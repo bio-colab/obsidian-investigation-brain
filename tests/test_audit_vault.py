@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from audit_vault import audit_vault  # noqa: E402
+import case_memory  # noqa: E402
 
 
 CRITICAL = (
@@ -76,3 +77,12 @@ Custody record for the training note.
     codes = {issue["code"] for issue in result["issues"]}
     assert "EVIDENCE_NO_COC" not in codes
     assert result["evidence_count"] == 1
+
+
+def test_audit_accepts_working_memory_snapshot(tmp_path: Path) -> None:
+    make_base(tmp_path)
+    case_memory.append_event(tmp_path, "session.init", summary="test")
+    case_memory.write_snapshot(tmp_path)
+    result = audit_vault(tmp_path)
+    assert not any(issue["code"] == "INVALID_STATUS" for issue in result["issues"])
+    assert result["memory_snapshot_present"] is True

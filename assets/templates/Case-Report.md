@@ -1,8 +1,8 @@
 ---
 type: case-report
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 readiness-passed: false
 claim-trace: []
 # claim-trace example:

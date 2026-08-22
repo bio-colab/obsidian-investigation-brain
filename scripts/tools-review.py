@@ -22,8 +22,6 @@ def load_json(path: Path) -> dict[str, Any] | None:
 def review(case_root: Path) -> dict[str, Any]:
     active = case_root / "08-Tooling" / "Active"
     audits = case_root / "08-Tooling" / "Audits"
-    library = case_root / "08-Tooling" / "Library"
-    archive = case_root / "08-Tooling" / "Archive"
     suggestions: list[dict[str, str]] = []
     if not active.exists():
         return {"case_root": str(case_root), "suggestions": [], "note": "no Active tooling directory"}

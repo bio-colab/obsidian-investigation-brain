@@ -1,8 +1,8 @@
 ---
 type: organization
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 org-kind: other
 # org-kind: law-enforcement | government | corporate | tribal | criminal-group | ngo | other
 aliases: []

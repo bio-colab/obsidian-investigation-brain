@@ -30,7 +30,6 @@ class AgentSpec:
     role: str
     task: str
     bot_id: str | None = None
-    model: str | None = None
     jurisdiction: str | None = None
     enabled: bool = True
 
@@ -44,7 +43,6 @@ class AgentSpec:
             role=require_text(raw.get("role"), f"{agent_id}.role"),
             task=require_text(raw.get("task"), f"{agent_id}.task"),
             bot_id=str(raw["bot_id"]).strip() if raw.get("bot_id") else None,
-            model=str(raw["model"]).strip() if raw.get("model") else None,
             jurisdiction=str(raw["jurisdiction"]).strip() if raw.get("jurisdiction") else None,
             enabled=bool(raw.get("enabled", True)),
         )
@@ -62,7 +60,6 @@ class TeamManifest:
     max_workers: int = 4
     timeout_seconds: int = 180
     max_claims_per_agent: int = 20
-    require_human_gate: bool = True
 
     @classmethod
     def from_mapping(cls, raw: dict[str, Any]) -> "TeamManifest":
@@ -72,6 +69,8 @@ class TeamManifest:
             raise ValueError(f"invalid case_id: {case_id}")
         if not AGENT_ID_RE.fullmatch(team_id):
             raise ValueError(f"invalid team_id: {team_id}")
+        if raw.get("require_human_gate") is False:
+            raise ValueError("Human Gate is mandatory and cannot be disabled")
         agents = tuple(AgentSpec.from_mapping(item) for item in raw.get("agents", []))
         if not agents:
             raise ValueError("agents must contain at least one agent")
@@ -105,7 +104,6 @@ class TeamManifest:
             max_workers=workers,
             timeout_seconds=timeout,
             max_claims_per_agent=claim_cap,
-            require_human_gate=bool(raw.get("require_human_gate", True)),
         )
 
 
@@ -232,13 +230,3 @@ class Gate:
     reviewer: str = ""
     decision: str = ""
     decided_at: str = ""
-
-
-def to_jsonable(value: Any) -> Any:
-    if hasattr(value, "__dataclass_fields__"):
-        return {key: to_jsonable(getattr(value, key)) for key in value.__dataclass_fields__}
-    if isinstance(value, (tuple, list)):
-        return [to_jsonable(item) for item in value]
-    if isinstance(value, dict):
-        return {key: to_jsonable(item) for key, item in value.items()}
-    return value

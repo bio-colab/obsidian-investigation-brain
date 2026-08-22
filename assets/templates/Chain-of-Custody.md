@@ -1,8 +1,8 @@
 ---
 type: chain-of-custody
 status: verified
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 evidence-ref: "[[EV-]]"
 current-custodian: 
 integrity-hash: 

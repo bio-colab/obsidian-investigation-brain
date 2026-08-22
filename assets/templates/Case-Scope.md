@@ -1,8 +1,8 @@
 ---
 type: scope
 status: verified
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 case-id: 
 case-title: 
 inside-scope: |

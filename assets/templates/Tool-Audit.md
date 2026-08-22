@@ -1,8 +1,8 @@
 ---
 type: tool-audit
 status: pending-human-review
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 tool-id: TOOL-000
 tool-version: 0.1.0
 source-hash: ""

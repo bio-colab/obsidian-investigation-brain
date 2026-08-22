@@ -6,7 +6,6 @@ mode: dry-run
 max_workers: 3
 timeout_seconds: 30
 max_claims_per_agent: 10
-require_human_gate: true
 agents:
   - agent_id: osint
     role: OSINT analyst

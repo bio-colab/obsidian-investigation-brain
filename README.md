@@ -5,16 +5,20 @@
 **الإصدار:** 0.4.2
 **مبني على:** [Obsidian Research Brain Skill](https://github.com/bio-colab/obsidian-research-brain-skill) (v1.1.9)
 
-### شفافية البنشمارك (يُرجى القراءة قبل تفسير أي درجات)
+### Benchmark اختياري للمطورين
 
-هذا الإصدار طُوِّر تحت ضغط **Investigation Benchmark v1** (`Benchmark v1/`).  
-الوثيقة المركزية للأثر والحدود والمنهج:
-
-**→ [`docs/BENCHMARK_TRANSPARENCY.md`](docs/BENCHMARK_TRANSPARENCY.md)**
-
-باختصار: درجات **baseline** تقيس قابلية التعبير عن البروتوكول؛ درجات **agent** (منفصلة) تقيس الوكيل الحر. لا تُخلط الاثنتان.
+`Benchmark v1/` ليس مطلوباً لاستخدام المهارة أو لإدارة قضية يومية. هو حزام Advanced لتقييم البروتوكول على حزم تدريبية ومقارنة baseline مع agent. عند استخدامه، راجع [`docs/BENCHMARK_TRANSPARENCY.md`](docs/BENCHMARK_TRANSPARENCY.md)، ولا تخلط درجات **baseline** بدرجات **agent**.
 
 **خرائط القراءة:** [`ARCHITECTURE.md`](ARCHITECTURE.md) للمعمارية الموحدة، [`OBSIDIAN_NATIVE_STRATEGY.md`](OBSIDIAN_NATIVE_STRATEGY.md) لاستراتيجية Dataview/Bases، و[`DEVELOPMENT.md`](DEVELOPMENT.md) و[`CONTRIBUTING.md`](CONTRIBUTING.md) للمطورين.
+
+## اختر مسار الاستخدام
+
+| المسار | لمن؟ | ابدأ بـ | لا تحتاجه الآن |
+|---|---|---|---|
+| **Basic** | الهاوي أو المحقق الذي يريد تنظيم قضية واحدة | [`references/guide-for-investigator.md`](references/guide-for-investigator.md)، ثم أوضاع Scaffold/Management/Audit/Reporting | Benchmark، Self-Tooling، وSwarm |
+| **Advanced** | المطور أو الفريق الذي يحتاج أدوات قابلة للتتبع أو مقارنة منهجية | [`ARCHITECTURE.md`](ARCHITECTURE.md)، [`docs/SELF_TOOLING_INTEGRATION.md`](docs/SELF_TOOLING_INTEGRATION.md)، و[`swarm-wrapper/README.md`](swarm-wrapper/README.md) | لا تستخدم هذه الطبقة قبل استقرار vault الأساسي |
+
+**قاعدة عملية:** ابدأ بـBasic، ولا تنتقل إلى Advanced إلا عند وجود سؤال تحليلي أو حاجة تشغيلية محددة. `Benchmark v1/` حزام تطوير اختياري، وليس جزءاً من العمل اليومي أو شرطاً لاستخدام المهارة.
 
 ---
 
@@ -50,16 +54,18 @@
 
 ---
 
-## Quick Start
+## Quick Start — المسار الأساسي
 
-1. فعّل المهارة واطلب بناء vault قضية من: رقم/اسم القضية + النطاق + خطة التحقيق (أو المراحل) + أدوار الفريق إن وُجدت.
-2. الوكيل يعمل بـ **الوضع أ (Scaffold)**.
-3. أضف الأدلة والكيانات والفرضيات في **الوضع ب** — Evidence فقط بأدلة حقيقية + سلسلة حفظ + Human Gate عند الحاجة.
-4. للتدقيق: **الوضع ج** أو شغّل `scripts/audit_vault.py`.
-5. عند الحاجة إلى أداة تحليل مخصصة: أنشئ scaffold عبر `scripts/tool_factory.py`، أضف fixture صغيراً، ثم شغّله عبر `scripts/case_tooling.py`؛ التنفيذ fail-closed عند غياب backend عازل.
-6. عند اتخاذ قرار أو استئناف جلسة استخدم `scripts/case_memory.py add/resume`؛ يسجل القرار المختصر ولا يسجل سلسلة التفكير السرية.
-7. لإنتاج تقرير: **الوضع د (Reporting)**.
-8. لتجربة فريق متعدد الوكلاء على قضية تدريبية: شغّل `swarm-wrapper/run.py` في `dry-run`، ثم افحص النتائج بـ `scripts/validate_swarm.py`. تبقى كل المخرجات Proposals/Analysis ويظل Human Gate إلزامياً.
+1. فعّل المهارة واطلب بناء vault قضية من رقم/اسم القضية، النطاق، وخطة التحقيق إن وُجدت.
+2. ابدأ بـ **الوضع أ (Scaffold)**، ثم اقرأ `AGENTS.md` و`Case-Scope.md` داخل vault.
+3. أضف الأدلة والكيانات والفرضيات في **الوضع ب (Management)**؛ Evidence لا يحتوي إلا ما له مصدر حقيقي وسجل حفظ مناسب.
+4. شغّل **الوضع ج (Audit)** قبل أي تقرير، ثم استخدم **الوضع د (Reporting)** عند اكتمال الجاهزية.
+
+في الاستخدام الأساسي لا تحتاج إلى Benchmark أو Self-Tooling أو Swarm. عند اتخاذ قرار مهم استخدم `scripts/case_memory.py add/resume`؛ يسجل القرار المختصر ولا يسجل سلسلة التفكير السرية.
+
+## المسار المتقدم — عند الحاجة فقط
+
+عند وجود سؤال تحليلي محدد، أنشئ scaffold عبر `scripts/tool_factory.py`، أضف fixture صغيراً، ثم شغّله عبر `scripts/case_tooling.py`؛ التنفيذ fail-closed عند غياب backend عازل. وللتنسيق متعدد الوكلاء استخدم `swarm-wrapper/run.py` في `dry-run` ثم افحص النتائج بـ `scripts/validate_swarm.py`. تبقى كل المخرجات Proposals/Analysis ويظل Human Gate إلزامياً.
 
 **دليل مبسّط للمحقق:** [`references/guide-for-investigator.md`](references/guide-for-investigator.md)
 

@@ -1,8 +1,8 @@
 ---
 type: digital-evidence
 status: pending-human-review
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 evidence-id: 
 collected-by: 
 collected-at: 

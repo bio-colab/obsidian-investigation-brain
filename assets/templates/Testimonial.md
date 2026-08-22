@@ -1,8 +1,8 @@
 ---
 type: testimonial
 status: pending-human-review
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 evidence-id: 
 interview-date: 
 interviewer: 

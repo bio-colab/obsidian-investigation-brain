@@ -1,8 +1,8 @@
 ---
 type: alibi
 status: draft
-created: {{date}}
-updated: {{date}}
+created: "{{date}}"
+updated: "{{date}}"
 person: "[[Person-]]"
 time-range-start: 
 time-range-end: 

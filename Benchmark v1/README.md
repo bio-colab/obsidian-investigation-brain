@@ -49,34 +49,32 @@ Benchmark v1/
 └── results/                 # run outputs (gitignored content OK)
 ```
 
-## Quick start
+## Quick start — Advanced only
+
+لا تحتاج هذا الحزام في الاستخدام الأساسي. استخدمه عندما تريد اختباراً قابلاً لإعادة التشغيل أو مقارنة baseline مع agent على حزم التدريب، وليس لإدارة قضية حقيقية يومية.
 
 ```powershell
-# From repo root (obsidian-investigation-brain-0.2.0)
 cd "Benchmark v1"
 
-# 1) Environment
+# 1) تحقق سريع من البيئة والـfixtures فقط
 python tools/check_environment.py
+python -m unittest tests/test_scorer_smoke.py
 
-# 2) Seed 20 historical/desensitized case skeletons (if not already present)
+# 2) عند الحاجة إلى حزم التدريب
 python tools/seed_historical_cases.py
-
-# 3) Validate all cases
 python tools/validate_case.py --all
 
-# 4) Smoke-test scorer on fixtures
-python tools/score_vault.py --case-id FIXTURE-GOOD --vault fixtures/sample_vault_good --ground-truth fixtures/sample_vault_good/ground_truth.yaml --out results/smoke_good.json
-python tools/score_vault.py --case-id FIXTURE-BAD  --vault fixtures/sample_vault_bad  --ground-truth fixtures/sample_vault_bad/ground_truth.yaml  --out results/smoke_bad.json
-
-# 5) After agents produce vaults under results/runs/<run_id>/<case_id>/vault
-python tools/run_benchmark.py --run-id demo --vaults-root results/runs/demo --producer baseline --cases-glob "cases/CASE-*"
+# 3) ابنِ مجموعة baseline محددة؛ لا تعتمد على scan ناقص بصمت
+python tools/build_run_vaults.py --preset 5a --run-id demo
+python tools/run_benchmark.py --run-id demo --vaults-root results/runs/demo --producer baseline --only CASE-FICT-WAREHOUSE-014 CASE-FICT-PAYROLL-015 CASE-NTSB-HUDSON-004 CASE-COLD-DBCOOPER-007 CASE-FICT-LABGAP-018
 python tools/aggregate_results.py --run-id demo
 
-# 6) Free-form agent path
-# see docs/AGENT_RUN_PROTOCOL.md
+# 4) تشغيل agent منفصل؛ راجع docs/AGENT_RUN_PROTOCOL.md أولاً
 python tools/prepare_agent_run.py --run-id agent-01 --cases CASE-ORG-RICO-SHELL-023 CASE-SK-FICT-CORRIDOR-030
 python tools/run_benchmark.py --run-id agent-01 --vaults-root results/runs/agent-01 --producer agent --only CASE-ORG-RICO-SHELL-023
 ```
+
+إذا أردت تشغيل مجموعة جزئية مع vaults ناقصة عمداً، استخدم `--skip-missing` صراحةً. التشغيل الافتراضي يفشل بدلاً من إنتاج متوسط مضلل.
 
 
 ## Case pack contract
