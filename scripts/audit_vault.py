@@ -656,16 +656,29 @@ def audit_vault(vault: Path) -> dict[str, Any]:
             between = [between]
         stems = {_link_stem(x) for x in between if str(x).strip()}
         stems.discard("")
+        # `undermines` names the side(s) the contradiction actually weakens. When
+        # present it takes precedence so hypotheses resting on the *surviving*
+        # side are not falsely flagged for merely sharing the contradiction.
+        if "undermines" in fm:
+            under = fm.get("undermines") or []
+            if not isinstance(under, list):
+                under = [under]
+            stems = {_link_stem(x) for x in under if str(x).strip()}
+            stems.discard("")
         if not stems and status_c not in ("deprecated", "rejected"):
             result["issues"].append({
                 "severity": "minor",
                 "code": "CONTRADICTION_UNLINKED",
-                "msg": "تناقض مسجل بلا روابط بين الأطراف المتناقضة (between)",
+                "msg": "تناقض مسجل بلا روابط بين الأطراف المتناقضة (between/undermines)",
                 "path": rel,
             })
             continue
         open_contradictions[rel] = stems
     for hrel, hfm, _hbody in hypothesis_notes:
+        h_status = str(hfm.get("status") or "").strip().lower()
+        h_kind = str(hfm.get("hypothesis-kind") or hfm.get("hypothesis_kind") or "").strip().lower()
+        if h_status in ("rejected", "deprecated") or h_kind == "rejected":
+            continue  # rejected hypotheses may legitimately cite contradicted evidence
         sup = hfm.get("supporting-notes") or hfm.get("supporting_notes") or []
         if not isinstance(sup, list) or not sup:
             continue

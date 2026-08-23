@@ -184,6 +184,62 @@ def test_audit_flags_strong_hypothesis_on_unresolved_contradiction(tmp_path: Pat
     assert ("HYPOTHESIS_STRONG_ON_CONTRADICTION", "major") in majors
 
 
+def test_audit_skips_rejected_hypotheses_in_contradiction_rule(tmp_path: Path) -> None:
+    make_base(tmp_path)
+    _write_note(
+        tmp_path,
+        "03-Hypotheses/Rejected/H-R1.md",
+        (
+            "type: hypothesis\nstatus: rejected\ncreated: 2026-01-01\nupdated: 2026-01-01\n"
+            'hypothesis-kind: rejected\nsupport-level: weak\nsupporting-notes: ["[[EV-A]]"]\n'
+            "reject-reason: superseded by DNA evidence"
+        ),
+    )
+    _write_note(
+        tmp_path,
+        "04-Timeline/Contradictions/CON-X.md",
+        (
+            "type: contradiction\nstatus: pending-human-review\ncreated: 2026-01-01\nupdated: 2026-01-01\n"
+            'between: ["[[EV-A]]", "[[EV-B]]"]'
+        ),
+    )
+    result = audit_vault(tmp_path)
+    codes = {issue["code"] for issue in result["issues"]}
+    assert not any(c.startswith("HYPOTHESIS_") and c.endswith("_CONTRADICTION") for c in codes)
+
+
+def test_contradiction_undermines_field_takes_precedence(tmp_path: Path) -> None:
+    make_base(tmp_path)
+    _write_note(
+        tmp_path,
+        "03-Hypotheses/Primary/H-P1.md",
+        (
+            "type: hypothesis\nstatus: draft\ncreated: 2026-01-01\nupdated: 2026-01-01\n"
+            'hypothesis-kind: primary\nsupport-level: strong\nsupporting-notes: ["[[EV-A]]", "[[EV-C]]"]\n'
+            'counter-hypothesis: "[[H-C1]]"'
+        ),
+    )
+    # The contradiction pits EV-A against EV-B; H-P1 rests on the survivor side.
+    _write_note(
+        tmp_path,
+        "04-Timeline/Contradictions/CON-X.md",
+        (
+            "type: contradiction\nstatus: pending-human-review\ncreated: 2026-01-01\nupdated: 2026-01-01\n"
+            'between: ["[[EV-A]]", "[[EV-B]]"]\nundermines: ["[[EV-B]]"]'
+        ),
+    )
+    result_ok = audit_vault(tmp_path)
+    assert not any(
+        i["code"] == "HYPOTHESIS_STRONG_ON_CONTRADICTION" and i["path"].endswith("H-P1.md")
+        for i in result_ok["issues"]
+    )
+    # Flip: undermine the very evidence the hypothesis rests on -> must flag.
+    note2 = tmp_path / "04-Timeline/Contradictions/CON-X.md"
+    note2.write_text(note2.read_text(encoding="utf-8").replace('undermines: ["[[EV-B]]"]', 'undermines: ["[[EV-A]]"]'), encoding="utf-8")
+    result_flag = audit_vault(tmp_path)
+    assert any(i["code"] == "HYPOTHESIS_STRONG_ON_CONTRADICTION" for i in result_flag["issues"])
+
+
 def test_audit_conclusive_requires_multiple_supporting_notes(tmp_path: Path) -> None:
     make_base(tmp_path)
     _write_note(
