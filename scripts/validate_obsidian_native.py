@@ -214,6 +214,9 @@ def validate(root: Path) -> dict[str, Any]:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Validate Obsidian native formats")
     parser.add_argument("vault", help="vault root")
     parser.add_argument("--json", help="write JSON result")

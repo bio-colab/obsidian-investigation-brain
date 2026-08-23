@@ -7,10 +7,11 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import re
+import sys
 from typing import Any
 
 
-FRONTMATTER = re.compile(r"\A---\n(?P<body>.*?)\n---\n", re.DOTALL)
+FRONTMATTER = re.compile(r"\A---\r?\n(?P<body>.*?)\r?\n---\r?\n?", re.DOTALL)
 ALLOWED_SEGMENT = "08-Tooling/Swarm"
 
 
@@ -135,6 +136,9 @@ def validate(case_root: Path, team_id: str, run_id: str) -> dict[str, Any]:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Validate Investigation Swarm artifacts")
     parser.add_argument("case_root")
     parser.add_argument("--team-id", required=True)

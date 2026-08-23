@@ -62,6 +62,24 @@ def _frontmatter(values: dict[str, Any]) -> str:
     return "---\n" + "\n".join(lines) + "\n---\n"
 
 
+def _cell(value: Any) -> str:
+    """Escape untrusted text for a Markdown table cell (pipes, newlines)."""
+    text = _line(value)
+    return text or "—"
+
+
+def _line(value: Any) -> str:
+    """Escape untrusted text for inline Markdown use without a dash fallback."""
+    return str(value).replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+
+
+def _fenced(text: str) -> tuple[str, str]:
+    """Return open/close fence markers long enough to survive embedded backticks."""
+    longest = max((len(run) for run in re.findall(r"`{3,}", text)), default=0)
+    marker = "`" * max(3, longest + 1)
+    return marker, marker
+
+
 class CaseVault:
     def __init__(self, root: Path, manifest: TeamManifest):
         self.root = root.resolve()
@@ -137,7 +155,7 @@ class CaseVault:
             "",
             "> This is an unapproved agent proposal. It is not Evidence and cannot change a note status.",
             "",
-            f"**Summary:** {proposal.summary or 'No structured summary returned.'}",
+            f"**Summary:** {_line(proposal.summary) or 'No structured summary returned.'}",
             "",
             "## Claims",
             "",
@@ -148,19 +166,21 @@ class CaseVault:
             for claim in proposal.claims:
                 body.append(
                     "| {id} | {text} | {support} | {counter} | {confidence} | {limits} |".format(
-                        id=claim.claim_id,
-                        text=claim.text.replace("|", "\\|"),
-                        support=", ".join(claim.supporting_refs) or "—",
-                        counter=", ".join(claim.counter_refs) or "—",
-                        confidence=claim.confidence,
-                        limits=", ".join(claim.limitations) or "—",
+                        id=_cell(claim.claim_id),
+                        text=_cell(claim.text),
+                        support=_cell(", ".join(claim.supporting_refs)),
+                        counter=_cell(", ".join(claim.counter_refs)),
+                        confidence=_cell(claim.confidence),
+                        limits=_cell(", ".join(claim.limitations)),
                     )
                 )
         else:
             body.append("| — | No structured claims | — | — | unknown | parse or agent failure |")
         body.extend(["", "## Known gaps", ""])
-        body.extend(f"- {gap}" for gap in proposal.known_gaps) if proposal.known_gaps else body.append("- No gaps returned; this is not evidence that no gaps exist.")
-        body.extend(["", "## Raw response (untrusted analysis text)", "", "```text", proposal.raw_text[-12000:], "```", ""])
+        body.extend(f"- {_cell(gap)}" for gap in proposal.known_gaps) if proposal.known_gaps else body.append("- No gaps returned; this is not evidence that no gaps exist.")
+        raw_tail = proposal.raw_text[-12000:]
+        open_fence, close_fence = _fenced(raw_tail)
+        body.extend(["", "## Raw response (untrusted analysis text)", "", open_fence + "text", raw_tail, close_fence, ""])
         path.write_text("\n".join(body), encoding="utf-8")
         append_event(self.root, "swarm.proposal.written", case_id=proposal.case_id, team_id=proposal.team_id, run_id=proposal.run_id, agent_id=proposal.agent_id, proposal_id=proposal.proposal_id, parse_status=proposal.parse_status, source_hash=proposal.source_hash)
         return path
@@ -178,7 +198,7 @@ class CaseVault:
             "|---|---|---|---|---|",
         ]
         for item in items:
-            body.append(f"| {item.conflict_id} | {item.claim_id} | {', '.join(item.proposal_ids)} | {'; '.join(item.descriptions)} | {item.status} |" )
+            body.append(f"| {_cell(item.conflict_id)} | {_cell(item.claim_id)} | {_cell(', '.join(item.proposal_ids))} | {_cell('; '.join(item.descriptions))} | {_cell(item.status)} |")
         if not items:
             body.append("| — | — | — | No exact claim-id conflict detected; semantic review is still required. | none-detected |")
         path.write_text("\n".join(body) + "\n", encoding="utf-8")
@@ -208,10 +228,7 @@ class CaseVault:
         body.extend(["", "## Claims to review", "", "| Agent | Claim ID | Text | Supporting refs | Counter refs |", "|---|---|---|---|---|"])
         for proposal in proposals_list:
             for claim in proposal.claims:
-                escaped_text = claim.text.replace("|", "\\|")
-                supporting_refs = ", ".join(claim.supporting_refs) or "—"
-                counter_refs = ", ".join(claim.counter_refs) or "—"
-                body.append(f"| {proposal.agent_id} | {claim.claim_id} | {escaped_text} | {supporting_refs} | {counter_refs} |")
+                body.append(f"| {_cell(proposal.agent_id)} | {_cell(claim.claim_id)} | {_cell(claim.text)} | {_cell(', '.join(claim.supporting_refs))} | {_cell(', '.join(claim.counter_refs))} |")
         body.extend(["", "## Required human decisions", "", "- Are any claims supported by source notes rather than agent assertions?", "- Are counter-hypotheses substantive and represented?", "- Are jurisdiction and limitations explicit?", "- Which gaps must remain open?", ""])
         draft.write_text("\n".join(body), encoding="utf-8")
         gate_path = run / "human-gates" / f"{gate.gate_id}.md"

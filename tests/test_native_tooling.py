@@ -6,6 +6,8 @@ from argparse import Namespace
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -75,7 +77,10 @@ def test_manifest_rejects_dotdot_and_symlink_write_targets(tmp_path: Path) -> No
     entry.write_text("print('ok')\n", encoding="utf-8")
     outside = tmp_path.parent / "outside-write"
     outside.mkdir()
-    (tmp_path / "08-Tooling/link").symlink_to(outside, target_is_directory=True)
+    try:
+        (tmp_path / "08-Tooling/link").symlink_to(outside, target_is_directory=True)
+    except OSError:
+        pytest.skip("symlink creation requires privileges on this platform")
 
     for target in ("08-Tooling/../01-Evidence", "08-Tooling/link/out"):
         manifest = tmp_path / f"manifest-{len(list(tmp_path.glob('manifest-*')))}.yaml"
@@ -182,6 +187,42 @@ def test_run_id_is_bounded_before_audit_write(tmp_path: Path) -> None:
     )
     assert code == 2
     assert not (tmp_path / "escaped-audit.json").exists()
+
+
+def test_build_command_host_mode_uses_real_paths(tmp_path: Path) -> None:
+    (tmp_path / "08-Tooling/Active").mkdir(parents=True)
+    entry = tmp_path / "08-Tooling/Active/tool.py"
+    entry.write_text("print('ok')\n", encoding="utf-8")
+    manifest = tmp_path / "manifest.yaml"
+    manifest.write_text(
+        "tool-id: TOOL-001\nversion: 0.1.0\nentrypoint: 08-Tooling/Active/tool.py\nnetwork: denied\nwrites-to: [08-Tooling/Runs/]\n",
+        encoding="utf-8",
+    )
+    data = case_tooling.load_manifest(manifest)
+    command, entrypoint = case_tooling.build_command(tmp_path, manifest, data, "host", [])
+    assert entrypoint == entry.resolve()
+    assert any(part == str(entry.resolve()) for part in command)
+    assert not any(isinstance(part, str) and part.startswith("/workspace") for part in command)
+
+
+def test_build_command_sandbox_hardening(tmp_path: Path) -> None:
+    (tmp_path / "08-Tooling/Active").mkdir(parents=True)
+    entry = tmp_path / "08-Tooling/Active/tool.py"
+    entry.write_text("print('ok')\n", encoding="utf-8")
+    manifest = tmp_path / "manifest.yaml"
+    manifest.write_text(
+        "tool-id: TOOL-001\nversion: 0.1.0\nentrypoint: 08-Tooling/Active/tool.py\nnetwork: denied\nwrites-to: [08-Tooling/Runs/]\n",
+        encoding="utf-8",
+    )
+    data = case_tooling.load_manifest(manifest)
+    for backend in ("docker", "podman"):
+        command, _ = case_tooling.build_command(tmp_path, manifest, data, backend, [])
+        assert command[0] == backend
+        network_at = command.index("--network")
+        assert command[network_at + 1] == "none"
+        assert "--read-only" in command
+    bwrap_command, _ = case_tooling.build_command(tmp_path, manifest, data, "bwrap", [])
+    assert "--unshare-net" in bwrap_command
 
 
 def test_core_keeps_benchmark_external_only() -> None:

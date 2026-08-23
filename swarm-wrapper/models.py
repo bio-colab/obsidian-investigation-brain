@@ -11,6 +11,17 @@ from urllib.parse import urlparse
 
 AGENT_ID_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9_.-]{1,63}$")
 CASE_ID_RE = re.compile(r"^[A-Z0-9][A-Z0-9_.-]{2,63}$")
+SAFE_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,79}$")
+LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
+
+
+def safe_agent_id(value: Any, fallback: str) -> str:
+    """Sanitize an agent-supplied identifier for safe Markdown/filename use."""
+    text = str(value or "").strip()
+    if SAFE_ID_RE.fullmatch(text):
+        return text
+    slug = re.sub(r"[^A-Za-z0-9_.:-]+", "-", text).strip("-.:-")
+    return slug[:80] if slug else fallback
 
 
 def utc_now() -> str:
@@ -82,7 +93,7 @@ class TeamManifest:
             raise ValueError("mode must be dry-run or openmausbot")
         openmaus_url = str(raw.get("openmaus_url", "http://127.0.0.1:8799")).rstrip("/")
         parsed_url = urlparse(openmaus_url)
-        if mode == "openmausbot" and (parsed_url.scheme not in {"http", "https"} or parsed_url.hostname not in {"127.0.0.1", "localhost", "::1"}):
+        if mode == "openmausbot" and (parsed_url.scheme not in {"http", "https"} or parsed_url.hostname not in LOOPBACK_HOSTS):
             raise ValueError("openmaus_url must target loopback in openmausbot mode")
         workers = int(raw.get("max_workers", min(4, len(agents))))
         timeout = int(raw.get("timeout_seconds", 180))
@@ -118,7 +129,10 @@ class Claim:
 
     @classmethod
     def from_mapping(cls, raw: dict[str, Any], index: int) -> "Claim":
-        claim_id = require_text(raw.get("claim_id") or raw.get("id") or f"CLAIM-{index:03d}", "claim_id")
+        claim_id = safe_agent_id(
+            raw.get("claim_id") or raw.get("id") or f"CLAIM-{index:03d}",
+            f"CLAIM-{index:03d}",
+        )
         text = require_text(raw.get("text") or raw.get("claim"), f"{claim_id}.text")
         confidence = str(raw.get("confidence", "unknown"))
         if confidence not in {"unknown", "low", "medium", "high"}:
@@ -192,8 +206,9 @@ class Proposal:
         if not isinstance(claims_raw, list):
             raise ValueError("proposal claims must be a list")
         claims = tuple(Claim.from_mapping(item, i + 1) for i, item in enumerate(claims_raw[: manifest.max_claims_per_agent]))
+        default_proposal_id = f"PROP-{agent.agent_id}-{run_id}"
         return cls(
-            proposal_id=str(payload.get("proposal_id") or f"PROP-{agent.agent_id}-{run_id}"),
+            proposal_id=safe_agent_id(payload.get("proposal_id"), default_proposal_id),
             case_id=manifest.case_id,
             team_id=manifest.team_id,
             agent_id=agent.agent_id,

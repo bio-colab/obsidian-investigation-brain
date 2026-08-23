@@ -9,9 +9,28 @@ import urllib.error
 import urllib.request
 import uuid
 from typing import Any, Protocol
+from urllib.parse import urlparse
 
-from models import AgentSpec, Conflict, Proposal, TeamManifest
+from models import AgentSpec, Conflict, LOOPBACK_HOSTS, Proposal, TeamManifest
 from vault import CaseVault, append_event
+
+
+class LoopbackRedirectBlocked(RuntimeError):
+    """Raised when a loopback-bound response redirects outside the loopback set."""
+
+
+class _LoopbackOnlyRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """HTTPRedirectHandler that re-validates every redirect target.
+
+    Without this, urllib follows redirects by default and a compromised or
+    misbehaving loopback service could pivot requests to any remote host.
+    """
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # type: ignore[override]
+        parsed = urlparse(str(newurl))
+        if parsed.scheme not in {"http", "https"} or (parsed.hostname or "").lower() not in LOOPBACK_HOSTS:
+            raise LoopbackRedirectBlocked(f"blocked non-loopback redirect target: {newurl}")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
 class AgentClient(Protocol):
@@ -50,6 +69,7 @@ class OpenMausBotClient:
 
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
+        self._opener = urllib.request.build_opener(_LoopbackOnlyRedirectHandler)
 
     def _request(self, method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
         data = json.dumps(body).encode("utf-8") if body is not None else None
@@ -60,7 +80,7 @@ class OpenMausBotClient:
             headers={"content-type": "application/json"} if body is not None else {},
         )
         try:
-            with urllib.request.urlopen(request, timeout=15) as response:
+            with self._opener.open(request, timeout=15) as response:
                 raw = response.read().decode("utf-8")
         except urllib.error.URLError as exc:
             raise RuntimeError(f"OpenMausBot request failed: {exc}") from exc

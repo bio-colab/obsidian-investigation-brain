@@ -12,9 +12,15 @@ ROOT = Path(__file__).resolve().parents[2]
 WRAPPER = ROOT / "swarm-wrapper"
 sys.path.insert(0, str(WRAPPER))
 
-from models import AgentSpec, TeamManifest  # noqa: E402
-from orchestrator import OpenMausBotClient, detect_conflicts, run_team  # noqa: E402
-from vault import append_event  # noqa: E402
+from models import AgentSpec, Claim, Proposal, TeamManifest  # noqa: E402
+from orchestrator import (  # noqa: E402
+    LoopbackRedirectBlocked,
+    OpenMausBotClient,
+    _LoopbackOnlyRedirectHandler,
+    detect_conflicts,
+    run_team,
+)
+from vault import CaseVault, append_event  # noqa: E402
 
 
 @pytest.fixture
@@ -230,6 +236,22 @@ def test_swarm_event_ids_are_unique_under_rapid_writes(tmp_path: Path) -> None:
     assert len({row["event_id"] for row in rows}) == len(rows)
 
 
+def test_validate_swarm_accepts_crlf_frontmatter(tmp_path: Path) -> None:
+    scripts_dir = ROOT / "scripts"
+    sys.path.insert(0, str(scripts_dir))
+    try:
+        import validate_swarm
+    finally:
+        sys.path.remove(str(scripts_dir))
+    note = tmp_path / "consensus-draft.md"
+    note.write_bytes(
+        b"---\r\ntype: consensus-draft\r\nstatus: pending-human-review\r\nrun-id: RUN-CRLF\r\n---\r\n\r\nbody\r\n"
+    )
+    meta = validate_swarm.parse_frontmatter(note)
+    assert meta["run-id"] == "RUN-CRLF"
+    assert meta["status"] == "pending-human-review"
+
+
 @pytest.mark.parametrize("run_id", ["/tmp/escaped-run", "../escaped-run", "runs/escaped"])
 def test_run_id_is_bounded_before_any_artifact_write(tmp_path: Path, manifest: TeamManifest, run_id: str) -> None:
     evidence = tmp_path / "01-Evidence"
@@ -242,3 +264,66 @@ def test_run_id_is_bounded_before_any_artifact_write(tmp_path: Path, manifest: T
 
     assert not outside.exists()
     assert not (tmp_path / "08-Tooling" / "Swarm").exists()
+
+
+def test_agent_supplied_ids_are_sanitized(manifest: TeamManifest) -> None:
+    hostile = {
+        "proposal_id": "PROP|evil\ninjection",
+        "summary": "hostile id probe",
+        "claims": [{"claim_id": "CLAIM|A\nB", "text": "hostile claim"}],
+    }
+    proposal = Proposal.from_reply(
+        agent=manifest.agents[0],
+        manifest=manifest,
+        run_id="RUN-SAFE-ID",
+        raw_text=json.dumps(hostile),
+        source_hash="sha256:test",
+    )
+    assert "|" not in proposal.proposal_id and "\n" not in proposal.proposal_id
+    assert proposal.proposal_id.startswith("PROP-evil-injection")
+    claim = proposal.claims[0]
+    assert "|" not in claim.claim_id and "\n" not in claim.claim_id
+
+
+def test_redirect_outside_loopback_is_blocked() -> None:
+    import urllib.request
+
+    handler = _LoopbackOnlyRedirectHandler()
+    request = urllib.request.Request("http://127.0.0.1:8799/api/bots")
+    with pytest.raises(LoopbackRedirectBlocked):
+        handler.redirect_request(request, None, 302, "Found", {"location": "http://example.com/"}, "http://example.com/evil")
+
+
+def test_proposal_markdown_survives_hostile_text(tmp_path: Path, manifest: TeamManifest) -> None:
+    vault = CaseVault(tmp_path, manifest)
+    vault.prepare("RUN-HARD")
+    proposal = Proposal(
+        proposal_id="PROP-HARD",
+        case_id=manifest.case_id,
+        team_id=manifest.team_id,
+        agent_id=manifest.agents[0].agent_id,
+        role="Analyst",
+        run_id="RUN-HARD",
+        status="draft",
+        summary="line one\nline two | three",
+        claims=(
+            Claim(
+                claim_id="C1",
+                text="claim | with pipes \n and newline",
+                supporting_refs=["EV-1"],
+                confidence="low",
+            ),
+        ),
+        known_gaps=("gap | one",),
+        raw_text='```json\n{"fake": "fence ``` inside"}\n```',
+        parse_status="structured",
+        source_hash="sha256:test",
+    )
+    path = vault.write_proposal("RUN-HARD", proposal)
+    text = path.read_text(encoding="utf-8")
+    table_rows = [line for line in text.splitlines() if line.startswith("| C1 ")]
+    assert len(table_rows) == 1
+    assert "\\|" in table_rows[0]
+    fence_lines = [line for line in text.splitlines() if line.startswith("```")]
+    assert fence_lines[0] == "````text"
+    assert fence_lines[-1] == "````"

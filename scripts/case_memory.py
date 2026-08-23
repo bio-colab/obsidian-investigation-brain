@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -75,7 +76,7 @@ def read_events(case_root: Path) -> tuple[list[dict[str, Any]], int]:
 def _clean(value: Any, limit: int = 280) -> str:
     if value is None:
         return ""
-    text = str(value).replace("\n", " ").strip()
+    text = str(value).replace("\r", " ").replace("\n", " ").replace("|", "\\|").strip()
     return text if len(text) <= limit else text[: limit - 1] + "…"
 
 
@@ -170,6 +171,9 @@ def resume_memory(args: argparse.Namespace) -> int:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="External case decision memory")
     sub = parser.add_subparsers(dest="command", required=True)
     add = sub.add_parser("add", help="append a structured decision-trace event")

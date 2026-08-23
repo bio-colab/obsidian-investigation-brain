@@ -18,8 +18,8 @@ Usage:
     python3 audit_vault.py /path/to/case-vault [--json out.json] [--md out.md] [--strict]
 
 Exit codes:
-    0  سليم أو ملاحظات طفيفة فقط
-    1  انتهاكات جوهرية أو حرجة
+    0  سليم، أو ملاحظات طفيفة/جوهرية فقط (استخدم --strict للفشل عند الجوهرية)
+    1  وجود مشكلة حرجة، أو --strict مع وجود جوهرية
     2  خطأ في التشغيل
 """
 
@@ -27,6 +27,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import posixpath
 import re
 import sys
 from collections import Counter, defaultdict
@@ -579,8 +581,12 @@ def audit_vault(vault: Path) -> dict[str, Any]:
         if not isinstance(writes, list):
             writes = [writes]
         for write_target in writes:
-            clean = str(write_target).replace("\\", "/").lstrip("/")
-            if not any(clean == prefix or clean.startswith(prefix + "/") for prefix in TOOLING_ALLOWED_WRITE_PREFIXES):
+            raw_text_target = str(write_target).replace("\\", "/")
+            drive_prefix = os.path.splitdrive(raw_text_target)[0]
+            is_absolute = bool(drive_prefix) or raw_text_target.startswith("/")
+            clean = posixpath.normpath(raw_text_target.lstrip("/"))
+            escapes = is_absolute or clean == ".." or clean.startswith("../")
+            if escapes or not any(clean == prefix or clean.startswith(prefix + "/") for prefix in TOOLING_ALLOWED_WRITE_PREFIXES):
                 result["issues"].append({
                     "severity": "critical",
                     "code": "TOOL_MANIFEST_WRITE_ESCAPE",
@@ -660,11 +666,6 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                         "msg": f"claim-trace[{i}] بلا evidence",
                         "path": rel,
                     })
-
-    # Convert Counters for later JSON
-    result["status_global"] = result["status_global"]
-    for z in result["zones"]:
-        result["zones"][z]["statuses"] = result["zones"][z]["statuses"]
 
     return result
 
@@ -787,6 +788,9 @@ def render_markdown(res: dict[str, Any], score: dict[str, int]) -> str:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser(
         description="Deterministic audit of an Obsidian investigation vault."
     )

@@ -86,3 +86,27 @@ def test_audit_accepts_working_memory_snapshot(tmp_path: Path) -> None:
     result = audit_vault(tmp_path)
     assert not any(issue["code"] == "INVALID_STATUS" for issue in result["issues"])
     assert result["memory_snapshot_present"] is True
+
+
+def test_audit_flags_traversal_write_target_despite_prefix(tmp_path: Path) -> None:
+    make_base(tmp_path)
+    manifests = tmp_path / "08-Tooling" / "Manifests"
+    manifests.mkdir(parents=True)
+    for target in (
+        "08-Tooling/../../99-Attachments/x",
+        "01-Evidence/leak",
+        "/etc/passwd",
+        "C:/Windows/Temp",
+    ):
+        manifest = manifests / "TOOL-EVIL.md"
+        manifest.write_text(
+            "---\n"
+            "type: tool-manifest\n"
+            "status: draft\n"
+            f"tool-id: TOOL-EVIL\nversion: 0.1.0\nentrypoint: 08-Tooling/Active/tool.py\nnetwork: denied\nwrites-to: [\"{target}\"]\n"
+            "---\n# Tool\n",
+            encoding="utf-8",
+        )
+        result = audit_vault(tmp_path)
+        codes = {issue["code"] for issue in result["issues"]}
+        assert "TOOL_MANIFEST_WRITE_ESCAPE" in codes, target
