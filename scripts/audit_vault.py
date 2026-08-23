@@ -187,6 +187,7 @@ def audit_vault(vault: Path) -> dict[str, Any]:
         "memory_events": 0,
         "memory_invalid_lines": 0,
         "memory_snapshot_present": False,
+        "coverage_intelligence": None,
     }
 
     # Collected for post-pass checks (v0.3)
@@ -197,6 +198,9 @@ def audit_vault(vault: Path) -> dict[str, Any]:
     hypothesis_notes: list[tuple[str, dict[str, Any], str]] = []
     tooling_manifests: list[tuple[str, dict[str, Any], str]] = []
     tooling_audits: list[tuple[str, dict[str, Any], str]] = []
+    coverage_ledgers: list[tuple[str, dict[str, Any], str]] = []
+    investigation_plans: list[tuple[str, dict[str, Any], str]] = []
+    contradiction_notes: list[tuple[str, dict[str, Any], str]] = []
 
     # --- Critical files ---
     for rel in CRITICAL_FILES:
@@ -415,6 +419,13 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                     "msg": f"فرضية {support} بلا supporting-notes",
                     "path": rel,
                 })
+            if support == "conclusive" and isinstance(supporting, list) and len(supporting) < 2:
+                result["issues"].append({
+                    "severity": "major",
+                    "code": "CONCLUSIVE_NEEDS_MULTIPLE_SUPPORT",
+                    "msg": "support-level conclusive يتطلب أدلة متعددة ومستقلة (supporting-notes >= 2)",
+                    "path": rel,
+                })
             hypothesis_notes.append((rel, fm, body))
 
         # --- v0.3.0: informant / wiretap gates ---
@@ -455,6 +466,12 @@ def audit_vault(vault: Path) -> dict[str, Any]:
             group_entities.append((rel, fm, body))
         if ntype == "person":
             person_notes.append((rel, fm, body))
+        if ntype == "coverage-ledger" or rel.endswith("Coverage-Ledger.md"):
+            coverage_ledgers.append((rel, fm, body))
+        if ntype == "investigation-plan" or rel.endswith("Investigation-Plan.md"):
+            investigation_plans.append((rel, fm, body))
+        if ntype == "contradiction":
+            contradiction_notes.append((rel, fm, body))
         if ntype in REPORT_TYPES or zone == "06-Outputs":
             if ntype in REPORT_TYPES or "report" in rel.lower() or "court" in rel.lower():
                 report_notes.append((rel, fm, body))
@@ -563,6 +580,113 @@ def audit_vault(vault: Path) -> dict[str, Any]:
                 "code": "GROUP_VICTIM_NAME_WITH_EMPTY_GROUP",
                 "msg": "Person بدور ضحية/راكب بينما group-entity للضحايا بلا named-individuals — راجع اختلاق الأسماء",
                 "path": rel,
+            })
+
+    # --- v0.4.3: Coverage Intelligence — نسبة مراحل الخطة التي لها صف في الـ Ledger
+    def _table_data_rows(body_text: str) -> list[str]:
+        rows = []
+        for ln in (body_text or "").splitlines():
+            s = ln.strip()
+            if not s.startswith("|"):
+                continue
+            core = s.strip("|").replace("-", "").replace(":", "").replace(" ", "").replace("|", "")
+            if not core:
+                continue  # separator row
+            rows.append(s)
+        if rows and any(k in rows[0] for k in ("المرحلة", "Phase", "phase", "البنود")):
+            rows = rows[1:]
+        return rows
+
+    coverage_info: dict[str, Any] | None = None
+    plan_rel, plan_body = next(((r, b) for r, _f, b in investigation_plans), (None, None))
+    ledger_rel, ledger_body = next(((r, b) for r, _f, b in coverage_ledgers), (None, None))
+    if plan_rel:
+        plan_phases = len(re.findall(r"(?m)^\s*\d+\.\s+\S", plan_body or ""))
+        ledger_rows = len(_table_data_rows(ledger_body)) if ledger_rel else 0
+        pct = round((ledger_rows / plan_phases) * 100) if plan_phases else 0
+        coverage_info = {
+            "plan": plan_rel,
+            "plan_phases": plan_phases,
+            "ledger": ledger_rel,
+            "ledger_rows": ledger_rows,
+            "coverage_pct": pct,
+        }
+        result["coverage_intelligence"] = coverage_info
+        if not ledger_rel:
+            result["issues"].append({
+                "severity": "major",
+                "code": "COVERAGE_LEDGER_MISSING_ROWS_FILE",
+                "msg": "خطة تحقيق موجودة بلا Coverage-Ledger قابل للقراءة",
+                "path": str(plan_rel),
+            })
+        elif ledger_rows == 0 and plan_phases > 0:
+            result["issues"].append({
+                "severity": "major",
+                "code": "COVERAGE_LEDGER_EMPTY",
+                "msg": f"Coverage-Ledger بلا صفوف مراحل بينما الخطة تحتوي {plan_phases} مرحلة",
+                "path": str(ledger_rel),
+            })
+        elif pct < 50:
+            result["issues"].append({
+                "severity": "major",
+                "code": "COVERAGE_LEDGER_LOW",
+                "msg": f"تغطية الـ Ledger منخفضة: {ledger_rows}/{plan_phases} مراحل ({pct}%)",
+                "path": str(ledger_rel),
+            })
+        elif pct < 100:
+            result["issues"].append({
+                "severity": "minor",
+                "code": "COVERAGE_LEDGER_PARTIAL",
+                "msg": f"تغطية جزئية للخطة في الـ Ledger: {ledger_rows}/{plan_phases} مراحل ({pct}%)",
+                "path": str(ledger_rel),
+            })
+
+    # --- v0.4.3: فرضيات قوية معتمدة على أدلة داخل تناقض مفتوح
+    def _link_stem(value: Any) -> str:
+        s = str(value).strip().strip("[]")
+        s = s.split("#")[0].split("|")[0].strip()
+        stem = s.replace("\\", "/").split("/")[-1]
+        return re.sub(r"\.md$", "", stem).strip().lower()
+
+    open_contradictions: dict[str, set[str]] = {}
+    for rel, fm, _body in contradiction_notes:
+        status_c = str(fm.get("status") or "").strip().lower()
+        between = fm.get("between") or fm.get("related-evidence") or fm.get("related-events") or []
+        if not isinstance(between, list):
+            between = [between]
+        stems = {_link_stem(x) for x in between if str(x).strip()}
+        stems.discard("")
+        if not stems and status_c not in ("deprecated", "rejected"):
+            result["issues"].append({
+                "severity": "minor",
+                "code": "CONTRADICTION_UNLINKED",
+                "msg": "تناقض مسجل بلا روابط بين الأطراف المتناقضة (between)",
+                "path": rel,
+            })
+            continue
+        open_contradictions[rel] = stems
+    for hrel, hfm, _hbody in hypothesis_notes:
+        sup = hfm.get("supporting-notes") or hfm.get("supporting_notes") or []
+        if not isinstance(sup, list) or not sup:
+            continue
+        hs = {_link_stem(x) for x in sup}
+        lvl = str(hfm.get("support-level") or hfm.get("support_level") or "").strip().lower()
+        hits = sorted(cr for cr, stems in open_contradictions.items() if stems & hs)
+        if not hits:
+            continue
+        if lvl in ("strong", "conclusive"):
+            result["issues"].append({
+                "severity": "major",
+                "code": "HYPOTHESIS_STRONG_ON_CONTRADICTION",
+                "msg": f"فرضية {lvl} تعتمد على دليل داخل تناقض غير محلول: {', '.join(Path(h).stem for h in hits)}",
+                "path": hrel,
+            })
+        else:
+            result["issues"].append({
+                "severity": "minor",
+                "code": "HYPOTHESIS_ON_CONTRADICTION",
+                "msg": f"فرضية تستخدم دليلاً داخل تناقض مفتوح: {', '.join(Path(h).stem for h in hits)}",
+                "path": hrel,
             })
 
         # --- v0.4: self-tooling manifest/audit consistency

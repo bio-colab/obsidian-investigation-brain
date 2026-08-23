@@ -230,9 +230,10 @@ metadata:
 - لا أداة تكتب خارج case-root أو ترفع Evidence/status تلقائياً.
 
 ### 6.2 Gap Intelligence تحقيقي
-- % مراحل الخطة التي لها صف في Coverage-Ledger.
+- % مراحل الخطة التي لها صف في Coverage-Ledger — **يقيسها `audit_vault.py` آلياً** (`coverage_intelligence` + COVERAGE_LEDGER_*).
 - أدلة بلا سلسلة حفظ.
 - فرضيات Primary بلا Counter.
+- فرضية strong/conclusive معتمدة على دليل داخل تناقض مفتوح (HYPOTHESIS_STRONG_ON_CONTRADICTION) — آلياً.
 - فترات زمنية فارغة في Master-Timeline.
 - تناقضات غير محلولة.
 - أسئلة تحقيقية ما زالت ضعيفة الدعم.

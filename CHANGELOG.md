@@ -2,6 +2,23 @@
 
 ## Unreleased — 2026-08-23
 
+### أضيف — Gap Intelligence تنفيذي في audit_vault (v0.4.3 rules)
+
+- **Coverage Intelligence:** يقارن `audit_vault.py` مراحل Investigation-Plan المرقمة بصفوف Coverage-Ledger ويصدر `COVERAGE_LEDGER_EMPTY` / `COVERAGE_LEDGER_LOW` / `COVERAGE_LEDGER_PARTIAL` مع `coverage_intelligence` في JSON (% مراحل الخطة التي لها صف).
+- **HYPOTHESIS_STRONG_ON_CONTRADICTION / HYPOTHESIS_ON_CONTRADICTION:** فرضية strong/conclusive تعتمد على دليل داخل تناقض مفتوح تُرفع major، وغيرها minor.
+- **CONTRADICTION_UNLINKED:** تناقض بلا `between` مرتبط يُعلن minor بدل أن يمر صامتاً.
+- **CONCLUSIVE_NEEDS_MULTIPLE_SUPPORT:** support-level conclusive يتطلب ≥2 supporting-notes وفق تعريف SKILL («أدلة قاطعة متعددة ومستقلة»).
+
+### أصلح — تحصينات عامة (post-audit hardening)
+
+- UTF-8 إجباري لمخرجات كل CLIs — إنهاء انهيارات cp1252 على ويندوز مع المحتوى العربي.
+- حجب redirects خارج loopback في OpenMausBot client (ثغرة SSRF pivot).
+- normpath على `writes-to` في التدقيق — مسارات مثل `08-Tooling/../../99-Attachments` تصبح critical.
+- host mode يستخدم مسارات المضيف الحقيقية؛ قراءة manifest مرة واحدة (TOCTOU)؛ hashes قبل/بعد لكل write target.
+- ترتيب Tool-Audits بالطابع الزمني في tools-review؛ تهريب pipes/newlines في decisions وسجلات Swarm؛ fences ديناميكية ضد كسر code blocks.
+- validate_swarm يقبل CRLF frontmatter؛ تعقيم proposal_id/claim_id الواردة من الوكلاء.
+- اختبارات انحدار جديدة لكل ما سبق (41 اختباراً) وحارس skip لاختبار symlink عند غياب الصلاحية.
+
 ### P3 — استخراج Benchmark إلى مستودع مستقل
 
 - نُقل Benchmark v1 إلى [مستودع مستقل](https://github.com/bio-colab/obsidian-investigation-brain-benchmark) خاص وقابل لإعادة التشغيل، مع أدواته وحزمه واختباراته وCI منفصلة.
